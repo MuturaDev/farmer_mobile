@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Farmer</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="login">Login</string>
+
+    <string-array name="document_type">
+        <item>ID</item>
+    </string-array>
+    <string-array name="section">
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>D</item>
+        <item>E</item>
+    </string-array>
+    <string name="title_activity_list_farmer">Registered Farmers</string>
+    <string name="tab_text_1">Scheme</string>
+    <string name="tab_text_2">Contract</string>
+    <string name="registered_farmers">Registered Farmers</string>
+    <string name="gender">Gender</string>
+    <string name="blacklist">Blacklist</string>
+    <string name="title_activity_blacklist">Blacklisting</string>
+    <string name="title_activity_farmer_recruit">Farmer Recruitment</string>
+    <string name="title_activity_search_farmer">Farmer Searching</string>
+    <string name="title_activity_contract_sign">Contract Signing</string>
+
+</resources>

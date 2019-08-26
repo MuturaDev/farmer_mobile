@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.FarmerRecruitActivity"
+    tools:showIn="@layout/activity_farmer_recruit">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:padding="10sp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="Farmer" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginBottom="20dp"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:imeOptions="actionSearch"
+                    android:id="@+id/farmer"
+                    android:padding="15dp"
+                    android:focusable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_edittext"
+                    android:drawSelectorOnTop="true"
+                    android:hint="Select farmer"/>
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="Crop Date" />
+            <Spinner
+                android:id="@+id/cropdate"
+                android:layout_width="match_parent"
+                android:entries="@array/section"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/border_edittext"
+                android:drawSelectorOnTop="true"
+                android:padding="15dp"
+                android:hint="Bank Name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="Section" />
+            <Spinner
+                android:id="@+id/section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/border_edittext"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/section"
+                android:hint="Bank Name"
+                android:padding="15dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="No of Units" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:id="@+id/noofunits"
+                android:background="@drawable/border_edittext"
+                android:inputType="numberSigned|number"
+                android:padding="15dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="Land Ownership" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/border_edittext"
+                android:gravity="center|center_horizontal"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+
+                <RadioGroup
+                    android:id="@+id/radioland"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/dimen_15">
+
+                    <RadioButton
+                        android:id="@+id/radioOwned"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dimen_10"
+                        android:textColor="@color/textColor"
+                        android:text="Owned" />
+
+                    <RadioButton
+                        android:textColor="@color/textColor"
+                        android:id="@+id/radioLeased"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Leased" />
+
+                </RadioGroup>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_recruit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_30"
+                android:background="@drawable/shape_rectangle"
+                android:padding="10dp"
+                android:layout_marginBottom="20sp"
+                android:text="Recruit"
+                android:onClick="submit"
+                android:textAllCaps="true"
+                android:textColor="@color/colorwhite"
+                android:typeface="normal" />
+        </LinearLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
