@@ -14,6 +14,9 @@
         <item>D</item>
         <item>E</item>
     </string-array>
+    <string-array name="empty">
+        <item> </item>
+    </string-array>
     <string name="title_activity_list_farmer">Registered Farmers</string>
     <string name="tab_text_1">Scheme</string>
     <string name="tab_text_2">Contract</string>
@@ -24,5 +27,7 @@
     <string name="title_activity_farmer_recruit">Farmer Recruitment</string>
     <string name="title_activity_search_farmer">Farmer Searching</string>
     <string name="title_activity_contract_sign">Contract Signing</string>
+    <string name="title_activity_crop_destruction">Crop Destruction</string>
+    <string name="title_activity_search_destruction_farmer">Search Crop Destruction Farmer</string>
 
 </resources>

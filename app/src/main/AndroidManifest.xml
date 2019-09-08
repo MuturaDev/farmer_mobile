@@ -20,6 +20,25 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
+            android:name=".activity.SearchDestructionFarmerActivity"
+            android:label="@string/title_activity_search_destruction_farmer"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.CropDestructionActivity"
+            android:label="@string/title_activity_crop_destruction"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.HomeActivity" />
+        </activity>
+        <activity android:name=".activity.SearchContractFarmerActivity" />
+        <activity
             android:name=".activity.ContractSignActivity"
             android:label="@string/title_activity_contract_sign"
             android:parentActivityName=".activity.HomeActivity"

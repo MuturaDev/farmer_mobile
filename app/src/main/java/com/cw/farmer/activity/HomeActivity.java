@@ -116,4 +116,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void opencontract(View v){
         startActivity(new Intent(HomeActivity.this, ContractSignActivity.class));
     }
+    public void opendestruction(View v){
+        startActivity(new Intent(HomeActivity.this, CropDestructionActivity.class));
+    }
 }

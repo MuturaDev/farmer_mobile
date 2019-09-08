@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".activity.ContractSignActivity"
-    tools:showIn="@layout/activity_contract_sign">
+    tools:context=".activity.CropDestructionActivity"
+    tools:showIn="@layout/activity_crop_destruction">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -30,7 +30,7 @@
 
                 <EditText
                     android:imeOptions="actionSearch"
-                    android:id="@+id/farmer_contract"
+                    android:id="@+id/farmer_destruction"
                     android:padding="15dp"
                     android:focusable="false"
                     android:layout_width="match_parent"
@@ -45,48 +45,95 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/dimen_10"
                 android:textColor="@color/textColor"
-                android:text="Crop Date" />
-            <EditText
+                android:text="Select Crop Date" />
+            <Spinner
+                android:layout_marginBottom="20dp"
+                android:id="@+id/codedate_destruction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:id="@+id/codedate"
-                android:editable="false"
-                android:background="@drawable/border_edittext"
-                android:inputType="none"
-                android:padding="15dp" />
+                android:padding="15dp"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/empty"
+                android:hint="crop date"
+                android:background="@drawable/border_edittext"></Spinner>
+
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/dimen_10"
                 android:textColor="@color/textColor"
-                android:text="No of Units" />
-
-            <EditText
+                android:text="Select Units" />
+            <Spinner
+                android:layout_marginBottom="20dp"
+                android:id="@+id/noofunits_destruction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:id="@+id/noofunits"
-                android:background="@drawable/border_edittext"
-                android:inputType="none"
-                android:editable="false"
-                android:padding="15dp" />
+                android:padding="15dp"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/empty"
+                android:hint="crop date"
+                android:background="@drawable/border_edittext"></Spinner>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/dimen_10"
                 android:textColor="@color/textColor"
-                android:text="Contract Ref No" />
-
-            <EditText
+                android:text="Select Type" />
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:id="@+id/contract_refno"
                 android:background="@drawable/border_edittext"
-                android:inputType="text"
-                android:padding="15dp" />
+                android:gravity="center|center_horizontal"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+
+                <RadioGroup
+                    android:id="@+id/radiotype"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/dimen_15">
+
+                    <RadioButton
+                        android:id="@+id/radioPartial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dimen_10"
+                        android:textColor="@color/textColor"
+                        android:text="Partial Destruction" />
+
+                    <RadioButton
+                        android:textColor="@color/textColor"
+                        android:id="@+id/radioCrop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Crop Destruction" />
+
+                </RadioGroup>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="Select Reason" />
+
+            <Spinner
+                android:layout_marginBottom="20dp"
+                android:id="@+id/reason_destruction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/empty"
+                android:hint="crop date"
+                android:background="@drawable/border_edittext"></Spinner>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,7 +142,7 @@
                 android:text="Take a clear picture of the contract"/>
 
             <ImageView
-                android:id="@+id/iv_contract_image"
+                android:id="@+id/iv_destruction_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -112,7 +159,7 @@
                 android:padding="10dp"
                 android:layout_marginBottom="20sp"
                 android:text="Submit"
-                android:onClick="contract_sign"
+                android:onClick="destruction_submit"
                 android:textAllCaps="true"
                 android:textColor="@color/colorwhite"
                 android:typeface="normal" />

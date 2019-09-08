@@ -1,14 +1,18 @@
 package com.cw.farmer.server;
 
+import com.cw.farmer.activity.SearchContractFarmerActivity;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.BankNameResponse;
 import com.cw.farmer.model.BlacklistPostResponse;
 import com.cw.farmer.model.BlacklistResponse;
 import com.cw.farmer.model.CropDateResponse;
+import com.cw.farmer.model.DestructionReasonResponse;
 import com.cw.farmer.model.FarmerErrorResponse;
 import com.cw.farmer.model.FarmerModel;
 import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.model.Result;
+import com.cw.farmer.model.SearchContractResponse;
+import com.cw.farmer.model.SearchDestructionResponse;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
@@ -61,6 +65,26 @@ public interface APIService {
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
     @GET("/fineract-provider/api/v1/cropdates/activecropdates")
     Call<List<CropDateResponse>> getcropdate();
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/contractsigning/contractfarmers")
+    Call<SearchContractResponse> getContractfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/contractsigning")
+    Call<AllResponse> postcontract(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/contractsigning")
+    Call<SearchDestructionResponse> getDestructionfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/cropdestructionreason")
+    Call<List<DestructionReasonResponse>> getdestructionreasons();
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/capturecropdestruction")
+    Call<AllResponse> postcropdestruction(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
 
 
 

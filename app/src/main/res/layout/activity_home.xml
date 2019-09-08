@@ -22,12 +22,6 @@
                 android:fitsSystemWindows="true"
                 android:theme="@style/AppTheme.AppBarOverlay">
 
-                <ImageView
-                    android:layout_width="200dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/logo_nice" />
-
             </com.google.android.material.appbar.AppBarLayout>
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -322,6 +316,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
+                    android:onClick="opendestruction"
                     android:layout_weight="1"
                     android:padding="@dimen/dimen_10">
 
