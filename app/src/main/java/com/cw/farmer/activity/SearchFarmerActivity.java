@@ -65,7 +65,7 @@ public class SearchFarmerActivity extends AppCompatActivity {
             String id =(String) b.get("id");
             Intent intent = null;
             SharedPreferences prefs = getSharedPreferences("search", MODE_PRIVATE);
-            Toast.makeText(SearchFarmerActivity.this, prefs.getString("activity", " "), Toast.LENGTH_LONG).show();
+            //Toast.makeText(SearchFarmerActivity.this, prefs.getString("activity", " "), Toast.LENGTH_LONG).show();
             if (prefs.getString("activity", " ").equals("recruit")){
                 intent = new Intent(SearchFarmerActivity.this, FarmerRecruitActivity.class);
                 intent.putExtra("name",name);
@@ -116,7 +116,7 @@ public class SearchFarmerActivity extends AppCompatActivity {
                     }
 
                 } catch (Exception e) {
-                    Utility.showToast(SearchFarmerActivity.this, e.getMessage()+"Aggrey");
+                    Utility.showToast(SearchFarmerActivity.this, e.getMessage());
                 }
 
             }

@@ -154,7 +154,7 @@ public class scheme extends Fragment {
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                 //progressDialog.hide();
                 try {
-                    Toast.makeText(getContext(),String.valueOf( response.body().getPageItems().size()), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getContext(),String.valueOf( response.body().getPageItems().size()), Toast.LENGTH_LONG).show();
                     if (String.valueOf(response.body().getPageItems().size())!="0"){
                         if (pageItemArrayList==null){
                             pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();

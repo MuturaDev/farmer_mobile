@@ -74,4 +74,14 @@ public class FarmerDetailsActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+    public void opendoc(View v){
+        Intent intent = new Intent(FarmerDetailsActivity.this, FarmerDocumentsActivity.class);
+        intent.putExtra("id",pageItem.getId());
+        startActivity(intent);
+    }
+    public void openbank(View v){
+        Intent intent = new Intent(FarmerDetailsActivity.this, FarmerAccountsActivity.class);
+        intent.putExtra("id",pageItem.getId());
+        startActivity(intent);
+    }
 }

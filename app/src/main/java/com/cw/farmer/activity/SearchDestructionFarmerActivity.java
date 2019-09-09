@@ -95,7 +95,7 @@ public class SearchDestructionFarmerActivity extends AppCompatActivity {
                     }
 
                 } catch (Exception e) {
-                    Utility.showToast(SearchDestructionFarmerActivity.this, e.getMessage()+"Aggrey");
+                    Utility.showToast(SearchDestructionFarmerActivity.this, e.getMessage());
                 }
 
             }

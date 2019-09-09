@@ -29,5 +29,7 @@
     <string name="title_activity_contract_sign">Contract Signing</string>
     <string name="title_activity_crop_destruction">Crop Destruction</string>
     <string name="title_activity_search_destruction_farmer">Search Crop Destruction Farmer</string>
+    <string name="title_activity_farmer_documents">Farmer Documents</string>
+    <string name="title_activity_farmer_accounts">Farmer Bank Accounts Details</string>
 
 </resources>

@@ -7,6 +7,8 @@ import com.cw.farmer.model.BlacklistPostResponse;
 import com.cw.farmer.model.BlacklistResponse;
 import com.cw.farmer.model.CropDateResponse;
 import com.cw.farmer.model.DestructionReasonResponse;
+import com.cw.farmer.model.FarmerAccountsResponse;
+import com.cw.farmer.model.FarmerDocResponse;
 import com.cw.farmer.model.FarmerErrorResponse;
 import com.cw.farmer.model.FarmerModel;
 import com.cw.farmer.model.RegisterResponse;
@@ -85,6 +87,15 @@ public interface APIService {
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/capturecropdestruction")
     Call<AllResponse> postcropdestruction(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/{id}/farmerdocs")
+    Call<List<FarmerDocResponse>> getfamerdocs( @Path("id") int groupId);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/{id}/farmeraccounts")
+    Call<List<FarmerAccountsResponse>> getfameraccount(@Path("id") int groupId);
+
 
 
 

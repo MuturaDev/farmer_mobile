@@ -78,7 +78,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.MyVi
         holder.cdview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utility.showToast(mContext,dashboard.getTitle());
+                //Utility.showToast(mContext,dashboard.getTitle());
                 switch (position) {
                     case 0:
                         mContext.startActivity(new Intent(mContext, ListFarmerActivity.class));

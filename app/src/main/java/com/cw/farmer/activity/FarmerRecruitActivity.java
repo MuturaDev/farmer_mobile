@@ -1,9 +1,12 @@
 package com.cw.farmer.activity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,6 +14,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -43,8 +47,10 @@ import com.cw.farmer.model.PageItem;
 import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.example.easywaylocation.EasyWayLocation;
-import com.example.easywaylocation.Listener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
@@ -63,23 +69,25 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-import static com.example.easywaylocation.EasyWayLocation.LOCATION_SETTING_REQUEST_CODE;
 
-public class FarmerRecruitActivity extends AppCompatActivity implements Listener {
-    EditText farmer,noofunits;
-    Spinner cropdate,section,farmerspinner;
+public class FarmerRecruitActivity extends AppCompatActivity {
+    EditText farmer, noofunits;
+    Spinner cropdate, section, farmerspinner;
     private RadioGroup radioland;
     private RadioButton radioSexButton;
-    EasyWayLocation easyWayLocation;
     private TextView location, latLong, diff;
     private Double lati, longi;
-    String location_str,coordinates;
+    String location_str, coordinates;
+    Double currentLat,currentLong;
     ProgressDialog progressDialog;
     String farmer_id_string;
     List<Integer> crop_id;
     List<Integer> farmer_id;
     ArrayList<PageItem> pageItemArrayList;
     ArrayList<PageItem> array_sort;
+    private int timeInterval = 3000;
+    private int fastestTimeInterval = 3000;
+    private boolean runAsBackgroundService = false;
 
 
     @Override
@@ -89,14 +97,66 @@ public class FarmerRecruitActivity extends AppCompatActivity implements Listener
         progressDialog = new ProgressDialog(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        easyWayLocation = new EasyWayLocation(this, false,this);
-        farmer=findViewById(R.id.farmer);
-        cropdate=findViewById(R.id.cropdate);
-        section=findViewById(R.id.section);
-        noofunits=findViewById(R.id.noofunits);
+        farmer = findViewById(R.id.farmer);
+        cropdate = findViewById(R.id.cropdate);
+        section = findViewById(R.id.section);
+        noofunits = findViewById(R.id.noofunits);
         radioland = findViewById(R.id.radioland);
-        coordinates="45,67";
-        location_str="Githurai East";
+
+
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        // GPS location can be null if GPS is switched off
+                        currentLat = location.getLatitude();
+                        currentLong = location.getLongitude();
+                        coordinates = currentLat+","+currentLong;
+
+                        Geocoder geocoder;
+                        List<Address> addresses;
+                        geocoder = new Geocoder(FarmerRecruitActivity.this, Locale.getDefault());
+
+                        try {
+                            addresses = geocoder.getFromLocation(currentLat, currentLong, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                            String city = addresses.get(0).getLocality();
+                            String state = addresses.get(0).getAdminArea();
+                            String country = addresses.get(0).getCountryName();
+                            String postalCode = addresses.get(0).getPostalCode();
+                            String knownName = addresses.get(0).getFeatureName();
+                            //Toast.makeText(FarmerRecruitActivity.this, "lat " + city + "\nlong " + address, Toast.LENGTH_LONG).show();
+                            location_str = address;
+
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
 
         Intent iin= getIntent();
         Bundle b = iin.getExtras();
@@ -322,31 +382,26 @@ public class FarmerRecruitActivity extends AppCompatActivity implements Listener
         });
     }
 
-    @Override
-    public void locationOn() {
-        Toast.makeText(this, "Location ON", Toast.LENGTH_SHORT).show();
-    }
 
-    @Override
-    public void currentLocation(Location location) {
-        StringBuilder data = new StringBuilder();
-        data.append(location.getLatitude());
-        data.append(" , ");
-        data.append(location.getLongitude());
-        coordinates= String.valueOf(data);
-        Toast.makeText(this, coordinates, Toast.LENGTH_SHORT).show();
+
+
+
+    private static String removeLastChar(String str) {
+        return str.substring(0, str.length() - 1);
+    }
+    public  String getAddress(double lat, double lng) {
         Geocoder geocoder = new Geocoder(FarmerRecruitActivity.this, Locale.getDefault());
+        String location = " ";
+        String add = null;
         try {
-            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             Address obj = addresses.get(0);
-            String add = obj.getAddressLine(0);
-            add = add + "\n" + obj.getCountryName();
-            add = add + "\n" + obj.getAdminArea();
-            add = add + "\n" + obj.getSubAdminArea();
+            add = obj.getAddressLine(0);
+            add = add + "\n" + obj.getLocality();
 
             Log.v("IGA", "Address" + add);
-            location_str=add;
-            Toast.makeText(this, location_str, Toast.LENGTH_SHORT).show();
+            location = add;
+
             // Toast.makeText(this, "Address=>" + add,
             // Toast.LENGTH_SHORT).show();
 
@@ -356,38 +411,11 @@ public class FarmerRecruitActivity extends AppCompatActivity implements Listener
             e.printStackTrace();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
-
-    }
-
-    @Override
-    public void locationCancelled() {
-        Toast.makeText(this, "Location Cancelled", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case LOCATION_SETTING_REQUEST_CODE:
-                easyWayLocation.onActivityResult(resultCode);
-                break;
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        easyWayLocation.startLocation();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        easyWayLocation.endUpdates();
+        return location;
 
     }
-    private static String removeLastChar(String str) {
-        return str.substring(0, str.length() - 1);
+    public void onpenlocation(View v){
+
     }
 
 }

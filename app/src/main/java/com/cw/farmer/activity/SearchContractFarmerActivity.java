@@ -113,7 +113,7 @@ public class SearchContractFarmerActivity extends AppCompatActivity {
                     }
 
                 } catch (Exception e) {
-                    Utility.showToast(SearchContractFarmerActivity.this, e.getMessage()+"Aggrey");
+                    Utility.showToast(SearchContractFarmerActivity.this, e.getMessage());
                 }
 
             }

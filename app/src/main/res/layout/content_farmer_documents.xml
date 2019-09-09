@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    tools:context=".activity.FarmerDocumentsActivity"
+    tools:showIn="@layout/activity_farmer_documents">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_5"
+            android:layout_weight="1"
+            android:padding="@dimen/dimen_10"
+            card_view:cardCornerRadius="@dimen/dimen_5"
+            card_view:cardElevation="5dp"
+            card_view:contentPadding="@dimen/dimen_8">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/dimen_10"
+        android:padding="10sp">
+        <TextView
+            android:id="@+id/docshtdesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_10"
+            android:textColor="@color/textColor"
+            android:text="Short Description" />
+        <TextView
+            android:id="@+id/docno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_10"
+            android:textColor="@color/textColor"
+            android:text="Document Number" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:padding="@dimen/dimen_10"
+            android:textColor="@color/textColor"
+            android:text="Document Image" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/ic_launcher_foreground" />
+
+
+    </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </ScrollView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

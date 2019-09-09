@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private boolean isValid() {
         if (et_username.getText().length()==0||et_username.getText().toString().equals("")||et_username.getText().equals(null)){
-            et_username.setError("Can Not Emmty");
+            et_username.setError("Can Not Empty");
             return false;
         }else if(et_password.getText().length()==0||et_password.getText().toString().equals("")||et_password.getText().equals(null))
         {
