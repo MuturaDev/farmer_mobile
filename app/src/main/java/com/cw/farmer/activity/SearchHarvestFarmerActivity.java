@@ -3,11 +3,12 @@ package com.cw.farmer.activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
-import com.cw.farmer.adapter.SearchAdapter;
 import com.cw.farmer.adapter.SearchDestructionAdapter;
+import com.cw.farmer.adapter.SearchHarvestAdapter;
 import com.cw.farmer.custom.Utility;
+import com.cw.farmer.model.FarmerHarvestResponse;
+import com.cw.farmer.model.PageItemHarvest;
 import com.cw.farmer.model.PageItemsDestruction;
-import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.model.SearchDestructionResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
@@ -36,11 +37,11 @@ import retrofit2.Retrofit;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
-public class SearchDestructionFarmerActivity extends AppCompatActivity {
+public class SearchHarvestFarmerActivity extends AppCompatActivity {
     RecyclerView rv_register;
-    SearchDestructionAdapter registerAdapter;
+    SearchHarvestAdapter registerAdapter;
     ProgressDialog progressDialog;
-    ArrayList<PageItemsDestruction> pageItemArrayList;
+    ArrayList<PageItemHarvest> pageItemArrayList;
     FloatingActionButton fab;
     EditText farmer_search;
     Button btn_search;
@@ -53,14 +54,17 @@ public class SearchDestructionFarmerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_destruction_farmer);
+        setContentView(R.layout.activity_search_harvest_farmer);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         rv_register = findViewById(R.id.search_recylerview);
         rv_register.setLayoutManager(new LinearLayoutManager(this));
         farmer_search = findViewById(R.id.farmer_search);
         btn_search = findViewById(R.id.btn_search);
         progressDialog = new ProgressDialog(this);
+
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     public void search(View v){
@@ -72,18 +76,19 @@ public class SearchDestructionFarmerActivity extends AppCompatActivity {
         progressDialog.show();
         Retrofit retrofit = ApiClient.getClient("/authentication/");
         APIService service = retrofit.create(APIService.class);
-        Call<SearchDestructionResponse> call = service.getDestructionfarmer(limit,offset,farmer_search.getText().toString());
-        call.enqueue(new Callback<SearchDestructionResponse>() {
+        Call<FarmerHarvestResponse> call = service.getHarvestfarmer(limit,offset,farmer_search.getText().toString());
+        call.enqueue(new Callback<FarmerHarvestResponse>() {
             @Override
-            public void onResponse(Call<SearchDestructionResponse> call, Response<SearchDestructionResponse> response) {
+            public void onResponse(Call<FarmerHarvestResponse> call, Response<FarmerHarvestResponse> response) {
                 progressDialog.hide();
                 try {
+                    System.out.println(response.body().getPageItemHarvest());
 
-                    if (response.body().getPageItemsDestruction().size()!=0){
+                    if (response.body().getPageItemHarvest().size()!=0){
                         if (pageItemArrayList==null){
-                            pageItemArrayList = (ArrayList<PageItemsDestruction>) response.body().getPageItemsDestruction();
+                            pageItemArrayList = (ArrayList<PageItemHarvest>) response.body().getPageItemHarvest();
                         }else{
-                            pageItemArrayList .addAll(response.body().getPageItemsDestruction());
+                            pageItemArrayList .addAll(response.body().getPageItemHarvest());
                         }
                         setData();
                     }else {
@@ -92,25 +97,25 @@ public class SearchDestructionFarmerActivity extends AppCompatActivity {
                             registerAdapter.setLoaded();
                         }
                         end =true;
-                        Toast.makeText(SearchDestructionFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SearchHarvestFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
                     }
 
                 } catch (Exception e) {
-                    Utility.showToast(SearchDestructionFarmerActivity.this, e.getMessage());
+                    Utility.showToast(SearchHarvestFarmerActivity.this, e.getMessage());
                 }
 
             }
 
             @Override
-            public void onFailure(Call<SearchDestructionResponse> call, Throwable t) {
+            public void onFailure(Call<FarmerHarvestResponse> call, Throwable t) {
                 progressDialog.hide();
-                Utility.showToast(SearchDestructionFarmerActivity.this, t.getMessage());
+                Utility.showToast(SearchHarvestFarmerActivity.this, t.getMessage());
             }
         });
     }
 
     private void setData() {
-        registerAdapter = new SearchDestructionAdapter(rv_register,SearchDestructionFarmerActivity.this, pageItemArrayList);
+        registerAdapter = new SearchHarvestAdapter(rv_register,SearchHarvestFarmerActivity.this, pageItemArrayList);
         DividerItemDecoration itemDecor = new DividerItemDecoration(this, HORIZONTAL);
         rv_register.addItemDecoration(itemDecor);
         rv_register.setAdapter(registerAdapter);

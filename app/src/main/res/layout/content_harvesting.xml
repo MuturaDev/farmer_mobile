@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.HarvestingActivity"
+    tools:showIn="@layout/activity_harvesting">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:padding="10sp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="Farmer" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginBottom="20dp"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:imeOptions="actionSearch"
+                    android:id="@+id/farmer_harvesting"
+                    android:padding="15dp"
+                    android:focusable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_edittext"
+                    android:drawSelectorOnTop="true"
+                    android:hint="Select farmer"/>
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="Select Crop Date" />
+            <Spinner
+                android:layout_marginBottom="20dp"
+                android:id="@+id/codedate_harvesting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/empty"
+                android:hint="crop date"
+                android:background="@drawable/border_edittext"></Spinner>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="Enter the weight (Kilograms)" />
+
+            <EditText
+                android:layout_marginBottom="20dp"
+                android:id="@+id/crop_weight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:inputType="numberDecimal"
+                android:background="@drawable/border_edittext"></EditText>
+
+
+            <Button
+                android:id="@+id/btn_recruit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_30"
+                android:background="@drawable/shape_rectangle"
+                android:padding="10dp"
+                android:layout_marginBottom="20sp"
+                android:text="Submit"
+                android:onClick="harvesting_submit"
+                android:textAllCaps="true"
+                android:textColor="@color/colorwhite"
+                android:typeface="normal" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

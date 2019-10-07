@@ -95,6 +95,7 @@
                 android:weightSum="2">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/register_farmer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
@@ -135,6 +136,7 @@
 
                 </androidx.cardview.widget.CardView>
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/view_farmer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
@@ -184,6 +186,7 @@
                 android:weightSum="2">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/recruit_farmer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
@@ -224,6 +227,7 @@
 
                 </androidx.cardview.widget.CardView>
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/contract_signing"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
@@ -274,6 +278,7 @@
                 android:orientation="horizontal"
                 android:weightSum="2">
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/verify_planting"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
@@ -313,6 +318,7 @@
 
                 </androidx.cardview.widget.CardView>
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/crop_destruction"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
@@ -363,6 +369,8 @@
                 android:orientation="horizontal"
                 android:weightSum="2">
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/harvest_collection"
+                    android:onClick="openharvesting"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
@@ -402,6 +410,7 @@
 
                 </androidx.cardview.widget.CardView>
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/inventory_mgt"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
@@ -450,6 +459,7 @@
                 android:orientation="horizontal"
                 android:weightSum="2">
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/dashboard"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"

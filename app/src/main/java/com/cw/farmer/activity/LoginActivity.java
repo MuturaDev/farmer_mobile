@@ -1,8 +1,11 @@
 package com.cw.farmer.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,9 +14,13 @@ import android.widget.TextView;
 
 import com.cw.farmer.R;
 import com.cw.farmer.custom.Utility;
+import com.cw.farmer.model.CropDateResponse;
 import com.cw.farmer.model.Result;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,7 +80,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 try {
                     if (response.body().getAuthenticated()){
                         //Utility.showToast(LoginActivity.this,"success");
-                        //Utility.showToast(LoginActivity.this,response.body().getUsername());
+                        //Utility.showToast(LoginActivity.this,response.body().getPermissions());
+
+                        //Set the values
+                        SharedPreferences mEdit1 = getSharedPreferences("PERMISSIONS", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor scoreEditor = mEdit1.edit();
+                        Set<String> set = new HashSet<String>();
+                        set.addAll(response.body().getPermissions());
+                        scoreEditor.putStringSet("key", set);
+                        scoreEditor.commit();
+
                         startActivity(new Intent(LoginActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
                     }
                 }catch (Exception e){

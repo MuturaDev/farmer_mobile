@@ -2,30 +2,27 @@ package com.cw.farmer.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.OnLoadMoreListener;
 import com.cw.farmer.R;
-import com.cw.farmer.activity.FarmerDetailsActivity;
-import com.cw.farmer.activity.RegisterActivity;
-import com.cw.farmer.model.PageItem;
+import com.cw.farmer.activity.CropDestructionActivity;
+import com.cw.farmer.activity.HarvestingActivity;
+import com.cw.farmer.model.PageItemHarvest;
 
 import java.util.ArrayList;
 
-public class RegisterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    ArrayList<PageItem> pageItemArrayList;
+public class SearchHarvestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    ArrayList<PageItemHarvest> pageItemArrayList;
     Context context;
     int length;
     int index = 0;
@@ -40,7 +37,7 @@ public class RegisterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.onLoadMoreListener = mOnLoadMoreListener;
     }
 
-    public RegisterAdapter(RecyclerView recyclerView,Context context, ArrayList<PageItem> pageItemArrayList) {
+    public SearchHarvestAdapter(RecyclerView recyclerView, Context context, ArrayList<PageItemHarvest> pageItemArrayList) {
         this.context = context;
         this.pageItemArrayList = pageItemArrayList;
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
@@ -61,7 +58,7 @@ public class RegisterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         });
     }
 
-    public void setdata(ArrayList<PageItem> feedDataArrayList) {
+    public void setdata(ArrayList<PageItemHarvest> feedDataArrayList) {
         this.pageItemArrayList = feedDataArrayList;
 
         this.notifyDataSetChanged();
@@ -102,7 +99,7 @@ public class RegisterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_register, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_harvesting, viewGroup, false);
             return new ViewHolder(view);
         } else {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_loading, viewGroup, false);
@@ -128,25 +125,46 @@ public class RegisterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void populateItemRows(ViewHolder viewHolder, int position) {
-        final PageItem pageItem = pageItemArrayList.get(position);
-        viewHolder.tv_first_midel_last_name.setText(pageItem.getFirstname()+" "+pageItem.getMiddlename()+" "+pageItem.getLastname());
-        viewHolder.tv_mobile.setText("Tel: "+pageItem.getMobileno());
-        viewHolder.tv_idno.setText("Id No: "+pageItem.getIdno());
+        final PageItemHarvest pageItem = pageItemArrayList.get(position);
+        String date="";
+        for(int elem : pageItem.getCropDate()){
+            date=elem+"/"+date;
+        }
+        String contractdate="";
+        for(int elem : pageItem.getCropDate()){
+            contractdate=elem+"/"+contractdate;
+        }
+        //Name
+        //Mobile No
+        //ID No
+        //Crop Date
+        //Centre Name
+        viewHolder.tv_first_midel_last_name.setText(pageItem.getFarmerName());
+        viewHolder.tv_mobile.setText("Mobile No: "+pageItem.getMobileno());
+        viewHolder.tv_idno.setText("ID No: "+pageItem.getIdno());
+        viewHolder.crop_date.setText("Crop Date: "+removeLastChar(date));
+
+        viewHolder.tv_noofunits.setText("Centre Name: "+pageItem.getCentreName());
+
 
         viewHolder.lin_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, FarmerDetailsActivity.class);
-                Bundle bundle1 = new Bundle();
-                bundle1.putParcelable("item", pageItem);
-                intent.putExtras(bundle1);
-                intent.putExtra("id",pageItem.getId());
-                intent.putExtra("status",pageItem.getStatus().getValue());
                 String date="";
-                for(int elem : pageItem.getDateOfBirth()){
-                    date=elem+"-"+date;
+                for(int elem : pageItem.getCropDate()){
+                    date=elem+"/"+date;
                 }
-                intent.putExtra("dob", removeLastChar(date));
+                String finalDate = date;
+                Intent intent = new Intent(context, HarvestingActivity.class);
+                intent.putExtra("name",pageItem.getFarmerName());
+                intent.putExtra("farmerId",pageItem.getFarmerId()+"");
+                intent.putExtra("farmerCode",pageItem.getFarmerCode()+"");
+                intent.putExtra("crop_date",removeLastChar(finalDate)+"");
+                intent.putExtra("totalUnits",pageItem.getTotalUnits()+"");
+                intent.putExtra("plantingId",pageItem.getPlantingId()+"");
+                intent.putExtra("idno",pageItem.getIdno()+"");
+                intent.putExtra("centreName",pageItem.getCentreName()+"");
+                intent.putExtra("mobileno",pageItem.getMobileno()+"");
                 context.startActivity(intent);
             }
         });
@@ -174,7 +192,7 @@ public class RegisterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        protected TextView tv_first_midel_last_name, tv_mobile,tv_idno;
+        protected TextView tv_first_midel_last_name, tv_mobile,tv_idno,tv_noofunits,crop_date;
         protected LinearLayout lin_item;
 
         public ViewHolder(@NonNull View itemView) {
@@ -183,11 +201,9 @@ public class RegisterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tv_mobile = itemView.findViewById(R.id.tv_mobile);
             lin_item = itemView.findViewById(R.id.lin_item);
             tv_idno=itemView.findViewById(R.id.tv_idno);
+            tv_noofunits=itemView.findViewById(R.id.tv_noofunits);
+            crop_date=itemView.findViewById(R.id.crop_date);
         }
-    }
-    public static String capitalize(String str)
-    {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
     private static String removeLastChar(String str) {
         return str.substring(0, str.length() - 1);

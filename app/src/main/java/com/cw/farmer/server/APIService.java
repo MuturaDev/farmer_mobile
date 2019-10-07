@@ -10,6 +10,7 @@ import com.cw.farmer.model.DestructionReasonResponse;
 import com.cw.farmer.model.FarmerAccountsResponse;
 import com.cw.farmer.model.FarmerDocResponse;
 import com.cw.farmer.model.FarmerErrorResponse;
+import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.FarmerModel;
 import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.model.Result;
@@ -28,6 +29,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -95,6 +97,18 @@ public interface APIService {
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
     @GET("/fineract-provider/api/v1/{id}/farmeraccounts")
     Call<List<FarmerAccountsResponse>> getfameraccount(@Path("id") int groupId);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/contractsigning/contractedfarmers")
+    Call<FarmerHarvestResponse> getHarvestfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/harvesting")
+    Call<AllResponse> postharvesting(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @PUT("/fineract-provider/api/v1/farmerscapture/{id}")
+    Call<AllResponse> posteditfarmer(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl,@Path("id") int groupId);
 
 
 

@@ -31,5 +31,8 @@
     <string name="title_activity_search_destruction_farmer">Search Crop Destruction Farmer</string>
     <string name="title_activity_farmer_documents">Farmer Documents</string>
     <string name="title_activity_farmer_accounts">Farmer Bank Accounts Details</string>
+    <string name="title_activity_harvesting">Crop Harvesting</string>
+    <string name="title_activity_search_harvest_farmer">Search for harvesting farmer</string>
+    <string name="title_activity_edit_farmer">Edit Farmer</string>
 
 </resources>

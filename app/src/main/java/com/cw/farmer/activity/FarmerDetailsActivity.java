@@ -25,6 +25,7 @@ public class FarmerDetailsActivity extends AppCompatActivity {
     List<Integer> blacklist_id;
     EditText editTextDateto,editTextDatefrom;
     DatePickerDialog picker,picker1;
+    String dob;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +52,8 @@ public class FarmerDetailsActivity extends AppCompatActivity {
             tv_email.setText("Farmer Id No : " + pageItem.getIdno());
             tv_address.setText("Mobile No : " + pageItem.getMobileno());
             String gender="";
-            if (pageItem.getGender().equals("M")){
-               gender="Male";
-            }else {
-                gender="Female";
-            }
+            dob=(String) bundle.get("dob");
+
             tv_gender.setText("Gender : " +gender );
             tv_centername.setText("Center : " + pageItem.getCentername());
             tv_farmerstatus.setText("Farmer Status : "+bundle.getString("status"));
@@ -82,6 +80,15 @@ public class FarmerDetailsActivity extends AppCompatActivity {
     public void openbank(View v){
         Intent intent = new Intent(FarmerDetailsActivity.this, FarmerAccountsActivity.class);
         intent.putExtra("id",pageItem.getId());
+        startActivity(intent);
+    }
+    public void openeditfarmer(View v){
+        Intent intent = new Intent(FarmerDetailsActivity.this, EditFarmerActivity.class);
+        intent.putExtra("id",pageItem.getId());
+        intent.putExtra("dob",dob);
+        Bundle bundle1 = new Bundle();
+        bundle1.putParcelable("item", pageItem);
+        intent.putExtras(bundle1);
         startActivity(intent);
     }
 }

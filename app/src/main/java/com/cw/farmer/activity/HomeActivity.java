@@ -2,11 +2,14 @@ package com.cw.farmer.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import com.google.android.material.appbar.AppBarLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import android.util.TypedValue;
@@ -18,6 +21,7 @@ import com.cw.farmer.adapter.DashboardAdapter;
 import com.cw.farmer.model.dashboard;
 
 import java.util.List;
+import java.util.Set;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
     LinearLayout lin_register, lin_create;
@@ -29,6 +33,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     AppBarLayout Appbar;
     Toolbar toolbar;
+    CardView register_farmer,view_farmer,recruit_farmer,contract_signing,verify_planting,crop_destruction,harvest_collection,inventory_mgt,dashboard;
 
     boolean ExpandedActionBar = true;
 
@@ -38,8 +43,54 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_home);
         Appbar = (AppBarLayout)findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        Set<String> permission = prefs.getStringSet("key", null);
+
+        if (!permission.contains("ALL_FUNCTIONS")){
+            register_farmer=findViewById(R.id.register_farmer);
+            if (!permission.contains("CREATE_FARMER")) {
+                register_farmer.setVisibility(View.GONE);
+            }
+            view_farmer=findViewById(R.id.view_farmer);
+            if (!permission.contains("READ_FARMER_MOBILE")) {
+                view_farmer.setVisibility(View.GONE);
+            }
+            recruit_farmer=findViewById(R.id.recruit_farmer);
+            if (!permission.contains("RECRUIT_FARMER_MOBILE")) {
+                recruit_farmer.setVisibility(View.GONE);
+            }
+            contract_signing=findViewById(R.id.contract_signing);
+            if (!permission.contains("CONTRACT_FARMER_MOBILE")) {
+                contract_signing.setVisibility(View.GONE);
+            }
+            verify_planting=findViewById(R.id.verify_planting);
+            if (!permission.contains("VERIFY_PLANTING_MOBILE")) {
+                verify_planting.setVisibility(View.GONE);
+            }
+            crop_destruction=findViewById(R.id.crop_destruction);
+            if (!permission.contains("CROP_DESTRUCTION_MOBILE")) {
+                crop_destruction.setVisibility(View.GONE);
+            }
+            harvest_collection=findViewById(R.id.harvest_collection);
+            if (!permission.contains("HARVEST_COLLECTION_MOBILE")) {
+                harvest_collection.setVisibility(View.GONE);
+            }
+            dashboard=findViewById(R.id.dashboard);
+            inventory_mgt=findViewById(R.id.inventory_mgt);
+        }
+
+
+
+
+
 
         setSupportActionBar(toolbar);
+
+        for (String s : permission) {
+            System.out.println(s);
+        }
+
+
 
 
     }
@@ -118,5 +169,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void opendestruction(View v){
         startActivity(new Intent(HomeActivity.this, CropDestructionActivity.class));
+    }
+    public void openharvesting(View v){
+        startActivity(new Intent(HomeActivity.this, HarvestingActivity.class));
     }
 }

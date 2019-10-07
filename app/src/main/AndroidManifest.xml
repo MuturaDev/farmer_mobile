@@ -20,17 +20,42 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
+            android:name=".activity.EditFarmerActivity"
+            android:label="@string/title_activity_edit_farmer"
+            android:parentActivityName=".activity.ListFarmerActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.ListFarmerActivity" />
+        </activity>
+        <activity
+            android:name=".activity.SearchHarvestFarmerActivity"
+            android:label="@string/title_activity_search_harvest_farmer"
+            android:parentActivityName=".activity.HarvestingActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.HarvestingActivity" />
+        </activity>
+        <activity
+            android:name=".activity.HarvestingActivity"
+            android:label="@string/title_activity_harvesting"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.HomeActivity" />
+        </activity>
+        <activity
             android:name=".activity.FarmerAccountsActivity"
             android:label="@string/title_activity_farmer_accounts"
             android:parentActivityName=".activity.ListFarmerActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.FarmerDocumentsActivity"
             android:label="@string/title_activity_farmer_documents"
             android:parentActivityName=".activity.ListFarmerActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SearchDestructionFarmerActivity"
             android:label="@string/title_activity_search_destruction_farmer"
