@@ -173,4 +173,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void openharvesting(View v){
         startActivity(new Intent(HomeActivity.this, HarvestingActivity.class));
     }
+    public void openplantverfication(View v){
+        startActivity(new Intent(HomeActivity.this, PlantingVerificationActivity.class));
+    }
 }

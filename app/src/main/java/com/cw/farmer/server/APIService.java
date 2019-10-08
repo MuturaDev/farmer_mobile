@@ -12,6 +12,7 @@ import com.cw.farmer.model.FarmerDocResponse;
 import com.cw.farmer.model.FarmerErrorResponse;
 import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.FarmerModel;
+import com.cw.farmer.model.PlantVerifyResponse;
 import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.model.Result;
 import com.cw.farmer.model.SearchContractResponse;
@@ -109,6 +110,16 @@ public interface APIService {
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @PUT("/fineract-provider/api/v1/farmerscapture/{id}")
     Call<AllResponse> posteditfarmer(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl,@Path("id") int groupId);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/plantingverification/contractedFarmers")
+    Call<PlantVerifyResponse> getplantingfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/plantingverification")
+    Call<AllResponse> postplantverify(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
+
+
 
 
 

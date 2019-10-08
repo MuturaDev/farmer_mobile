@@ -169,7 +169,7 @@ public class HarvestingActivity extends AppCompatActivity {
         //}
         SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-        pDialog.setTitleText("Submitting Crop Destruction Data...");
+        pDialog.setTitleText("Submitting Harvesting Data...");
         pDialog.setCancelable(false);
         pDialog.show();
         HashMap<String,String> hashMap=new HashMap<>();

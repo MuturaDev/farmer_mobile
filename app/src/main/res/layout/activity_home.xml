@@ -279,6 +279,7 @@
                 android:weightSum="2">
                 <androidx.cardview.widget.CardView
                     android:id="@+id/verify_planting"
+                    android:onClick="openplantverfication"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/dimen_5"
