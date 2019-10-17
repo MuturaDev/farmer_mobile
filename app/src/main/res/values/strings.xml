@@ -36,5 +36,6 @@
     <string name="title_activity_edit_farmer">Edit Farmer</string>
     <string name="title_activity_planting_verification">Planting Verification</string>
     <string name="title_activity_search_planting_verfication">Planting Verification Farmer</string>
+    <string name="title_activity_requisition">"Requisition "</string>
 
 </resources>

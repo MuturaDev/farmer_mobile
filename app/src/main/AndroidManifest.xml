@@ -20,6 +20,15 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
+            android:name=".activity.RequisitionActivity"
+            android:label="@string/title_activity_requisition"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.HomeActivity" />
+        </activity>
+        <activity
             android:name=".activity.SearchPlantingVerficationActivity"
             android:label="@string/title_activity_search_planting_verfication"
             android:parentActivityName=".activity.HomeActivity"

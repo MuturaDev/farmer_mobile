@@ -3,12 +3,11 @@ package com.cw.farmer.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public  class Role {
-
+public class Role {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName("name")
     @Expose
     private String name;
@@ -17,14 +16,19 @@ public  class Role {
     private String description;
     @SerializedName("disabled")
     @Expose
-    private Boolean disabled;
+    private boolean disabled;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public Role withId(int id) {
+        this.id = id;
+        return this;
     }
 
     public String getName() {
@@ -35,6 +39,11 @@ public  class Role {
         this.name = name;
     }
 
+    public Role withName(String name) {
+        this.name = name;
+        return this;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -43,12 +52,22 @@ public  class Role {
         this.description = description;
     }
 
-    public Boolean getDisabled() {
+    public Role withDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public boolean isDisabled() {
         return disabled;
     }
 
-    public void setDisabled(Boolean disabled) {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public Role withDisabled(boolean disabled) {
+        this.disabled = disabled;
+        return this;
     }
 
 }

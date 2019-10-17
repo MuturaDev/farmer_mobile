@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/dimen_10"
+    android:id="@+id/lin_item"
+    android:layout_marginBottom="@dimen/dimen_5"
+    android:layout_height="wrap_content">
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="@dimen/dimen_10"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:stretchColumns="1">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/tv_centre"
+                android:textColor="@color/colorblack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kayuyu" />
+
+            <TextView
+                android:id="@+id/tv_crop_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/colorblack"
+                android:text="20/10/2019" />
+            <TextView
+                android:id="@+id/tv_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:textColor="@color/colorblack"
+                android:text="Planting" />
+
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

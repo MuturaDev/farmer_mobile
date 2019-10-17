@@ -14,9 +14,11 @@ import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.FarmerModel;
 import com.cw.farmer.model.PlantVerifyResponse;
 import com.cw.farmer.model.RegisterResponse;
+import com.cw.farmer.model.RequisitionResponse;
 import com.cw.farmer.model.Result;
 import com.cw.farmer.model.SearchContractResponse;
 import com.cw.farmer.model.SearchDestructionResponse;
+import com.cw.farmer.model.TasksResponse;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
@@ -118,6 +120,14 @@ public interface APIService {
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/plantingverification")
     Call<AllResponse> postplantverify(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/tasks/{id}")
+    Call<TasksResponse> gettask(@Header("Authorization") String authorization,@Path("id") int groupId);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/plantrequisition/requistionitems/{id}")
+    Call<List<RequisitionResponse>> getrequsition(@Path("id") String groupId);
 
 
 

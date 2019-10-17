@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.RequisitionActivity"
+    tools:showIn="@layout/activity_requisition">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:paddingTop="@dimen/dimen_30"
+        android:layout_margin="@dimen/dimen_10"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_10"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:layout_marginBottom="@dimen/dimen_30"
+            android:stretchColumns="1">
+
+            <TableRow>
+
+                <TextView
+                    android:textColor="@color/colorblack"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="Centre" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/colorblack"
+                    android:textStyle="bold"
+                    android:text="Crop Date" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorblack"
+                    android:text="Type" />
+
+            </TableRow>
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/tv_centre"
+                    android:textColor="@color/colorblack"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kayuyu" />
+
+                <TextView
+                    android:id="@+id/tv_crop_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/colorblack"
+                    android:text="20/10/2019" />
+                <TextView
+                    android:id="@+id/tv_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:textColor="@color/colorblack"
+                    android:text="Planting" />
+
+            </TableRow>
+        </TableLayout>
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:layout_marginBottom="@dimen/dimen_5"
+            android:background="@color/colorblack"
+            android:baselineAligned="false" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/dimen_20"
+            android:paddingBottom="@dimen/dimen_10"
+            android:text="Inventory Details"/>
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_10"
+            android:layout_marginRight="@dimen/dimen_20">
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/tv_itemcode"
+                    android:textColor="@color/colorblack"
+                    android:paddingRight="@dimen/dimen_10"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Item Code" />
+                <TextView
+                    android:id="@+id/tv_itemname"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingRight="@dimen/dimen_10"
+                    android:textColor="@color/colorblack"
+                    android:text="Item Name" />
+
+                <TextView
+                    android:id="@+id/tv_quanity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingRight="@dimen/dimen_10"
+                    android:textColor="@color/colorblack"
+                    android:text="Quality" />
+                <TextView
+                    android:id="@+id/tv_actual"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingRight="@dimen/dimen_10"
+                    android:textColor="@color/colorblack"
+                    android:text="Actual" />
+
+            </TableRow>
+        </TableLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/requistion_list"
+            android:paddingLeft="@dimen/dimen_20"
+            android:paddingRight="@dimen/dimen_20"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/shape_rectangle"
+                android:padding="1dp"
+                android:text="Confirm"
+                android:textAllCaps="true"
+                android:textColor="@color/colorwhite"
+                android:typeface="normal" />
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

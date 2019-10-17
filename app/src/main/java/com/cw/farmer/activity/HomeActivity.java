@@ -1,35 +1,63 @@
 package com.cw.farmer.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
+
+import com.cw.farmer.adapter.SearchAdapter;
+import com.cw.farmer.adapter.TaskAdapter;
+import com.cw.farmer.custom.Utility;
+import com.cw.farmer.model.PageItem;
+import com.cw.farmer.model.PageItemstask;
+import com.cw.farmer.model.RegisterResponse;
+import com.cw.farmer.model.TasksResponse;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.DashboardAdapter;
 import com.cw.farmer.model.dashboard;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
+import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
+import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
     LinearLayout lin_register, lin_create;
     private Context mContext=HomeActivity.this;
 
-    private RecyclerView recyclerView;
     private DashboardAdapter adapter;
     private List<dashboard> dashboardList;
+    String user_id;
+    RecyclerView rv_register;
+    TaskAdapter registerAdapter;
+    ProgressDialog progressDialog;
+    ArrayList<PageItemstask> pageItemArrayList;
 
     AppBarLayout Appbar;
     Toolbar toolbar;
@@ -43,6 +71,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_home);
         Appbar = (AppBarLayout)findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        progressDialog = new ProgressDialog(this);
+        rv_register = findViewById(R.id.verifyplanting_list);
+        rv_register.setLayoutManager(new LinearLayoutManager(this));
         SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
         Set<String> permission = prefs.getStringSet("key", null);
 
@@ -79,20 +110,51 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             inventory_mgt=findViewById(R.id.inventory_mgt);
         }
 
+        user_id=prefs.getString("userid", "-1");
+        progressDialog.setCancelable(false);
+        // progressBar.setMessage("Please Wait...");
+        progressDialog.show();
+        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        APIService service = retrofit.create(APIService.class);
+        Call<TasksResponse> call = service.gettask("Basic YWRtaW46bWFudW5pdGVk", Integer.parseInt(user_id));
+        call.enqueue(new Callback<TasksResponse>() {
+            @Override
+            public void onResponse(Call<TasksResponse> call, Response<TasksResponse> response) {
+                progressDialog.hide();
+                try {
+                    if (response.body().getTotalFilteredRecords() > 0){
+                        if (pageItemArrayList==null){
+                            pageItemArrayList = (ArrayList<PageItemstask>) response.body().getPageItemstasks();
+                            registerAdapter = new TaskAdapter(rv_register,HomeActivity.this, pageItemArrayList);
+                            DividerItemDecoration itemDecor = new DividerItemDecoration(HomeActivity.this, HORIZONTAL);
+                            rv_register.addItemDecoration(itemDecor);
+                            rv_register.setAdapter(registerAdapter);
+                        }
+                    }else{
+
+                        Utility.showToast(HomeActivity.this, "No Task");
+                    }
+
+                } catch (Exception e) {
+                    Utility.showToast(HomeActivity.this, e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<TasksResponse> call, Throwable t) {
+                progressDialog.hide();
+                Utility.showToast(HomeActivity.this, t.getMessage());
+            }
+        });
+
+
 
 
 
 
 
         setSupportActionBar(toolbar);
-
-        for (String s : permission) {
-            System.out.println(s);
-        }
-
-
-
-
     }
 
 
@@ -154,6 +216,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(HomeActivity.this, RegisterActivity.class));
                 break;
         }
+    }
+    private void setData() {
+
+
     }
     public void openregister(View v){
         startActivity(new Intent(HomeActivity.this, MainActivity.class));

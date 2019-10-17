@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/dimen_10"
+    android:id="@+id/lin_item"
+    android:layout_marginBottom="@dimen/dimen_5"
+    android:layout_height="wrap_content">
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="@dimen/dimen_10"
+        android:layout_marginRight="@dimen/dimen_20">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/tv_itemcode"
+                android:textColor="@color/colorblack"
+                android:paddingRight="@dimen/dimen_10"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Item Code" />
+            <TextView
+                android:id="@+id/tv_itemname"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="@dimen/dimen_10"
+                android:textColor="@color/colorblack"
+                android:text="Item Name" />
+
+            <TextView
+                android:id="@+id/tv_quanity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="@dimen/dimen_10"
+                android:textColor="@color/colorblack"
+                android:text="Quality" />
+            <TextView
+                android:id="@+id/tv_actual"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="@dimen/dimen_10"
+                android:textColor="@color/colorblack"
+                android:text="Actual" />
+
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

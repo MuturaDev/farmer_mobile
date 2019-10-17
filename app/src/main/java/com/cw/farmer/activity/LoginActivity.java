@@ -78,13 +78,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 progressBar.hide();
 
                 try {
-                    if (response.body().getAuthenticated()){
+                    if (response.body().getBase64EncodedAuthenticationKey() != null){
                         //Utility.showToast(LoginActivity.this,"success");
                         //Utility.showToast(LoginActivity.this,response.body().getPermissions());
 
                         //Set the values
                         SharedPreferences mEdit1 = getSharedPreferences("PERMISSIONS", Context.MODE_PRIVATE);
                         SharedPreferences.Editor scoreEditor = mEdit1.edit();
+                        scoreEditor.putString("userid",response.body().getCentreId()+"" );
                         Set<String> set = new HashSet<String>();
                         set.addAll(response.body().getPermissions());
                         scoreEditor.putStringSet("key", set);
