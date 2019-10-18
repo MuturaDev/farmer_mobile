@@ -123,7 +123,7 @@ public interface APIService {
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
     @GET("/fineract-provider/api/v1/tasks/{id}")
-    Call<TasksResponse> gettask(@Header("Authorization") String authorization,@Path("id") int groupId);
+    Call<TasksResponse> gettask(@Header("Authorization") String authorization,@Path("id") String groupId);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
     @GET("/fineract-provider/api/v1/plantrequisition/requistionitems/{id}")

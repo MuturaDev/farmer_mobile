@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
 
+import com.cw.farmer.adapter.ExpandableListAdapter;
 import com.cw.farmer.adapter.SearchAdapter;
 import com.cw.farmer.adapter.TaskAdapter;
 import com.cw.farmer.custom.Utility;
@@ -26,8 +27,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -36,6 +40,7 @@ import com.cw.farmer.adapter.DashboardAdapter;
 import com.cw.farmer.model.dashboard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -64,6 +69,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     CardView register_farmer,view_farmer,recruit_farmer,contract_signing,verify_planting,crop_destruction,harvest_collection,inventory_mgt,dashboard;
 
     boolean ExpandedActionBar = true;
+    ExpandableListAdapter listAdapter;
+    ExpandableListView expListView;
+    List<String> listDataHeader;
+    HashMap<String, List<String>> listDataChild;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +81,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         Appbar = (AppBarLayout)findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         progressDialog = new ProgressDialog(this);
-        rv_register = findViewById(R.id.verifyplanting_list);
-        rv_register.setLayoutManager(new LinearLayoutManager(this));
+        // get the listview
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        expListView = (ExpandableListView) findViewById(R.id.verifyplanting_list);
+        int width = getResources().getDisplayMetrics().widthPixels;
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            expListView.setIndicatorBounds(width - getPixelValue(40), width - getPixelValue(10));
+        } else {
+            expListView.setIndicatorBoundsRelative(width - getPixelValue(40), width - getPixelValue(10));
+        }
+
+
+
+
         SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
         Set<String> permission = prefs.getStringSet("key", null);
 
@@ -111,49 +132,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         user_id=prefs.getString("userid", "-1");
-        progressDialog.setCancelable(false);
-        // progressBar.setMessage("Please Wait...");
-        progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
-        APIService service = retrofit.create(APIService.class);
-        Call<TasksResponse> call = service.gettask("Basic YWRtaW46bWFudW5pdGVk", Integer.parseInt(user_id));
-        call.enqueue(new Callback<TasksResponse>() {
-            @Override
-            public void onResponse(Call<TasksResponse> call, Response<TasksResponse> response) {
-                progressDialog.hide();
-                try {
-                    if (response.body().getTotalFilteredRecords() > 0){
-                        if (pageItemArrayList==null){
-                            pageItemArrayList = (ArrayList<PageItemstask>) response.body().getPageItemstasks();
-                            registerAdapter = new TaskAdapter(rv_register,HomeActivity.this, pageItemArrayList);
-                            DividerItemDecoration itemDecor = new DividerItemDecoration(HomeActivity.this, HORIZONTAL);
-                            rv_register.addItemDecoration(itemDecor);
-                            rv_register.setAdapter(registerAdapter);
-                        }
-                    }else{
-
-                        Utility.showToast(HomeActivity.this, "No Task");
-                    }
-
-                } catch (Exception e) {
-                    Utility.showToast(HomeActivity.this, e.getMessage());
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<TasksResponse> call, Throwable t) {
-                progressDialog.hide();
-                Utility.showToast(HomeActivity.this, t.getMessage());
-            }
-        });
-
-
-
-
-
-
-
+        // preparing list data
+        prepareListData();
         setSupportActionBar(toolbar);
     }
 
@@ -241,5 +221,80 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void openplantverfication(View v){
         startActivity(new Intent(HomeActivity.this, PlantingVerificationActivity.class));
+    }
+    private void prepareListData() {
+        progressDialog.setCancelable(false);
+        // progressBar.setMessage("Please Wait...");
+        progressDialog.show();
+        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        APIService service = retrofit.create(APIService.class);
+        Call<TasksResponse> call = service.gettask("Basic YWRtaW46bWFudW5pdGVk", user_id+"");
+        call.enqueue(new Callback<TasksResponse>() {
+            @Override
+            public void onResponse(Call<TasksResponse> call, Response<TasksResponse> response) {
+                progressDialog.hide();
+                try {
+                    if (response.body().getTotalFilteredRecords() > 0){
+                            listDataHeader = new ArrayList<String>();
+                            listDataChild = new HashMap<String, List<String>>();
+
+                            // Adding child data
+                            listDataHeader.add("Receive Inventory");
+                            listDataHeader.add("Verify Planting");
+                            listDataHeader.add("Manage Sprays");
+                        List<String> planting = new ArrayList<String>();
+                        List<String> invent = new ArrayList<String>();
+                        List<String> spray = new ArrayList<String>();
+                        for(PageItemstask taks: response.body().getPageItemstasks()) {
+                            String date="";
+                            for(int elem : taks.getCropDate()){
+                                date=elem+"/"+date;
+                            }
+                            if (taks.getEntityName().equals("VERIFY_PLANTING_MOBILE")){
+                                planting.add(taks.getCentrename()+",Planting,"+removeLastChar(date)+","+taks.getEntityId());
+                            }else{
+
+                            }
+
+                        }
+
+                            listDataChild.put(listDataHeader.get(0), invent); // Header, Child data
+                            listDataChild.put(listDataHeader.get(1), planting);
+                            listDataChild.put(listDataHeader.get(2), spray);
+
+                        for (String num : listDataHeader) {
+                            System.out.println(num);
+                        }
+
+                        listAdapter = new ExpandableListAdapter(HomeActivity.this, listDataHeader, listDataChild);
+
+                        // setting list adapter
+                        expListView.setAdapter(listAdapter);
+                    }else{
+
+                        Utility.showToast(HomeActivity.this, "No Task");
+                    }
+
+                } catch (Exception e) {
+                    Utility.showToast(HomeActivity.this, e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<TasksResponse> call, Throwable t) {
+                progressDialog.hide();
+                Utility.showToast(HomeActivity.this, t.getMessage());
+            }
+        });
+
+    }
+    public int getPixelValue(int dp) {
+
+        final float scale = getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
+    }
+    private static String removeLastChar(String str) {
+        return str.substring(0, str.length() - 1);
     }
 }

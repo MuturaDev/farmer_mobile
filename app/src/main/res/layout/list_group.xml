@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="@dimen/dimen_10"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:stretchColumns="1">
+
+        <TableRow>
+
+            <ImageView
+                android:id="@+id/image_see"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:gravity="right"
+                android:src="@drawable/planting" />
+
+            <TextView
+                android:id="@+id/lblListHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_20"
+                android:text="Verify Planting"
+                android:textSize="@dimen/dimen_20" />
+
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>
