@@ -3,19 +3,6 @@ package com.cw.farmer.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import com.bumptech.glide.Glide;
-import com.cw.farmer.model.BankNameResponse;
-import com.cw.farmer.model.BlacklistPostResponse;
-import com.cw.farmer.model.FarmerDocResponse;
-import com.cw.farmer.server.APIService;
-import com.cw.farmer.server.ApiClient;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -25,7 +12,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.bumptech.glide.Glide;
 import com.cw.farmer.R;
+import com.cw.farmer.model.FarmerDocResponse;
+import com.cw.farmer.model.PageItem;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
 
 import java.util.List;
 
@@ -38,6 +33,8 @@ import retrofit2.Retrofit;
 public class FarmerDocumentsActivity extends AppCompatActivity {
     TextView docshtdesc,docno;
     ImageView imageView;
+    PageItem pageItem;
+    String farmer_id, id_no, id_image, entry_id, status_farmer, dob;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +53,16 @@ public class FarmerDocumentsActivity extends AppCompatActivity {
 
         if(b!=null) {
             Integer id = (Integer) b.get("id");
+            status_farmer = (String) b.get("status_farmer");
+            dob = (String) b.get("dob");
+            farmer_id = id + "";
+            pageItem = b.getParcelable("item");
             SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
             pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
             pDialog.setTitleText("Fetching farmer details..");
             pDialog.setCancelable(false);
             pDialog.show();
-            Retrofit retrofit = ApiClient.getClient("/authentication/");
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
             Call<List<FarmerDocResponse>> call = service.getfamerdocs(id);
             call.enqueue(new Callback<List<FarmerDocResponse>>() {
@@ -75,7 +76,12 @@ public class FarmerDocumentsActivity extends AppCompatActivity {
 
                         docshtdesc.setText("Document Type: "+doc.getDocshtdesc());
                         docno.setText("Document No: "+doc.getDocno());
+                        id_no = doc.getDocno();
+                        entry_id = doc.getId() + "";
+
+
                         String imageBytes = doc.getBase64ImageDesc().replace("data:image/png;base64,","");
+                        id_image = imageBytes;
                         byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
                         Glide.with(FarmerDocumentsActivity.this).asBitmap().load(imageByteArray).into(imageView);
                     }
@@ -105,6 +111,20 @@ public class FarmerDocumentsActivity extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
+    }
+
+    public void opendoc(View v) {
+        Intent intent = new Intent(FarmerDocumentsActivity.this, UpdateDocsActivity.class);
+        intent.putExtra("id", pageItem.getId() + "");
+        intent.putExtra("entry_id", entry_id + "");
+        intent.putExtra("id_no", id_no);
+        intent.putExtra("id_image", id_image);
+        intent.putExtra("status_farmer", status_farmer);
+        intent.putExtra("dob", dob);
+        Bundle bundle1 = new Bundle();
+        bundle1.putParcelable("item", pageItem);
+        intent.putExtras(bundle1);
+        startActivity(intent);
     }
 
 }

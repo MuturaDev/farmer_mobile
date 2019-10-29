@@ -5,18 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.model.PageItem;
-import com.cw.farmer.server.APIService;
-import com.cw.farmer.server.ApiClient;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
@@ -27,7 +15,16 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
 import com.cw.farmer.R;
+import com.cw.farmer.model.AllResponse;
+import com.cw.farmer.model.PageItem;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 
@@ -177,7 +174,7 @@ public class EditFarmerActivity extends AppCompatActivity {
         hashMap.put("dateFormat","DD-MM-YYYY");
         hashMap.put("locale","en");
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<AllResponse> call = service.posteditfarmer("Basic YWRtaW46bWFudW5pdGVk",hashMap,farmer_id);
         call.enqueue(new Callback<AllResponse>() {

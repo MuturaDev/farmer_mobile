@@ -63,17 +63,16 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/dimen_10"
                 android:textColor="@color/textColor"
-                android:text="Select Units" />
-            <Spinner
+                android:text="Enter number of units" />
+
+            <EditText
                 android:layout_marginBottom="20dp"
                 android:id="@+id/noofunits_destruction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
                 android:drawSelectorOnTop="true"
-                android:entries="@array/empty"
-                android:hint="crop date"
-                android:background="@drawable/border_edittext"></Spinner>
+                android:background="@drawable/border_edittext"></EditText>
 
             <TextView
                 android:layout_width="wrap_content"

@@ -4,20 +4,16 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.OnLoadMoreListener;
 import com.cw.farmer.R;
@@ -26,6 +22,8 @@ import com.cw.farmer.adapter.RegisterAdapter;
 import com.cw.farmer.custom.Utility;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -92,7 +90,7 @@ public class scheme extends Fragment {
                 progressDialog.setCancelable(false);
                 // progressBar.setMessage("Please Wait...");
                 progressDialog.show();
-                Retrofit retrofit = ApiClient.getClient("/authentication/");
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getContext());
                 APIService service = retrofit.create(APIService.class);
                 Call<RegisterResponse> call = service.getRegister(0,0,search.getText().toString());
                 call.enqueue(new Callback<RegisterResponse>() {
@@ -146,7 +144,7 @@ public class scheme extends Fragment {
         //progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
         //progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getContext());
         APIService service = retrofit.create(APIService.class);
         Call<RegisterResponse> call = service.getRegister(limit,offset,null);
         call.enqueue(new Callback<RegisterResponse>() {

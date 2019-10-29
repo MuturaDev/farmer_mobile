@@ -8,14 +8,13 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.bumptech.glide.Glide;
-import com.cw.farmer.R;
-import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.server.APIService;
-import com.cw.farmer.server.ApiClient;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.util.Base64;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,15 +22,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
-import android.util.Base64;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.bumptech.glide.Glide;
+import com.cw.farmer.R;
+import com.cw.farmer.model.AllResponse;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 
@@ -298,7 +294,7 @@ public class ContractSignActivity extends AppCompatActivity {
         hashMap.put("dateFormat","DD/M/YYYY");
         hashMap.put("locale","en");
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<AllResponse> call = service.postcontract("Basic YWRtaW46bWFudW5pdGVk",hashMap);
         call.enqueue(new Callback<AllResponse>() {

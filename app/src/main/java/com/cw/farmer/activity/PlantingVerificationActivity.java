@@ -10,22 +10,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.server.APIService;
-import com.cw.farmer.server.ApiClient;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
@@ -36,7 +20,20 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
 import com.cw.farmer.R;
+import com.cw.farmer.model.AllResponse;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 
@@ -268,7 +265,7 @@ public class PlantingVerificationActivity extends AppCompatActivity {
         hashMap.put("plantconfirmed",plant_value);
         hashMap.put("waterconfirmed",water_value);
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<AllResponse> call = service.postplantverify("Basic YWRtaW46bWFudW5pdGVk",hashMap);
         call.enqueue(new Callback<AllResponse>() {

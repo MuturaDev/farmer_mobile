@@ -5,30 +5,23 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.model.DestructionReasonResponse;
-import com.cw.farmer.server.APIService;
-import com.cw.farmer.server.ApiClient;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.cw.farmer.R;
+import com.cw.farmer.model.AllResponse;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 
@@ -179,7 +172,7 @@ public class HarvestingActivity extends AppCompatActivity {
         hashMap.put("harvestkilos",crop_weight.getText().toString());
         hashMap.put("locale","en");
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<AllResponse> call = service.postharvesting("Basic YWRtaW46bWFudW5pdGVk",hashMap);
         call.enqueue(new Callback<AllResponse>() {

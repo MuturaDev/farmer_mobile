@@ -37,5 +37,8 @@
     <string name="title_activity_planting_verification">Planting Verification</string>
     <string name="title_activity_search_planting_verfication">Planting Verification Farmer</string>
     <string name="title_activity_requisition">"Requisition "</string>
+    <string name="title_activity_change_centre">Change Centre</string>
+    <string name="title_activity_update_bank">Update Bank</string>
+    <string name="title_activity_update_docs">Update Documents</string>
 
 </resources>

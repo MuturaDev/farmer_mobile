@@ -8,21 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.bumptech.glide.Glide;
-import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.model.BankNameResponse;
-import com.cw.farmer.model.DestructionReasonResponse;
-import com.cw.farmer.server.APIService;
-import com.cw.farmer.server.ApiClient;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-
 import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,10 +17,19 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+
+import com.bumptech.glide.Glide;
 import com.cw.farmer.R;
+import com.cw.farmer.model.AllResponse;
+import com.cw.farmer.model.DestructionReasonResponse;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
 
 import org.json.JSONObject;
 
@@ -62,8 +56,8 @@ import static com.cw.farmer.ManifestPermission.hasPermissions;
 public class CropDestructionActivity extends AppCompatActivity {
     private ImageView iv_destruction_image;
     private File compressedImageFile;
-    EditText farmer_destruction;
-    Spinner codedate_destruction,noofunits_destruction,type_destruction,reason_destruction;
+    EditText farmer_destruction, noofunits_destruction;
+    Spinner codedate_destruction, type_destruction, reason_destruction;
     String farmer_id_string,accountNumber_string,referenceNo_string,units_string;
     String planting_id_string;
     List<Integer> reason_ids;
@@ -142,13 +136,9 @@ public class CropDestructionActivity extends AppCompatActivity {
             ArrayList<String> spinnerArray1 = new ArrayList<String>();
             spinnerArray1.clear();
             String units =(String) b.get("units");
-            spinnerArray1.add(units);
-            ArrayAdapter<String> spinnerArrayAdapter1 = new ArrayAdapter<String>(CropDestructionActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray1);
-            noofunits_destruction.setAdapter(spinnerArrayAdapter1);
 
 
-
-            Retrofit retrofit = ApiClient.getClient("/authentication/");
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
             Call<List<DestructionReasonResponse>> call = service.getdestructionreasons();
             call.enqueue(new Callback<List<DestructionReasonResponse>>() {
@@ -310,14 +300,14 @@ public class CropDestructionActivity extends AppCompatActivity {
         HashMap<String,String> hashMap=new HashMap<>();
         hashMap.put("cropDatesId",cropDateId_list.get(codedate_destruction.getSelectedItemPosition()).toString());
         hashMap.put("accountNumber",accountNumber_string);
-        hashMap.put("unit",noofunits_destruction.getSelectedItem().toString());
+        hashMap.put("unit", noofunits_destruction.getText().toString());
         hashMap.put("farmers_id",farmer_id_string);
         hashMap.put("file",getBase64FromPath());
         hashMap.put("locale","en");
         hashMap.put("cropDestructionType",reason_main.get(reason_destruction.getSelectedItemPosition()).toString());
         hashMap.put("cropDestructionReasonsId",reason_ids.get(reason_destruction.getSelectedItemPosition()).toString());
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<AllResponse> call = service.postcropdestruction("Basic YWRtaW46bWFudW5pdGVk",hashMap);
         call.enqueue(new Callback<AllResponse>() {

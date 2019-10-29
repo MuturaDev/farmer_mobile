@@ -2,16 +2,15 @@ package com.cw.farmer.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-import android.widget.Toast;
 
 import com.cw.farmer.OnLoadMoreListener;
 import com.cw.farmer.R;
@@ -21,6 +20,7 @@ import com.cw.farmer.model.PageItem;
 import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
         progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<RegisterResponse> call = service.getRegister(limit,offset,null);
         call.enqueue(new Callback<RegisterResponse>() {

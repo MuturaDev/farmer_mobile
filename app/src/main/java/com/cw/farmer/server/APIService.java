@@ -1,6 +1,6 @@
 package com.cw.farmer.server;
 
-import com.cw.farmer.activity.SearchContractFarmerActivity;
+import com.cw.farmer.model.AllCentreResponse;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.BankNameResponse;
 import com.cw.farmer.model.BlacklistPostResponse;
@@ -20,8 +20,6 @@ import com.cw.farmer.model.SearchContractResponse;
 import com.cw.farmer.model.SearchDestructionResponse;
 import com.cw.farmer.model.TasksResponse;
 import com.google.gson.JsonObject;
-
-import org.json.JSONArray;
 
 import java.util.HashMap;
 import java.util.List;
@@ -122,12 +120,32 @@ public interface APIService {
     Call<AllResponse> postplantverify(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
-    @GET("/fineract-provider/api/v1/tasks/{id}")
-    Call<TasksResponse> gettask(@Header("Authorization") String authorization,@Path("id") String groupId);
+    @GET("/fineract-provider/api/v1/tasks/")
+    Call<TasksResponse> gettask(@Header("Authorization") String authorization, @Query("centerId") String groupId);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
     @GET("/fineract-provider/api/v1/plantrequisition/requistionitems/{id}")
     Call<List<RequisitionResponse>> getrequsition(@Path("id") String groupId);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/centrestore")
+    Call<JsonObject> postreceiveinventory(@Header("Authorization") String authorization, @Body JsonObject registerApiPayloadl);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/hierarchy/template")
+    Call<List<AllCentreResponse>> getcentre();
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/farmercentres")
+    Call<AllResponse> postchangecentre(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @PUT("/fineract-provider/api/v1/{id}/farmeraccounts/{entry}")
+    Call<AllResponse> changebank(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl, @Path("id") String groupId, @Path("entry") String entry);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @PUT("/fineract-provider/api/v1/{id}/farmerdocs/{entry}")
+    Call<AllResponse> changedocs(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl, @Path("id") String groupId, @Path("entry") String entry);
 
 
 

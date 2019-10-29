@@ -3,14 +3,14 @@ package com.cw.farmer.activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Build;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.cw.farmer.R;
 import com.cw.farmer.model.PageItem;
@@ -25,7 +25,7 @@ public class FarmerDetailsActivity extends AppCompatActivity {
     List<Integer> blacklist_id;
     EditText editTextDateto,editTextDatefrom;
     DatePickerDialog picker,picker1;
-    String dob;
+    String dob, status_farmer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,7 @@ public class FarmerDetailsActivity extends AppCompatActivity {
             tv_gender.setText("Gender : " +gender );
             tv_centername.setText("Center : " + pageItem.getCentername());
             tv_farmerstatus.setText("Farmer Status : "+bundle.getString("status"));
+            status_farmer = bundle.getString("status");
 
 
         }
@@ -75,11 +76,29 @@ public class FarmerDetailsActivity extends AppCompatActivity {
     public void opendoc(View v){
         Intent intent = new Intent(FarmerDetailsActivity.this, FarmerDocumentsActivity.class);
         intent.putExtra("id",pageItem.getId());
+        intent.putExtra("status_farmer", status_farmer);
+        intent.putExtra("dob", dob);
+        Bundle bundle1 = new Bundle();
+        bundle1.putParcelable("item", pageItem);
+        intent.putExtras(bundle1);
         startActivity(intent);
     }
+
     public void openbank(View v){
         Intent intent = new Intent(FarmerDetailsActivity.this, FarmerAccountsActivity.class);
         intent.putExtra("id",pageItem.getId());
+        intent.putExtra("status_farmer", status_farmer);
+        intent.putExtra("dob", dob);
+        Bundle bundle1 = new Bundle();
+        bundle1.putParcelable("item", pageItem);
+        intent.putExtras(bundle1);
+        startActivity(intent);
+    }
+
+    public void openchangefarmercentre(View v) {
+        Intent intent = new Intent(FarmerDetailsActivity.this, ChangeCentreActivity.class);
+        intent.putExtra("user_id", pageItem.getId() + "");
+        intent.putExtra("centre_name", pageItem.getCentername());
         startActivity(intent);
     }
     public void openeditfarmer(View v){

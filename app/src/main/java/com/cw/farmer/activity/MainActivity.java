@@ -8,15 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.cardview.widget.CardView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
@@ -34,6 +26,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.bumptech.glide.Glide;
 import com.cw.farmer.R;
 import com.cw.farmer.custom.Utility;
@@ -44,6 +43,7 @@ import com.cw.farmer.model.FarmerModel;
 import com.cw.farmer.model.Identitydetails;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 
@@ -53,7 +53,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -288,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //			// find the radiobutton by returned id
         //		        radioSexButton = (RadioButton) findViewById(selectedId);
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<List<BankNameResponse>> call = service.getbankname();
         call.enqueue(new Callback<List<BankNameResponse>>() {
@@ -430,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             genstr="F";
         }
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         FarmerModel farmerModel = new FarmerModel();
         Accountdetails accountdetails = new Accountdetails();
@@ -744,5 +743,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         calendarStart.set(Calendar.DAY_OF_MONTH, day);
         return calendarStart.getTimeInMillis();
     }
+
 
 }

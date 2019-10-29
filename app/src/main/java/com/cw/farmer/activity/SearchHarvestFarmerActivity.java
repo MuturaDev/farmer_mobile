@@ -2,18 +2,10 @@ package com.cw.farmer.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-
-import com.cw.farmer.adapter.SearchDestructionAdapter;
-import com.cw.farmer.adapter.SearchHarvestAdapter;
-import com.cw.farmer.custom.Utility;
-import com.cw.farmer.model.FarmerHarvestResponse;
-import com.cw.farmer.model.PageItemHarvest;
-import com.cw.farmer.model.PageItemsDestruction;
-import com.cw.farmer.model.SearchDestructionResponse;
-import com.cw.farmer.server.APIService;
-import com.cw.farmer.server.ApiClient;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -21,12 +13,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
 import com.cw.farmer.R;
+import com.cw.farmer.adapter.SearchHarvestAdapter;
+import com.cw.farmer.custom.Utility;
+import com.cw.farmer.model.FarmerHarvestResponse;
+import com.cw.farmer.model.PageItemHarvest;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -74,7 +68,7 @@ public class SearchHarvestFarmerActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
         progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<FarmerHarvestResponse> call = service.getHarvestfarmer(limit,offset,farmer_search.getText().toString());
         call.enqueue(new Callback<FarmerHarvestResponse>() {

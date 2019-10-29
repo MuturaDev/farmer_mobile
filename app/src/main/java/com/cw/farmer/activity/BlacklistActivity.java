@@ -5,10 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,6 +14,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.cw.farmer.R;
 import com.cw.farmer.model.BlacklistPostResponse;
@@ -123,7 +123,7 @@ public class BlacklistActivity extends AppCompatActivity {
 
             }
         });
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<List<BlacklistResponse>> call = service.getblacklistreasons();
         call.enqueue(new Callback<List<BlacklistResponse>>() {
@@ -160,7 +160,7 @@ public class BlacklistActivity extends AppCompatActivity {
         hashMap.put("locale","en");
         hashMap.put("dateFormat","dd-MMM-yyyy");
         hashMap.put("reasonId",blacklist_id.get(blacklist_reasons.getSelectedItemPosition()).toString());
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<BlacklistPostResponse> call = service.createblacklist("Basic YWRtaW46bWFudW5pdGVk",pageItem.getId(),"blacklist",hashMap);
         call.enqueue(new Callback<BlacklistPostResponse>() {

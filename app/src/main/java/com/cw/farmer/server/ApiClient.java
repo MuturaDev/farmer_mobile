@@ -1,10 +1,12 @@
 package com.cw.farmer.server;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
 
+import java.io.File;
 import java.security.cert.CertificateException;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -13,20 +15,56 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Cache;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
 public class ApiClient {
     private static String BASE_URL = "https://skyplusapps.co.ke:8080/";
     private static Retrofit retrofit = null;
+    private static final Interceptor REWRITE_RESPONSE_INTERCEPTOR = chain -> {
+        Response originalResponse = chain.proceed(chain.request());
+        String cacheControl = originalResponse.header("Cache-Control");
 
-    public static Retrofit getClient(String urlstring) {
+        if (cacheControl == null || cacheControl.contains("no-store") || cacheControl.contains("no-cache") ||
+                cacheControl.contains("must-revalidate") || cacheControl.contains("max-age=0")) {
+            return originalResponse.newBuilder()
+                    .header("Cache-Control", "public, max-age=" + 10)
+                    .build();
+        } else {
+            return originalResponse;
+        }
+    };
+    static Context context_new;
+    private static final Interceptor OFFLINE_INTERCEPTOR = chain -> {
+        Request request = chain.request();
+
+        if (!isOnline()) {
+            Log.d(TAG, "rewriting request");
+
+            int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
+            request = request.newBuilder()
+                    .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
+                    .build();
+        }
+        return chain.proceed(request);
+    };
+    private static File httpCacheDirectory;
+
+    public static Retrofit getClient(String urlstring, Context context) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor)
                .build();
+        context_new = context;
+
 
 
         retrofit = new Retrofit.Builder()
@@ -36,7 +74,6 @@ public class ApiClient {
                 .build();
         return retrofit;
     }
-
 
     public static OkHttpClient.Builder getUnsafeOkHttpClient() {
 
@@ -66,11 +103,25 @@ public class ApiClient {
             // Create an ssl socket factory with our all-trusting manager
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
+            File directory = context_new.getCacheDir();
+            if (!directory.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                directory.mkdirs();
+            }
+            httpCacheDirectory = new File(directory, "responses");
+
+
+            int cacheSize = 10 * 1024 * 1024; // 10 MiB
+            Cache cache = new Cache(httpCacheDirectory, cacheSize);
+
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             builder.addInterceptor(interceptor);
+            builder.addNetworkInterceptor(REWRITE_RESPONSE_INTERCEPTOR);
+            builder.addInterceptor(OFFLINE_INTERCEPTOR);
+            builder.cache(cache);
             builder.hostnameVerifier(new HostnameVerifier() {
                 @Override
                 public boolean verify(String hostname, SSLSession session) {
@@ -82,4 +133,11 @@ public class ApiClient {
             throw new RuntimeException(e);
         }
     }
+
+    public static boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) context_new.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
 }

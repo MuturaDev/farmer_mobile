@@ -39,7 +39,8 @@
                 android:paddingRight="@dimen/dimen_10"
                 android:textColor="@color/colorblack"
                 android:text="Quality" />
-            <TextView
+
+            <EditText
                 android:id="@+id/tv_actual"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -71,7 +71,7 @@ public class SearchPlantingVerficationActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
         progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<PlantVerifyResponse> call = service.getplantingfarmer(limit,offset,farmer_search.getText().toString());
         call.enqueue(new Callback<PlantVerifyResponse>() {

@@ -14,7 +14,7 @@ public class Result {
     private int userId;
     @SerializedName("centreId")
     @Expose
-    private int centreId;
+    private List<CentreId> centreId = null;
     @SerializedName("base64EncodedAuthenticationKey")
     @Expose
     private String base64EncodedAuthenticationKey;
@@ -60,15 +60,15 @@ public class Result {
         return this;
     }
 
-    public int getCentreId() {
+    public List<CentreId> getCentreId() {
         return centreId;
     }
 
-    public void setCentreId(int centreId) {
+    public void setCentreId(List<CentreId> centreId) {
         this.centreId = centreId;
     }
 
-    public Result withCentreId(int centreId) {
+    public Result withCentreId(List<CentreId> centreId) {
         this.centreId = centreId;
         return this;
     }

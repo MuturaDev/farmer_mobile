@@ -6,38 +6,29 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
-
-import com.cw.farmer.adapter.ExpandableListAdapter;
-import com.cw.farmer.adapter.SearchAdapter;
-import com.cw.farmer.adapter.TaskAdapter;
-import com.cw.farmer.custom.Utility;
-import com.cw.farmer.model.PageItem;
-import com.cw.farmer.model.PageItemstask;
-import com.cw.farmer.model.RegisterResponse;
-import com.cw.farmer.model.TasksResponse;
-import com.cw.farmer.server.APIService;
-import com.cw.farmer.server.ApiClient;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.DashboardAdapter;
+import com.cw.farmer.adapter.ExpandableListAdapter;
+import com.cw.farmer.adapter.TaskAdapter;
+import com.cw.farmer.custom.Utility;
+import com.cw.farmer.model.PageItemstask;
+import com.cw.farmer.model.TasksResponse;
 import com.cw.farmer.model.dashboard;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
+import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,9 +39,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
-import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
-import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
     LinearLayout lin_register, lin_create;
@@ -226,7 +214,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
         progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<TasksResponse> call = service.gettask("Basic YWRtaW46bWFudW5pdGVk", user_id+"");
         call.enqueue(new Callback<TasksResponse>() {
@@ -246,15 +234,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         List<String> invent = new ArrayList<String>();
                         List<String> spray = new ArrayList<String>();
                         for(PageItemstask taks: response.body().getPageItemstasks()) {
-                            String date="";
-                            for(int elem : taks.getCropDate()){
-                                date=elem+"/"+date;
-                            }
-                            if (taks.getEntityName().equals("VERIFY_PLANTING_MOBILE")){
-                                planting.add(taks.getCentrename()+",Planting,"+removeLastChar(date)+","+taks.getEntityId());
-                            }else{
 
+                            if (taks.getEntityName().equals("VERIFY_PLANTING_MOBILE")) {
+                                String date = "";
+                                for (int elem : taks.getCropDate()) {
+                                    date = elem + "/" + date;
+                                }
+                                planting.add(taks.getCentrename() + " ,Planting," + removeLastChar(date) + " ," + taks.getEntityId());
+                            }else{
+                                String date = "";
+                                for (int elem : taks.getCreatedOn()) {
+                                    date = elem + "/" + date;
+                                }
+                                invent.add(taks.getCentrename() + " ,Inventory," + removeLastChar(date) + " ," + taks.getEntityId());
                             }
+                            System.out.println(taks.getCentreid());
 
                         }
 
@@ -262,9 +256,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             listDataChild.put(listDataHeader.get(1), planting);
                             listDataChild.put(listDataHeader.get(2), spray);
 
-                        for (String num : listDataHeader) {
-                            System.out.println(num);
-                        }
+
 
                         listAdapter = new ExpandableListAdapter(HomeActivity.this, listDataHeader, listDataChild);
 
@@ -277,6 +269,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 } catch (Exception e) {
                     Utility.showToast(HomeActivity.this, e.getMessage());
+                    System.out.println(e.getMessage());
                 }
 
             }

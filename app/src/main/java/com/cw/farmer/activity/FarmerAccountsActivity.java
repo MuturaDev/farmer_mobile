@@ -3,18 +3,6 @@ package com.cw.farmer.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import com.bumptech.glide.Glide;
-import com.cw.farmer.model.FarmerAccountsResponse;
-import com.cw.farmer.model.FarmerDocResponse;
-import com.cw.farmer.server.APIService;
-import com.cw.farmer.server.ApiClient;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -24,7 +12,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.bumptech.glide.Glide;
 import com.cw.farmer.R;
+import com.cw.farmer.model.FarmerAccountsResponse;
+import com.cw.farmer.model.PageItem;
+import com.cw.farmer.server.APIService;
+import com.cw.farmer.server.ApiClient;
 
 import java.util.List;
 
@@ -37,6 +33,9 @@ import retrofit2.Retrofit;
 public class FarmerAccountsActivity extends AppCompatActivity {
     TextView bankName,accountno;
     ImageView imageView;
+    PageItem pageItem;
+    Integer id;
+    String farmer_id, account_name, bank_name, account_image, entry_id, status_farmer, dob;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +53,17 @@ public class FarmerAccountsActivity extends AppCompatActivity {
         Bundle b = iin.getExtras();
 
         if (b != null) {
-            Integer id = (Integer) b.get("id");
+            id = (Integer) b.get("id");
+            status_farmer = (String) b.get("status_farmer");
+            dob = (String) b.get("dob");
+            farmer_id = id + "";
+            pageItem = b.getParcelable("item");
             SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
             pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
             pDialog.setTitleText("Fetching farmer bank account details..");
             pDialog.setCancelable(false);
             pDialog.show();
-            Retrofit retrofit = ApiClient.getClient("/authentication/");
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
             Call<List<FarmerAccountsResponse>> call = service.getfameraccount(id);
             call.enqueue(new Callback<List<FarmerAccountsResponse>>() {
@@ -74,7 +77,12 @@ public class FarmerAccountsActivity extends AppCompatActivity {
 
                         bankName.setText("Bank Name: " + doc.getBankName());
                         accountno.setText("Account Number: " + doc.getAccountno());
+                        account_name = doc.getAccountno();
+                        bank_name = doc.getBankName();
+                        entry_id = doc.getId() + "";
+
                         String imageBytes = doc.getBase64ImageData().replace("data:image/png;base64,", "");
+                        account_image = imageBytes;
                         byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
                         Glide.with(FarmerAccountsActivity.this).asBitmap().load(imageByteArray).into(imageView);
                     }
@@ -105,6 +113,21 @@ public class FarmerAccountsActivity extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
+    }
+
+    public void opendoc(View v) {
+        Intent intent = new Intent(FarmerAccountsActivity.this, UpdateBankActivity.class);
+        intent.putExtra("id", pageItem.getId() + "");
+        intent.putExtra("entry_id", entry_id + "");
+        intent.putExtra("account_name", account_name);
+        intent.putExtra("bank_name", bank_name);
+        intent.putExtra("account_image", account_image);
+        intent.putExtra("status_farmer", status_farmer);
+        intent.putExtra("dob", dob);
+        Bundle bundle1 = new Bundle();
+        bundle1.putParcelable("item", pageItem);
+        intent.putExtras(bundle1);
+        startActivity(intent);
     }
 
 }

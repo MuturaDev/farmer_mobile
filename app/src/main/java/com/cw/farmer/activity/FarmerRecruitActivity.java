@@ -1,8 +1,6 @@
 package com.cw.farmer.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,23 +11,11 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-
-import android.text.Editable;
 import android.text.SpannableStringBuilder;
-import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -37,14 +23,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
 import com.cw.farmer.R;
-import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.model.BlacklistPostResponse;
-import com.cw.farmer.model.BlacklistResponse;
 import com.cw.farmer.model.CropDateResponse;
 import com.cw.farmer.model.PageItem;
-import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -56,9 +43,7 @@ import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -68,6 +53,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 public class FarmerRecruitActivity extends AppCompatActivity {
@@ -97,12 +84,75 @@ public class FarmerRecruitActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        farmer = findViewById(R.id.farmer);
         cropdate = findViewById(R.id.cropdate);
         section = findViewById(R.id.section);
         noofunits = findViewById(R.id.noofunits);
         radioland = findViewById(R.id.radioland);
+        farmer = findViewById(R.id.farmer);
+        farmer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor searcheditor = getSharedPreferences("search", MODE_PRIVATE).edit();
+                searcheditor.putString("activity", "recruit");
+                searcheditor.apply();
 
+                SharedPreferences.Editor editor = getSharedPreferences("recruit_farmer", MODE_PRIVATE).edit();
+                editor.putString("cropdate", cropdate.getSelectedItem().toString());
+                editor.putString("section", section.getSelectedItem().toString());
+                editor.putString("noofunits", noofunits.getText().toString());
+                editor.apply();
+
+                Intent intent = new Intent(FarmerRecruitActivity.this, SearchFarmerActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Intent iin = getIntent();
+        Bundle b = iin.getExtras();
+
+        if (b != null) {
+            String name = (String) b.get("name");
+            farmer.setText(name);
+
+            String id = (String) b.get("id");
+            farmer_id_string = id;
+
+        }
+        SharedPreferences prefs = getSharedPreferences("recruit_farmer", MODE_PRIVATE);
+        noofunits.setText(prefs.getString("noofunits", " "));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        progressDialog.setCancelable(false);
+        // progressBar.setMessage("Please Wait...");
+        progressDialog.show();
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+        APIService service = retrofit.create(APIService.class);
+        Call<List<CropDateResponse>> call = service.getcropdate();
+        call.enqueue(new Callback<List<CropDateResponse>>() {
+            @Override
+            public void onResponse(Call<List<CropDateResponse>> call, Response<List<CropDateResponse>> response) {
+                progressDialog.hide();
+                ArrayList<String> spinnerArray = new ArrayList<String>();
+                spinnerArray.clear();
+                crop_id = new ArrayList<Integer>();
+                for (CropDateResponse blacklist : response.body()) {
+                    String date = "";
+                    for (int elem : blacklist.getPlantingDate()) {
+                        date = elem + "-" + date;
+                    }
+
+                    spinnerArray.add(removeLastChar(date) + "(" + blacklist.getProdId() + ")");
+                    crop_id.add(blacklist.getId());
+                }
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(FarmerRecruitActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
+                cropdate.setAdapter(spinnerArrayAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<CropDateResponse>> call, Throwable t) {
+                progressDialog.hide();
+                Toast.makeText(FarmerRecruitActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
 
         FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -127,6 +177,7 @@ public class FarmerRecruitActivity extends AppCompatActivity {
                         currentLat = location.getLatitude();
                         currentLong = location.getLongitude();
                         coordinates = currentLat+","+currentLong;
+                        Log.d(TAG, "1 coordinates" + coordinates);
 
                         Geocoder geocoder;
                         List<Address> addresses;
@@ -142,6 +193,7 @@ public class FarmerRecruitActivity extends AppCompatActivity {
                             String knownName = addresses.get(0).getFeatureName();
                             //Toast.makeText(FarmerRecruitActivity.this, "lat " + city + "\nlong " + address, Toast.LENGTH_LONG).show();
                             location_str = address;
+                            Log.d(TAG, "1 location_str" + location_str);
 
 
                         } catch (IOException e) {
@@ -158,72 +210,9 @@ public class FarmerRecruitActivity extends AppCompatActivity {
                     }
                 });
 
-        Intent iin= getIntent();
-        Bundle b = iin.getExtras();
-
-        if(b!=null)
-        {
-            String name =(String) b.get("name");
-            farmer.setText(name);
-
-            String id =(String) b.get("id");
-            farmer_id_string=id;
-
-        }
-        SharedPreferences prefs = getSharedPreferences("recruit_farmer", MODE_PRIVATE);
-        noofunits.setText(prefs.getString("noofunits", " "));
 
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        farmer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences.Editor searcheditor = getSharedPreferences("search", MODE_PRIVATE).edit();
-                searcheditor.putString("activity","recruit");
-                searcheditor.apply();
 
-                SharedPreferences.Editor editor = getSharedPreferences("recruit_farmer", MODE_PRIVATE).edit();
-                editor.putString("cropdate",cropdate.getSelectedItem().toString());
-                editor.putString("section",section.getSelectedItem().toString());
-                editor.putString("noofunits",noofunits.getText().toString());
-                editor.apply();
-
-                Intent intent = new Intent(FarmerRecruitActivity.this, SearchFarmerActivity.class);
-                startActivity(intent);
-            }
-        });
-        progressDialog.setCancelable(false);
-        // progressBar.setMessage("Please Wait...");
-        progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
-        APIService service = retrofit.create(APIService.class);
-        Call<List<CropDateResponse>> call = service.getcropdate();
-        call.enqueue(new Callback<List<CropDateResponse>>() {
-            @Override
-            public void onResponse(Call<List<CropDateResponse>> call, Response<List<CropDateResponse>> response) {
-                progressDialog.hide();
-                ArrayList<String> spinnerArray = new ArrayList<String>();
-                spinnerArray.clear();
-                crop_id = new ArrayList<Integer>();
-                for(CropDateResponse blacklist: response.body()) {
-                    String date="";
-                    for(int elem : blacklist.getPlantingDate()){
-                        date=elem+"-"+date;
-                    }
-
-                    spinnerArray.add(removeLastChar(date)+"("+blacklist.getProdId()+")");
-                    crop_id.add(blacklist.getId());
-                }
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(FarmerRecruitActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
-                cropdate.setAdapter(spinnerArrayAdapter);
-            }
-
-            @Override
-            public void onFailure(Call<List<CropDateResponse>> call, Throwable t) {
-                progressDialog.hide();
-                Toast.makeText(FarmerRecruitActivity.this, t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
     }
     public boolean validate() {
         boolean valid = true;
@@ -274,13 +263,12 @@ public class FarmerRecruitActivity extends AppCompatActivity {
         int selectedId = radioland.getCheckedRadioButtonId();
         // find the radiobutton by returned id
         radioSexButton = (RadioButton) findViewById(selectedId);
-        String landop =radioSexButton.getText()+"";
-        if (landop.isEmpty()) {
+        if (radioSexButton == null) {
 
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
             SpannableStringBuilder ssbuilder = new SpannableStringBuilder("must input no of units");
             ssbuilder.setSpan(fgcspan, 0, "must input no of units".length(), 0);
-            radioSexButton.setError(ssbuilder);
+            //radioSexButton.setError(ssbuilder);
             valid = false;
         } else {
             radioSexButton.setError(null);
@@ -308,6 +296,9 @@ public class FarmerRecruitActivity extends AppCompatActivity {
         }else{
             land="L";
         }
+        Log.d(TAG, "2 location_str" + location_str);
+        Log.d(TAG, "2 coordinates" + coordinates);
+
         SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         pDialog.setTitleText("Recruiting...");
@@ -322,7 +313,7 @@ public class FarmerRecruitActivity extends AppCompatActivity {
         hashMap.put("noofunits",noofunits.getText().toString().trim());
         hashMap.put("section",section.getSelectedItem().toString().trim());
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<AllResponse> call = service.recruit("Basic YWRtaW46bWFudW5pdGVk",hashMap);
         call.enqueue(new Callback<AllResponse>() {
@@ -331,6 +322,7 @@ public class FarmerRecruitActivity extends AppCompatActivity {
                 progressDialog.hide();
                 try {
                 if (response.body()!=null){
+                    pDialog.dismissWithAnimation();
                     new SweetAlertDialog(FarmerRecruitActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                             .setTitleText("Success")
                             .setContentText("You have successfully submitted farmer recruitment details")
@@ -354,14 +346,17 @@ public class FarmerRecruitActivity extends AppCompatActivity {
                             .show();
 
                 }else{
+                    pDialog.dismissWithAnimation();
                     JSONObject jObjError = new JSONObject(response.errorBody().string());
                     new SweetAlertDialog(FarmerRecruitActivity.this, SweetAlertDialog.WARNING_TYPE)
                             .setTitleText("Ooops...")
                             .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
                             .show();
 
+
                 }
             } catch (Exception e) {
+                    pDialog.dismissWithAnimation();
                 new SweetAlertDialog(FarmerRecruitActivity.this, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("Oops...")
                         .setContentText(e.getMessage())
@@ -373,7 +368,7 @@ public class FarmerRecruitActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<AllResponse> call, Throwable t) {
-                pDialog.cancel();
+                pDialog.dismissWithAnimation();
                 new SweetAlertDialog(FarmerRecruitActivity.this, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("Oops...")
                         .setContentText(t.getMessage())

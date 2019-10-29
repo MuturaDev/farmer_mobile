@@ -20,6 +20,33 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
+            android:name=".activity.UpdateDocsActivity"
+            android:label="@string/title_activity_update_docs"
+            android:parentActivityName=".activity.FarmerDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.FarmerDetailsActivity" />
+        </activity>
+        <activity
+            android:name=".activity.UpdateBankActivity"
+            android:label="@string/title_activity_update_bank"
+            android:parentActivityName=".activity.FarmerDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.FarmerDetailsActivity" />
+        </activity>
+        <activity
+            android:name=".activity.ChangeCentreActivity"
+            android:label="@string/title_activity_change_centre"
+            android:parentActivityName=".activity.FarmerDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.FarmerDetailsActivity" />
+        </activity>
+        <activity
             android:name=".activity.RequisitionActivity"
             android:label="@string/title_activity_requisition"
             android:parentActivityName=".activity.HomeActivity"

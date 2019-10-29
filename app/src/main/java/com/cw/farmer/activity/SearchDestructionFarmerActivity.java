@@ -70,7 +70,7 @@ public class SearchDestructionFarmerActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
         progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/");
+        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         Call<SearchDestructionResponse> call = service.getDestructionfarmer(limit,offset,farmer_search.getText().toString());
         call.enqueue(new Callback<SearchDestructionResponse>() {

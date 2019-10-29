@@ -1,10 +1,12 @@
 package com.cw.farmer.adapter;
 
 import android.content.Context;
-import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,11 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.OnLoadMoreListener;
 import com.cw.farmer.R;
-import com.cw.farmer.activity.SearchFarmerActivity;
-import com.cw.farmer.model.PageItemstask;
 import com.cw.farmer.model.RequisitionResponse;
+import com.cw.farmer.model.RetItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RequistionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     ArrayList<RequisitionResponse> pageItemArrayList;
@@ -32,6 +34,8 @@ public class RequistionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private OnLoadMoreListener onLoadMoreListener;
     private boolean isLoading;
     private int visibleThreshold = 5;
+    private List<RetItem> _retData;
+
 
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.onLoadMoreListener = mOnLoadMoreListener;
@@ -40,6 +44,10 @@ public class RequistionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RequistionAdapter(RecyclerView recyclerView, Context context, ArrayList<RequisitionResponse> pageItemArrayList) {
         this.context = context;
         this.pageItemArrayList = pageItemArrayList;
+        _retData = new ArrayList<RetItem>(pageItemArrayList.size());
+        for (int i = 0; i < pageItemArrayList.size(); ++i) {
+            _retData.add(new RetItem());
+        }
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -127,9 +135,27 @@ public class RequistionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void populateItemRows(ViewHolder viewHolder, int position) {
         final RequisitionResponse pageItem = pageItemArrayList.get(position);
         viewHolder.tv_itemcode.setText(pageItem.getInvId()+"");
+        _retData.get(position).invid = pageItem.getInvId() + "";
         viewHolder.tv_itemname.setText(pageItem.getInvitemdesc()+"");
         viewHolder.tv_quanity.setText(pageItem.getQuantity()+"");
-        viewHolder.tv_actual.setText(pageItem.getInvtype()+"");
+        viewHolder.tv_actual.setText(pageItem.getQuantity() + "");
+        _retData.get(position).qty = pageItem.getQuantity() + "";
+        _retData.get(position).centreid = pageItem.getCentreid() + "";
+        viewHolder.tv_actual.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                _retData.get(position).qty = s.toString();
+            }
+        });
+
+
     }
 
     @Override
@@ -152,9 +178,15 @@ public class RequistionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    public List<RetItem> retrieveData() {
+        return _retData;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
-        protected TextView tv_itemcode, tv_itemname,tv_quanity,tv_actual;
+        protected TextView tv_itemcode, tv_itemname, tv_quanity;
         protected LinearLayout lin_item;
+        protected EditText tv_actual;
+
 
 
         public ViewHolder(@NonNull View itemView) {

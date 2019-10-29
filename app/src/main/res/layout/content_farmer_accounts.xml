@@ -55,6 +55,17 @@
                     android:layout_height="wrap_content"
                     app:srcCompat="@mipmap/ic_launcher_foreground" />
 
+                <Button
+                    android:id="@+id/btn_farmel_bank_det_pre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_rectangle"
+                    android:onClick="opendoc"
+                    android:padding="15dp"
+                    android:text="Resubmit Bank Details"
+                    android:textColor="@color/colorwhite" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
