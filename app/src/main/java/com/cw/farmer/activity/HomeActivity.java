@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -18,23 +19,38 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.DashboardAdapter;
 import com.cw.farmer.adapter.ExpandableListAdapter;
 import com.cw.farmer.adapter.TaskAdapter;
 import com.cw.farmer.custom.Utility;
+import com.cw.farmer.model.Accountdetails;
+import com.cw.farmer.model.AllResponse;
+import com.cw.farmer.model.ContractSignDB;
+import com.cw.farmer.model.CropDestructionPostDB;
+import com.cw.farmer.model.FarmerErrorResponse;
+import com.cw.farmer.model.FarmerModel;
+import com.cw.farmer.model.FarmerModelDB;
+import com.cw.farmer.model.HarvestingDB;
+import com.cw.farmer.model.Identitydetails;
 import com.cw.farmer.model.PageItemstask;
+import com.cw.farmer.model.PlantingVerifyDB;
+import com.cw.farmer.model.RecruitFarmerDB;
 import com.cw.farmer.model.TasksResponse;
 import com.cw.farmer.model.dashboard;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.material.appbar.AppBarLayout;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -79,10 +95,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             expListView.setIndicatorBoundsRelative(width - getPixelValue(40), width - getPixelValue(10));
         }
-
-
-
-
         SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
         Set<String> permission = prefs.getStringSet("key", null);
 
@@ -121,8 +133,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         user_id=prefs.getString("userid", "-1");
         // preparing list data
-        prepareListData();
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            prepareListData();
+        }
+
         setSupportActionBar(toolbar);
+        //offlinesync();
+
     }
 
 
@@ -227,12 +244,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             listDataChild = new HashMap<String, List<String>>();
 
                             // Adding child data
-                            listDataHeader.add("Receive Inventory");
-                            listDataHeader.add("Verify Planting");
-                            listDataHeader.add("Manage Sprays");
+                        listDataHeader.add("Message");
+                        //listDataHeader.add("");
                         List<String> planting = new ArrayList<String>();
                         List<String> invent = new ArrayList<String>();
-                        List<String> spray = new ArrayList<String>();
                         for(PageItemstask taks: response.body().getPageItemstasks()) {
 
                             if (taks.getEntityName().equals("VERIFY_PLANTING_MOBILE")) {
@@ -240,7 +255,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 for (int elem : taks.getCropDate()) {
                                     date = elem + "/" + date;
                                 }
-                                planting.add(taks.getCentrename() + " ,Planting," + removeLastChar(date) + " ," + taks.getEntityId());
+                                invent.add(taks.getCentrename() + " ,Planting," + removeLastChar(date) + " ," + taks.getEntityId());
                             }else{
                                 String date = "";
                                 for (int elem : taks.getCreatedOn()) {
@@ -253,8 +268,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                             listDataChild.put(listDataHeader.get(0), invent); // Header, Child data
-                            listDataChild.put(listDataHeader.get(1), planting);
-                            listDataChild.put(listDataHeader.get(2), spray);
+                        // listDataChild.put(listDataHeader.get(1), planting);
 
 
 
@@ -289,5 +303,334 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     private static String removeLastChar(String str) {
         return str.substring(0, str.length() - 1);
+    }
+
+    public void offlinesync(View v) {
+
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            SharedPreferences prefs = getSharedPreferences("location", MODE_PRIVATE);
+
+
+            List<FarmerModelDB> farmers = FarmerModelDB.listAll(FarmerModelDB.class);
+            for (FarmerModelDB farmer : farmers) {
+                FarmerModel farmerModel = new FarmerModel();
+                Accountdetails accountdetails = new Accountdetails();
+                Identitydetails identitydetails = new Identitydetails();
+
+                farmerModel.setFirstname(farmer.firstname);
+                farmerModel.setMobileno(farmer.mobileno);
+                farmerModel.setEmail(farmer.email);
+                farmerModel.setGender(farmer.gender);
+                farmerModel.getIdno(farmer.idno);
+                farmerModel.setDateOfBirth(farmer.dateOfBirth);
+                farmerModel.setActivated(farmer.activated);
+                farmerModel.setCenterid(farmer.centerid);
+                farmerModel.setDateFormat(farmer.dateFormat);
+                farmerModel.setLocale(farmer.locale);
+
+                accountdetails.setAccountno(farmer.accountno);
+                accountdetails.setBankId(farmer.bankId);
+                accountdetails.setImage(farmer.image_bank);
+                accountdetails.setFiletype(farmer.filetype_bank);
+
+                identitydetails.setDocId(farmer.docId);
+                identitydetails.setImage(farmer.image_id);
+                identitydetails.setFiletype(farmer.filetype_id);
+                identitydetails.setDocno(farmer.docno_id);
+
+                farmerModel.setAccountdetails(accountdetails);
+                farmerModel.setIdentitydetails(identitydetails);
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Synchronizing offline data to online ...");
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                Call<FarmerErrorResponse> call = service.createFarmer("Basic YWRtaW46bWFudW5pdGVk", farmerModel);
+                call.enqueue(new Callback<FarmerErrorResponse>() {
+                    @Override
+                    public void onResponse(Call<FarmerErrorResponse> call, Response<FarmerErrorResponse> response) {
+                        try {
+                            if (response.body() != null) {
+                                farmer.delete();
+                                pDialog.dismissWithAnimation();
+
+                            } else {
+                                farmer.delete();
+                                pDialog.dismissWithAnimation();
+                                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Ooops...")
+                                        .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                        .show();
+                            }
+
+                            //Toast.makeText(MainActivity.this, response.body().getHttpStatusCode(), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            pDialog.dismissWithAnimation();
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<FarmerErrorResponse> call, Throwable t) {
+                        pDialog.dismissWithAnimation();
+                    }
+                });
+            }
+
+            List<RecruitFarmerDB> recruits = RecruitFarmerDB.listAll(RecruitFarmerDB.class);
+            for (RecruitFarmerDB recruit : recruits) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("farmerid", recruit.farmerid);
+                hashMap.put("dateid", recruit.dateid);
+                hashMap.put("landownership", recruit.landownership);
+                hashMap.put("cordinates", prefs.getString("coordinates", "000,000"));
+                hashMap.put("location", prefs.getString("location_str", "offline"));
+                hashMap.put("noofunits", recruit.noofunits);
+                hashMap.put("section", recruit.section);
+
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Synchronizing offline data to online ...");
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                Call<AllResponse> call = service.recruit("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                call.enqueue(new Callback<AllResponse>() {
+                    @Override
+                    public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                        progressDialog.hide();
+                        try {
+                            if (response.body() != null) {
+                                recruit.delete();
+                                pDialog.dismissWithAnimation();
+                            } else {
+                                recruit.delete();
+                                pDialog.dismissWithAnimation();
+                                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Ooops...")
+                                        .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                        .show();
+                            }
+                        } catch (Exception e) {
+                            pDialog.dismissWithAnimation();
+                        }
+                        //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<AllResponse> call, Throwable t) {
+                        pDialog.dismissWithAnimation();
+                    }
+                });
+            }
+
+            List<ContractSignDB> signs = ContractSignDB.listAll(ContractSignDB.class);
+            for (ContractSignDB sign : signs) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("referenceNo", sign.referenceNo);
+                hashMap.put("cropDateId", sign.cropDateId);
+                hashMap.put("units", sign.units);
+                hashMap.put("farmerId", sign.farmerId);
+                hashMap.put("file", sign.file);
+                hashMap.put("dateFormat", sign.dateFormat);
+                hashMap.put("locale", sign.locale);
+
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Synchronizing offline data to online ...");
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                Call<AllResponse> call = service.postcontract("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                call.enqueue(new Callback<AllResponse>() {
+                    @Override
+                    public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                        //pDialog.hide();
+                        try {
+                            if (response.body() != null) {
+                                sign.delete();
+                                pDialog.dismissWithAnimation();
+
+                            } else {
+                                sign.delete();
+                                pDialog.dismissWithAnimation();
+                                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Ooops...")
+                                        .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                        .show();
+                            }
+                        } catch (Exception e) {
+                            pDialog.dismissWithAnimation();
+                        }
+                        //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<AllResponse> call, Throwable t) {
+                        pDialog.dismissWithAnimation();
+                    }
+                });
+            }
+
+            List<PlantingVerifyDB> plants = PlantingVerifyDB.listAll(PlantingVerifyDB.class);
+            for (PlantingVerifyDB plant : plants) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("cordinates", prefs.getString("cordinates", "000,000"));
+                hashMap.put("location", prefs.getString("location_str", "offline"));
+                hashMap.put("contractid", plant.contractid);
+                hashMap.put("plantconfirmed", plant.plant_value);
+                hashMap.put("waterconfirmed", plant.water_value);
+
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Synchronizing offline data to online ...");
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                Call<AllResponse> call = service.postplantverify("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                call.enqueue(new Callback<AllResponse>() {
+                    @Override
+                    public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                        try {
+                            if (response.body() != null) {
+                                plant.delete();
+                                pDialog.dismissWithAnimation();
+                            } else {
+                                plant.delete();
+                                pDialog.dismissWithAnimation();
+                                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Ooops...")
+                                        .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                        .show();
+                            }
+                        } catch (Exception e) {
+                            pDialog.dismissWithAnimation();
+                        }
+                        //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<AllResponse> call, Throwable t) {
+                        pDialog.dismissWithAnimation();
+                    }
+                });
+            }
+
+            List<CropDestructionPostDB> destroys = CropDestructionPostDB.listAll(CropDestructionPostDB.class);
+            SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+            pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+            pDialog.setTitleText("Synchronizing offline data to online ...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+            for (CropDestructionPostDB destroy : destroys) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("cropDatesId", destroy.cropDatesId);
+                hashMap.put("accountNumber", destroy.accountNumber);
+                hashMap.put("unit", destroy.unit);
+                hashMap.put("farmers_id", destroy.farmers_id);
+                hashMap.put("file", destroy.file);
+                hashMap.put("locale", destroy.locale);
+                hashMap.put("cropDestructionType", destroy.cropDestructionType);
+                hashMap.put("cropDestructionReasonsId", destroy.cropDestructionReasonsId);
+
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                Call<AllResponse> call = service.postcropdestruction("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                call.enqueue(new Callback<AllResponse>() {
+                    @Override
+                    public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                        try {
+                            if (response.body() != null) {
+                                destroy.delete();
+                                pDialog.dismissWithAnimation();
+
+                            } else {
+                                destroy.delete();
+                                pDialog.dismissWithAnimation();
+                                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Ooops...")
+                                        .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                        .show();
+                            }
+                        } catch (Exception e) {
+                            pDialog.dismissWithAnimation();
+                        }
+                        //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<AllResponse> call, Throwable t) {
+                        pDialog.dismissWithAnimation();
+                    }
+                });
+            }
+
+
+            List<HarvestingDB> harvests = HarvestingDB.listAll(HarvestingDB.class);
+            for (HarvestingDB harvest : harvests) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("dateid", harvest.dateid);
+                hashMap.put("noofunits", harvest.noofunits);
+                hashMap.put("farmerid", harvest.farmerid);
+                hashMap.put("harvestkilos", harvest.harvestkilos);
+                hashMap.put("locale", harvest.locale);
+
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                Call<AllResponse> call = service.postharvesting("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                call.enqueue(new Callback<AllResponse>() {
+                    @Override
+                    public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                        try {
+                            if (response.body() != null) {
+                                harvest.delete();
+                                pDialog.dismissWithAnimation();
+
+                            } else {
+                                harvest.delete();
+                                pDialog.dismissWithAnimation();
+                                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Ooops...")
+                                        .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                        .show();
+                            }
+                        } catch (Exception e) {
+                            pDialog.dismissWithAnimation();
+                        }
+                        //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<AllResponse> call, Throwable t) {
+                        pDialog.dismissWithAnimation();
+                    }
+                });
+            }
+            //pDialog.dismissWithAnimation();
+
+
+        }
+
     }
 }
