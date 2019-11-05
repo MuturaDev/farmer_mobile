@@ -18,6 +18,8 @@ import com.cw.farmer.model.RequisitionResponse;
 import com.cw.farmer.model.Result;
 import com.cw.farmer.model.SearchContractResponse;
 import com.cw.farmer.model.SearchDestructionResponse;
+import com.cw.farmer.model.SprayFarmerResponse;
+import com.cw.farmer.model.SprayNumbersResponse;
 import com.cw.farmer.model.TasksResponse;
 import com.google.gson.JsonObject;
 
@@ -146,6 +148,19 @@ public interface APIService {
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @PUT("/fineract-provider/api/v1/{id}/farmerdocs/{entry}")
     Call<AllResponse> changedocs(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl, @Path("id") String groupId, @Path("entry") String entry);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/plantingverification/verifiedFarmers")
+    Call<SprayFarmerResponse> getSprayfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/sprayprogram/regionprograms")
+    Call<SprayNumbersResponse> getspraynumber();
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/sprayconfirmation")
+    Call<AllResponse> spraypost(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
+
 
 
 

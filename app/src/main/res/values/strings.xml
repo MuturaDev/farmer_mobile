@@ -40,5 +40,7 @@
     <string name="title_activity_change_centre">Change Centre</string>
     <string name="title_activity_update_bank">Update Bank</string>
     <string name="title_activity_update_docs">Update Documents</string>
+    <string name="title_activity_spray_confirmation">Spray Confirmation</string>
+    <string name="title_activity_search_spray">Search spraying farmer</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.cw.farmer.activity;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -19,6 +21,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,8 +30,12 @@ import androidx.core.content.ContextCompat;
 
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
+import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.model.PlantingVerifyDB;
+import com.cw.farmer.model.PageItemsSprayNumber;
+import com.cw.farmer.model.SprayNumberDB;
+import com.cw.farmer.model.SprayNumbersResponse;
+import com.cw.farmer.model.SprayPostDB;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -51,66 +58,119 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class PlantingVerificationActivity extends AppCompatActivity {
-    EditText farmer,account_no;
-    Spinner codedate_harvesting;
-    String farmer_id_string,noofunits,plantingId;
-    List<String> cropDateId_list,reason_main;
-    RadioGroup Plantconfirmed_radio,Waterconfirmed_radio;
-    RadioButton plant_btn,water_btn;
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
+public class SprayConfirmationActivity extends AppCompatActivity {
+    EditText farmer, noofunits, cropdate;
+    Spinner spraynumber, section, farmerspinner;
     String location_str, coordinates;
-    Double currentLat,currentLong;
+    Double currentLat, currentLong;
+    ProgressDialog progressDialog;
+    String farmer_id_string;
+    List<Integer> crop_id;
+    private RadioGroup radioland;
+    private RadioButton radioSexButton;
+    private TextView location, latLong, diff;
+    private Double lati, longi;
+
+    private static String removeLastChar(String str) {
+        return str.substring(0, str.length() - 1);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_planting_verification);
+        setContentView(R.layout.activity_spray_confirmation);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        Plantconfirmed_radio = findViewById(R.id.Plantconfirmed);
-        Waterconfirmed_radio = findViewById(R.id.Waterconfirmed);
+        progressDialog = new ProgressDialog(this);
+        cropdate = findViewById(R.id.cropdate);
+        spraynumber = findViewById(R.id.spraynumber);
+        noofunits = findViewById(R.id.noofunits);
         farmer = findViewById(R.id.farmer);
         farmer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor searcheditor = getSharedPreferences("search", MODE_PRIVATE).edit();
-                searcheditor.putString("activity","planting vertification");
-                searcheditor.apply();
 
-                Intent intent = new Intent(PlantingVerificationActivity.this, SearchPlantingVerficationActivity.class);
+                Intent intent = new Intent(SprayConfirmationActivity.this, SearchSprayActivity.class);
                 startActivity(intent);
             }
         });
-        codedate_harvesting = findViewById(R.id.codedate_harvesting);
-        account_no = findViewById(R.id.account_no);
-        Intent iin= getIntent();
+
+        Intent iin = getIntent();
         Bundle b = iin.getExtras();
 
-        if(b!=null)
-        {
-            String name =(String) b.get("name");
+        if (b != null) {
+            String name = (String) b.get("name");
             farmer.setText(name);
 
-            String id =(String) b.get("contractId");
-            farmer_id_string=id;
+            String id = (String) b.get("id");
+            farmer_id_string = id;
 
-            String noofunits_now =(String) b.get("accountNo");
-            account_no.setText(noofunits_now);
+            String cropdate_gre = (String) b.get("cropdate");
+            cropdate.setText(cropdate_gre);
 
-            cropDateId_list = new ArrayList<String>();
-            String cropDateId =(String) b.get("crop_date");
-            cropDateId_list.add(cropDateId);
+            String units_gre = (String) b.get("units");
+            noofunits.setText(units_gre);
 
-            ArrayList<String> spinnerArray = new ArrayList<String>();
-            spinnerArray.clear();
-            String crop_date =(String) b.get("crop_date");
-            spinnerArray.add(crop_date);
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(PlantingVerificationActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
-            codedate_harvesting.setAdapter(spinnerArrayAdapter);
+        }
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ArrayList<String> spinnerArray = new ArrayList<String>();
+        spinnerArray.clear();
+        crop_id = new ArrayList<Integer>();
+        List<SprayNumberDB> sprays = SprayNumberDB.listAll(SprayNumberDB.class);
+        for (SprayNumberDB spray : sprays) {
+            spinnerArray.add(spray.spray_no);
+            crop_id.add(spray.id_spray);
+        }
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(SprayConfirmationActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
+        spraynumber.setAdapter(spinnerArrayAdapter);
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            progressDialog.setCancelable(false);
+            // progressBar.setMessage("Please Wait...");
+            progressDialog.show();
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            Call<SprayNumbersResponse> call = service.getspraynumber();
+            call.enqueue(new Callback<SprayNumbersResponse>() {
+                @Override
+                public void onResponse(Call<SprayNumbersResponse> call, Response<SprayNumbersResponse> response) {
+                    progressDialog.hide();
+                    try {
+                        if (response.body().getPageItemsSprayNumbers().size() != 0) {
+                            ArrayList<String> spinnerArray = new ArrayList<String>();
+                            spinnerArray.clear();
+                            crop_id = new ArrayList<Integer>();
+                            SprayNumberDB.deleteAll(SprayNumberDB.class);
+                            for (PageItemsSprayNumber blacklist : response.body().getPageItemsSprayNumbers()) {
 
+                                SprayNumberDB book = new SprayNumberDB(blacklist.getId(), blacklist.getSprayno());
+                                book.save();
+
+                                spinnerArray.add(blacklist.getSprayno());
+                                crop_id.add(blacklist.getId());
+                            }
+                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(SprayConfirmationActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
+                            spraynumber.setAdapter(spinnerArrayAdapter);
+
+                        } else {
+
+                            Toast.makeText(SprayConfirmationActivity.this, "Spray numbers not found", Toast.LENGTH_LONG).show();
+                        }
+
+                    } catch (Exception e) {
+                        Utility.showToast(SprayConfirmationActivity.this, e.getMessage());
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<SprayNumbersResponse> call, Throwable t) {
+                    progressDialog.hide();
+                    Utility.showToast(SprayConfirmationActivity.this, t.getMessage());
+                }
+            });
         }
         FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -132,13 +192,18 @@ public class PlantingVerificationActivity extends AppCompatActivity {
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         // GPS location can be null if GPS is switched off
+                        SharedPreferences.Editor editor = getSharedPreferences("location", MODE_PRIVATE).edit();
+
+
                         currentLat = location.getLatitude();
                         currentLong = location.getLongitude();
-                        coordinates = currentLat+","+currentLong;
+                        coordinates = currentLat + "," + currentLong;
+                        Log.d(TAG, "1 coordinates" + coordinates);
+                        editor.putString("coordinates", coordinates);
 
                         Geocoder geocoder;
                         List<Address> addresses;
-                        geocoder = new Geocoder(PlantingVerificationActivity.this, Locale.getDefault());
+                        geocoder = new Geocoder(SprayConfirmationActivity.this, Locale.getDefault());
 
                         try {
                             addresses = geocoder.getFromLocation(currentLat, currentLong, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
@@ -150,6 +215,9 @@ public class PlantingVerificationActivity extends AppCompatActivity {
                             String knownName = addresses.get(0).getFeatureName();
                             //Toast.makeText(FarmerRecruitActivity.this, "lat " + city + "\nlong " + address, Toast.LENGTH_LONG).show();
                             location_str = address;
+                            Log.d(TAG, "1 location_str" + location_str);
+                            editor.putString("location_str", location_str);
+                            editor.apply();
 
 
                         } catch (IOException e) {
@@ -165,7 +233,9 @@ public class PlantingVerificationActivity extends AppCompatActivity {
 
                     }
                 });
+
     }
+
     public boolean validate() {
         boolean valid = true;
         int errorColor;
@@ -178,114 +248,77 @@ public class PlantingVerificationActivity extends AppCompatActivity {
             errorColor = getResources().getColor(R.color.errorColor);
         }
 
-        if (codedate_harvesting == null && codedate_harvesting.getSelectedItem() ==null) {
+        if (cropdate.getText().toString().isEmpty()) {
 
-            TextView errorText = (TextView)codedate_harvesting.getSelectedView();
-            errorText.setError("select crop date");
+            ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
+            SpannableStringBuilder ssbuilder = new SpannableStringBuilder("must input crop date");
+            ssbuilder.setSpan(fgcspan, 0, "must input crop date".length(), 0);
+            noofunits.setError(ssbuilder);
+            valid = false;
+        }
+        if (spraynumber == null && spraynumber.getSelectedItem() == null) {
+
+            TextView errorText = (TextView) spraynumber.getSelectedView();
+            errorText.setError("must input spray number");
             errorText.setTextColor(errorColor);//just to highlight that this is an error
 
             valid = false;
         }
-        if (account_no.getText().toString().isEmpty()) {
+        if (noofunits.getText().toString().isEmpty()) {
 
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
-            SpannableStringBuilder ssbuilder = new SpannableStringBuilder("must input account no");
-            ssbuilder.setSpan(fgcspan, 0, "must input account no".length(), 0);
-            account_no.setError(ssbuilder);
+            SpannableStringBuilder ssbuilder = new SpannableStringBuilder("must input no of units");
+            ssbuilder.setSpan(fgcspan, 0, "must input no of units".length(), 0);
+            noofunits.setError(ssbuilder);
             valid = false;
         } else {
-            account_no.setError(null);
+            noofunits.setError(null);
         }
-
-        if (farmer.getText().toString().isEmpty()) {
-
-            ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
-            SpannableStringBuilder ssbuilder = new SpannableStringBuilder("Select a farmer");
-            ssbuilder.setSpan(fgcspan, 0, "Select a farmer".length(), 0);
-            farmer.setError(ssbuilder);
-            valid = false;
-        } else {
-            farmer.setError(null);
-        }
-
-
-
 
         return valid;
     }
-    public void plantverify_submit(View v){
+
+    public void submit(View v) {
         if (!validate()) {
             Snackbar.make(v, "Correct the above errors first", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
             return;
         }
-        /*{
-  “contractid”: 23,
- “cordinates”:””,
-“location”:””,
-“Plantconfirmed”:”Y” or “N”,
-“Waterconfirmed”:”Y” or “N”,
-}
-*/
-        int selectedId = Plantconfirmed_radio.getCheckedRadioButtonId();
-        plant_btn = (RadioButton) findViewById(selectedId);
-        String plant_print =plant_btn.getText().toString();
-        String plant_value="N";
+        Log.d(TAG, "2 location_str" + location_str);
+        Log.d(TAG, "2 coordinates" + coordinates);
 
-        if (plant_print.equals("Yes")){
-            plant_value="Y";
-        }else{
-            plant_value="N";
-        }
-
-        int selectedId_2 = Waterconfirmed_radio.getCheckedRadioButtonId();
-        water_btn = (RadioButton) findViewById(selectedId_2);
-        String water_print =plant_btn.getText().toString();
-        String water_value="N";
-
-        if (water_print.equals("Yes")){
-            water_value="Y";
-        }else{
-            water_value="N";
-        }
-//        {
-//"contractid": 23,
-// "cordinates":"",
-//"location":"",
-//"plantconfirmed":"Y",
-//"waterconfirmed":"Y"
-//}
         SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-        pDialog.setTitleText("Submitting Planting Verification Data...");
+        pDialog.setTitleText("Recruiting...");
         pDialog.setCancelable(false);
         pDialog.show();
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("verificationid", farmer_id_string);
             hashMap.put("cordinates", coordinates);
             hashMap.put("location", location_str);
-            hashMap.put("contractid", farmer_id_string);
-            hashMap.put("plantconfirmed", plant_value);
-            hashMap.put("waterconfirmed", water_value);
+            hashMap.put("sprayconfirmed", "Y");
+            hashMap.put("programid", crop_id.get(spraynumber.getSelectedItemPosition()).toString());
 
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<AllResponse> call = service.postplantverify("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+            Call<AllResponse> call = service.spraypost("Basic YWRtaW46bWFudW5pdGVk", hashMap);
             call.enqueue(new Callback<AllResponse>() {
                 @Override
                 public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                    pDialog.dismissWithAnimation();
+                    progressDialog.hide();
                     try {
                         if (response.body() != null) {
-                            new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                            pDialog.dismissWithAnimation();
+                            new SweetAlertDialog(SprayConfirmationActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                                     .setTitleText("Success")
-                                    .setContentText("You have successfully submitted " + farmer.getText() + " plant verification details")
+                                    .setContentText("You have successfully submitted farmer spray confirmation details")
                                     .setConfirmText("Ok")
                                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                         @Override
                                         public void onClick(SweetAlertDialog sDialog) {
                                             sDialog.dismissWithAnimation();
-                                            startActivity(new Intent(PlantingVerificationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                            startActivity(new Intent(SprayConfirmationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
                                         }
                                     })
@@ -293,22 +326,25 @@ public class PlantingVerificationActivity extends AppCompatActivity {
                                         @Override
                                         public void onClick(SweetAlertDialog sDialog) {
                                             sDialog.dismissWithAnimation();
-                                            startActivity(new Intent(PlantingVerificationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                            startActivity(new Intent(SprayConfirmationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
                                         }
                                     })
                                     .show();
 
                         } else {
+                            pDialog.dismissWithAnimation();
                             JSONObject jObjError = new JSONObject(response.errorBody().string());
-                            new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                            new SweetAlertDialog(SprayConfirmationActivity.this, SweetAlertDialog.WARNING_TYPE)
                                     .setTitleText("Ooops...")
                                     .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
                                     .show();
 
+
                         }
                     } catch (Exception e) {
-                        new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.ERROR_TYPE)
+                        pDialog.dismissWithAnimation();
+                        new SweetAlertDialog(SprayConfirmationActivity.this, SweetAlertDialog.ERROR_TYPE)
                                 .setTitleText("Oops...")
                                 .setContentText(e.getMessage())
                                 .show();
@@ -319,18 +355,18 @@ public class PlantingVerificationActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<AllResponse> call, Throwable t) {
-                    pDialog.cancel();
-                    new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.ERROR_TYPE)
+                    pDialog.dismissWithAnimation();
+                    new SweetAlertDialog(SprayConfirmationActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
                             .setContentText(t.getMessage())
                             .show();
                 }
             });
         } else {
-            PlantingVerifyDB book = new PlantingVerifyDB(coordinates, location_str, farmer_id_string, plant_value, water_value);
+            SprayPostDB book = new SprayPostDB(farmer_id_string, coordinates, location_str, noofunits.getText().toString().trim(), "Y", crop_id.get(spraynumber.getSelectedItemPosition()).toString());
             book.save();
-            pDialog.hide();
-            new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.WARNING_TYPE)
+            progressDialog.hide();
+            new SweetAlertDialog(SprayConfirmationActivity.this, SweetAlertDialog.WARNING_TYPE)
                     .setTitleText("No Wrong")
                     .setContentText("We have saved the data offline, We will submitted it when you have internet")
                     .setConfirmText("Ok")
@@ -338,7 +374,7 @@ public class PlantingVerificationActivity extends AppCompatActivity {
                         @Override
                         public void onClick(SweetAlertDialog sDialog) {
                             sDialog.dismissWithAnimation();
-                            startActivity(new Intent(PlantingVerificationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                            startActivity(new Intent(SprayConfirmationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
                         }
                     })
@@ -346,5 +382,36 @@ public class PlantingVerificationActivity extends AppCompatActivity {
         }
 
     }
+
+    public String getAddress(double lat, double lng) {
+        Geocoder geocoder = new Geocoder(SprayConfirmationActivity.this, Locale.getDefault());
+        String location = " ";
+        String add = null;
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            Address obj = addresses.get(0);
+            add = obj.getAddressLine(0);
+            add = add + "\n" + obj.getLocality();
+
+            Log.v("IGA", "Address" + add);
+            location = add;
+
+            // Toast.makeText(this, "Address=>" + add,
+            // Toast.LENGTH_SHORT).show();
+
+            // TennisAppActivity.showDialog(add);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return location;
+
+    }
+
+    public void onpenlocation(View v) {
+
+    }
+
 
 }

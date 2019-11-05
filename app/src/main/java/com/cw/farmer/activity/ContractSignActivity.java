@@ -23,8 +23,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
+import com.cw.farmer.model.ContractSignDB;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.material.snackbar.Snackbar;
@@ -285,74 +287,94 @@ public class ContractSignActivity extends AppCompatActivity {
         pDialog.setTitleText("Submitting Contract Signing...");
         pDialog.setCancelable(false);
         pDialog.show();
-        HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("referenceNo",contract_refno.getText().toString().trim());
-        hashMap.put("cropDateId",planting_id_string);
-        hashMap.put("units",noofunits.getText().toString().trim());
-        hashMap.put("farmerId",farmer_id_string);
-        hashMap.put("file",getBase64FromPath());
-        hashMap.put("dateFormat","DD/M/YYYY");
-        hashMap.put("locale","en");
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("referenceNo", contract_refno.getText().toString().trim());
+            hashMap.put("cropDateId", planting_id_string);
+            hashMap.put("units", noofunits.getText().toString().trim());
+            hashMap.put("farmerId", farmer_id_string);
+            hashMap.put("file", getBase64FromPath());
+            hashMap.put("dateFormat", "DD/M/YYYY");
+            hashMap.put("locale", "en");
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
-        Call<AllResponse> call = service.postcontract("Basic YWRtaW46bWFudW5pdGVk",hashMap);
-        call.enqueue(new Callback<AllResponse>() {
-            @Override
-            public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                //pDialog.hide();
-                pDialog.dismissWithAnimation();
-                try {
-                    if (response.body()!=null){
-                        new SweetAlertDialog(ContractSignActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                .setTitleText("Success")
-                                .setContentText("You have successfully submitted "+farmer.getText().toString().trim()+" farmer contract signing details")
-                                .setConfirmText("Ok")
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(ContractSignActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            Call<AllResponse> call = service.postcontract("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+            call.enqueue(new Callback<AllResponse>() {
+                @Override
+                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                    //pDialog.hide();
+                    pDialog.dismissWithAnimation();
+                    try {
+                        if (response.body() != null) {
+                            new SweetAlertDialog(ContractSignActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                    .setTitleText("Success")
+                                    .setContentText("You have successfully submitted " + farmer.getText().toString().trim() + " farmer contract signing details")
+                                    .setConfirmText("Ok")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(ContractSignActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                    }
-                                })
-                                .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(ContractSignActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                        }
+                                    })
+                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(ContractSignActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                    }
-                                })
+                                        }
+                                    })
+                                    .show();
+
+                        } else {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            new SweetAlertDialog(ContractSignActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("Ooops...")
+                                    .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                    .show();
+
+                        }
+                    } catch (Exception e) {
+                        new SweetAlertDialog(ContractSignActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText(e.getMessage())
                                 .show();
-
-                    }else{
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        new SweetAlertDialog(ContractSignActivity.this, SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("Ooops...")
-                                .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
-                                .show();
-
                     }
-                } catch (Exception e) {
+                    //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onFailure(Call<AllResponse> call, Throwable t) {
+                    pDialog.cancel();
                     new SweetAlertDialog(ContractSignActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText(e.getMessage())
+                            .setContentText(t.getMessage())
                             .show();
                 }
-                //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+            });
+        } else {
+            ContractSignDB book = new ContractSignDB(contract_refno.getText().toString().trim(), planting_id_string, noofunits.getText().toString().trim(), farmer_id_string, getBase64FromPath(), "DD/M/YYYY", "en");
+            book.save();
+            pDialog.hide();
+            new SweetAlertDialog(ContractSignActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(ContractSignActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-            }
+                        }
+                    })
+                    .show();
+        }
 
-            @Override
-            public void onFailure(Call<AllResponse> call, Throwable t) {
-                pDialog.cancel();
-                new SweetAlertDialog(ContractSignActivity.this, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText("Oops...")
-                        .setContentText(t.getMessage())
-                        .show();
-            }
-        });
     }
 
 }

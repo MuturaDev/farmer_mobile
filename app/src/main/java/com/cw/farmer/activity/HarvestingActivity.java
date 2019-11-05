@@ -17,8 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
+import com.cw.farmer.model.HarvestingDB;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.material.snackbar.Snackbar;
@@ -165,71 +167,92 @@ public class HarvestingActivity extends AppCompatActivity {
         pDialog.setTitleText("Submitting Harvesting Data...");
         pDialog.setCancelable(false);
         pDialog.show();
-        HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("dateid",plantingId);
-        hashMap.put("noofunits",noofunits);
-        hashMap.put("farmerid",farmer_id_string);
-        hashMap.put("harvestkilos",crop_weight.getText().toString());
-        hashMap.put("locale","en");
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("dateid", plantingId);
+            hashMap.put("noofunits", noofunits);
+            hashMap.put("farmerid", farmer_id_string);
+            hashMap.put("harvestkilos", crop_weight.getText().toString());
+            hashMap.put("locale", "en");
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
-        Call<AllResponse> call = service.postharvesting("Basic YWRtaW46bWFudW5pdGVk",hashMap);
-        call.enqueue(new Callback<AllResponse>() {
-            @Override
-            public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                pDialog.dismissWithAnimation();
-                try {
-                    if (response.body()!=null){
-                        new SweetAlertDialog(HarvestingActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                .setTitleText("Success")
-                                .setContentText("You have successfully submitted "+farmer_harvesting.getText()+" harvesting details")
-                                .setConfirmText("Ok")
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(HarvestingActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            Call<AllResponse> call = service.postharvesting("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+            call.enqueue(new Callback<AllResponse>() {
+                @Override
+                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                    pDialog.dismissWithAnimation();
+                    try {
+                        if (response.body() != null) {
+                            new SweetAlertDialog(HarvestingActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                    .setTitleText("Success")
+                                    .setContentText("You have successfully submitted " + farmer_harvesting.getText() + " harvesting details")
+                                    .setConfirmText("Ok")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(HarvestingActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                    }
-                                })
-                                .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(HarvestingActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                        }
+                                    })
+                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(HarvestingActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                    }
-                                })
+                                        }
+                                    })
+                                    .show();
+
+                        } else {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            new SweetAlertDialog(HarvestingActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("Ooops...")
+                                    .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                    .show();
+
+                        }
+                    } catch (Exception e) {
+                        new SweetAlertDialog(HarvestingActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText(e.getMessage())
                                 .show();
-
-                    }else{
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        new SweetAlertDialog(HarvestingActivity.this, SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("Ooops...")
-                                .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
-                                .show();
-
                     }
-                } catch (Exception e) {
+                    //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onFailure(Call<AllResponse> call, Throwable t) {
+                    pDialog.cancel();
                     new SweetAlertDialog(HarvestingActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText(e.getMessage())
+                            .setContentText(t.getMessage())
                             .show();
                 }
-                //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+            });
+        } else {
+            HarvestingDB book = new HarvestingDB(plantingId, noofunits, farmer_id_string, crop_weight.getText().toString(), "en");
+            book.save();
+            pDialog.cancel();
+            new SweetAlertDialog(HarvestingActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(HarvestingActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-            }
+                        }
+                    })
+                    .show();
 
-            @Override
-            public void onFailure(Call<AllResponse> call, Throwable t) {
-                pDialog.cancel();
-                new SweetAlertDialog(HarvestingActivity.this, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText("Oops...")
-                        .setContentText(t.getMessage())
-                        .show();
-            }
-        });
+        }
+
     }
 
 }

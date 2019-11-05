@@ -37,6 +37,7 @@ import com.cw.farmer.model.Identitydetails;
 import com.cw.farmer.model.PageItemstask;
 import com.cw.farmer.model.PlantingVerifyDB;
 import com.cw.farmer.model.RecruitFarmerDB;
+import com.cw.farmer.model.SprayPostDB;
 import com.cw.farmer.model.TasksResponse;
 import com.cw.farmer.model.dashboard;
 import com.cw.farmer.server.APIService;
@@ -226,6 +227,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void openplantverfication(View v){
         startActivity(new Intent(HomeActivity.this, PlantingVerificationActivity.class));
+    }
+
+    public void opensprayconfirmation(View v) {
+        startActivity(new Intent(HomeActivity.this, SprayConfirmationActivity.class));
     }
     private void prepareListData() {
         progressDialog.setCancelable(false);
@@ -607,6 +612,49 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                             } else {
                                 harvest.delete();
+                                pDialog.dismissWithAnimation();
+                                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                                new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Ooops...")
+                                        .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                        .show();
+                            }
+                        } catch (Exception e) {
+                            pDialog.dismissWithAnimation();
+                        }
+                        //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<AllResponse> call, Throwable t) {
+                        pDialog.dismissWithAnimation();
+                    }
+                });
+            }
+
+            List<SprayPostDB> sprays = SprayPostDB.listAll(SprayPostDB.class);
+            for (SprayPostDB spray : sprays) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("verificationid", spray.verificationid);
+                hashMap.put("cordinates", prefs.getString("cordinates", "000,000"));
+                hashMap.put("location", prefs.getString("location_str", "offline"));
+                hashMap.put("sprayconfirmed", spray.sprayconfirmed);
+                hashMap.put("programid", spray.programid);
+
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                Call<AllResponse> call = service.spraypost("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                call.enqueue(new Callback<AllResponse>() {
+                    @Override
+                    public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                        try {
+                            if (response.body() != null) {
+                                spray.delete();
+                                pDialog.dismissWithAnimation();
+
+                            } else {
+                                spray.delete();
                                 pDialog.dismissWithAnimation();
                                 JSONObject jObjError = new JSONObject(response.errorBody().string());
                                 new SweetAlertDialog(HomeActivity.this, SweetAlertDialog.ERROR_TYPE)

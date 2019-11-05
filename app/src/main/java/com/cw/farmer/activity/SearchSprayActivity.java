@@ -1,11 +1,9 @@
 package com.cw.farmer.activity;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
-import com.cw.farmer.adapter.SearchAdapter;
+import com.cw.farmer.adapter.SearchSprayAdapter;
 import com.cw.farmer.custom.Utility;
-import com.cw.farmer.model.PageItem;
-import com.cw.farmer.model.RegisterResponse;
+import com.cw.farmer.model.PageItemsSprayFarmer;
+import com.cw.farmer.model.SprayFarmerResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -38,62 +36,47 @@ import retrofit2.Retrofit;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
-public class SearchFarmerActivity extends AppCompatActivity {
+public class SearchSprayActivity extends AppCompatActivity {
+
     RecyclerView rv_register;
-    SearchAdapter registerAdapter;
+    SearchSprayAdapter registerAdapter;
     ProgressDialog progressDialog;
-    ArrayList<PageItem> pageItemArrayList;
+    ArrayList<PageItemsSprayFarmer> pageItemArrayList;
     FloatingActionButton fab;
     EditText farmer_search;
     Button btn_search;
     SharedPreferences sharedPreferences;
 
-    private int page=0;
-    private int limit=0;
-    private int offset=0;
-    private boolean end=false;
+    private int page = 0;
+    private int limit = 0;
+    private int offset = 0;
+    private boolean end = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_farmer);
-        Intent iin= getIntent();
-        Bundle b = iin.getExtras();
-        sharedPreferences = getSharedPreferences("USER", MODE_PRIVATE);
-
-        if(b!=null)
-        {
-            String name =(String) b.get("name");
-            String id =(String) b.get("id");
-            Intent intent = null;
-            SharedPreferences prefs = getSharedPreferences("search", MODE_PRIVATE);
-            //Toast.makeText(SearchFarmerActivity.this, prefs.getString("activity", " "), Toast.LENGTH_LONG).show();
-            if (prefs.getString("activity", " ").equals("recruit")){
-                intent = new Intent(SearchFarmerActivity.this, FarmerRecruitActivity.class);
-                intent.putExtra("name",name);
-                intent.putExtra("id",id);
-                startActivity(intent);
-            }
-
-
-        }
+        setContentView(R.layout.activity_search_spray);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         rv_register = findViewById(R.id.search_recylerview);
         rv_register.setLayoutManager(new LinearLayoutManager(this));
         farmer_search = findViewById(R.id.farmer_search);
         btn_search = findViewById(R.id.btn_search);
         progressDialog = new ProgressDialog(this);
+        search();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-    public void search(View v){
+
+    public void search() {
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             getData();
         } else {
-            pageItemArrayList = getArrayList("viewfarmer");
+            pageItemArrayList = getArrayList("sprayfarmer");
             setData();
         }
     }
+
     private void getData() {
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
@@ -101,18 +84,18 @@ public class SearchFarmerActivity extends AppCompatActivity {
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<RegisterResponse> call = service.getRegister(limit, offset, farmer_search.getText().toString());
-            call.enqueue(new Callback<RegisterResponse>() {
+            Call<SprayFarmerResponse> call = service.getSprayfarmer(limit, offset, farmer_search.getText().toString());
+            call.enqueue(new Callback<SprayFarmerResponse>() {
                 @Override
-                public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                public void onResponse(Call<SprayFarmerResponse> call, Response<SprayFarmerResponse> response) {
                     progressDialog.hide();
                     try {
-                        if (response.body().getPageItems().size() != 0) {
+                        if (response.body().getPageItemsSprayFarmer().size() != 0) {
                             if (pageItemArrayList == null) {
-                                pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
-                                saveArrayList(pageItemArrayList, "viewfarmer");
+                                pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) response.body().getPageItemsSprayFarmer();
+                                saveArrayList(pageItemArrayList, "sprayfarmer");
                             } else {
-                                pageItemArrayList.addAll(response.body().getPageItems());
+                                pageItemArrayList.addAll(response.body().getPageItemsSprayFarmer());
                             }
                             setData();
                         } else {
@@ -120,23 +103,23 @@ public class SearchFarmerActivity extends AppCompatActivity {
                                 registerAdapter.setLoaded();
                             }
                             end = true;
-                            Toast.makeText(SearchFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
+                            Toast.makeText(SearchSprayActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
                         }
 
                     } catch (Exception e) {
-                        Utility.showToast(SearchFarmerActivity.this, e.getMessage());
+                        Utility.showToast(SearchSprayActivity.this, e.getMessage());
                     }
 
                 }
 
                 @Override
-                public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                public void onFailure(Call<SprayFarmerResponse> call, Throwable t) {
                     progressDialog.hide();
-                    Utility.showToast(SearchFarmerActivity.this, t.getMessage());
+                    Utility.showToast(SearchSprayActivity.this, t.getMessage());
                 }
             });
         } else {
-            pageItemArrayList = getArrayList("recruitfarmer");
+            pageItemArrayList = getArrayList("sprayfarmer");
             setData();
             progressDialog.hide();
         }
@@ -144,14 +127,14 @@ public class SearchFarmerActivity extends AppCompatActivity {
     }
 
     private void setData() {
-        registerAdapter = new SearchAdapter(rv_register,SearchFarmerActivity.this, pageItemArrayList);
+        registerAdapter = new SearchSprayAdapter(rv_register, SearchSprayActivity.this, pageItemArrayList);
         DividerItemDecoration itemDecor = new DividerItemDecoration(this, HORIZONTAL);
         rv_register.addItemDecoration(itemDecor);
         rv_register.setAdapter(registerAdapter);
 
     }
 
-    public void saveArrayList(ArrayList<PageItem> list, String key) {
+    public void saveArrayList(ArrayList<PageItemsSprayFarmer> list, String key) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         Gson gson = new Gson();
@@ -160,11 +143,11 @@ public class SearchFarmerActivity extends AppCompatActivity {
         editor.apply();     // This line is IMPORTANT !!!
     }
 
-    public ArrayList<PageItem> getArrayList(String key) {
+    public ArrayList<PageItemsSprayFarmer> getArrayList(String key) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Gson gson = new Gson();
         String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<PageItem>>() {
+        Type type = new TypeToken<ArrayList<PageItemsSprayFarmer>>() {
         }.getType();
         return gson.fromJson(json, type);
     }

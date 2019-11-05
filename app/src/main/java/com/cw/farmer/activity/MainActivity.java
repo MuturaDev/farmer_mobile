@@ -34,12 +34,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
-import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.Accountdetails;
+import com.cw.farmer.model.BankNameDB;
 import com.cw.farmer.model.BankNameResponse;
 import com.cw.farmer.model.FarmerErrorResponse;
 import com.cw.farmer.model.FarmerModel;
+import com.cw.farmer.model.FarmerModelDB;
 import com.cw.farmer.model.Identitydetails;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
@@ -282,34 +284,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_finish.setOnClickListener(this);
         et_dob.setOnClickListener(this);
 
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            Call<List<BankNameResponse>> call = service.getbankname();
+            call.enqueue(new Callback<List<BankNameResponse>>() {
+                @Override
+                public void onResponse(Call<List<BankNameResponse>> call, Response<List<BankNameResponse>> response) {
+                    ArrayList<String> spinnerArray = new ArrayList<String>();
+                    spinnerArray.clear();
+                    bank_ids = new ArrayList<Integer>();
+                    BankNameDB.deleteAll(BankNameDB.class);
+                    for (BankNameResponse bank : response.body()) {
+                        BankNameDB book = new BankNameDB(bank.getId(), bank.getBankname(), bank.getAccountformat());
+                        book.save();
+                        spinnerArray.add(bank.getBankname());
+                        bank_ids.add(bank.getId());
+                    }
+                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
+                    et_bankname.setAdapter(spinnerArrayAdapter);
+                }
+
+                @Override
+                public void onFailure(Call<List<BankNameResponse>> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            ArrayList<String> spinnerArray = new ArrayList<String>();
+            spinnerArray.clear();
+            bank_ids = new ArrayList<Integer>();
+
+            List<BankNameDB> books = BankNameDB.listAll(BankNameDB.class);
+            for (BankNameDB book : books) {
+                spinnerArray.add(book.bankname_db);
+                bank_ids.add(book.id_db);
+            }
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
+            et_bankname.setAdapter(spinnerArrayAdapter);
+        }
+
         //int selectedId = radioSexGroup.getCheckedRadioButtonId();
         //
         //			// find the radiobutton by returned id
         //		        radioSexButton = (RadioButton) findViewById(selectedId);
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
-        Call<List<BankNameResponse>> call = service.getbankname();
-        call.enqueue(new Callback<List<BankNameResponse>>() {
-            @Override
-            public void onResponse(Call<List<BankNameResponse>> call, Response<List<BankNameResponse>> response) {
-                ArrayList<String> spinnerArray = new ArrayList<String>();
-                spinnerArray.clear();
-                bank_ids = new ArrayList<Integer>();
-                for(BankNameResponse bank: response.body()) {
 
-                    spinnerArray.add(bank.getBankname());
-                    bank_ids.add(bank.getId());
-                }
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
-                et_bankname.setAdapter(spinnerArrayAdapter);
-            }
-
-            @Override
-            public void onFailure(Call<List<BankNameResponse>> call, Throwable t) {
-                Toast.makeText(MainActivity.this, t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
 
         et_bankname.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -402,14 +422,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             .setAction("Action", null).show();
                     break;
                 }
-                if (Utility.isNetworkAvailable(this)) {
-                    createFarmer();
-                }
+                createFarmer();
                 break;
         }
     }
 
     private void createFarmer() {
+
+
         SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         pDialog.setTitleText("Submitting...");
@@ -429,8 +449,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             genstr="F";
         }
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
         FarmerModel farmerModel = new FarmerModel();
         Accountdetails accountdetails = new Accountdetails();
         Identitydetails identitydetails = new Identitydetails();
@@ -456,69 +474,91 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         identitydetails.setFiletype("image/png");
         identitydetails.setDocno(et_idno.getText().toString());
 
-
         farmerModel.setAccountdetails(accountdetails);
         farmerModel.setIdentitydetails(identitydetails);
 
 
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            Call<FarmerErrorResponse> call = service.createFarmer("Basic YWRtaW46bWFudW5pdGVk", farmerModel);
+            call.enqueue(new Callback<FarmerErrorResponse>() {
+                @Override
+                public void onResponse(Call<FarmerErrorResponse> call, Response<FarmerErrorResponse> response) {
+                    pDialog.cancel();
+                    try {
+                        if (response.body() != null) {
+                            new SweetAlertDialog(MainActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                    .setTitleText("Success")
+                                    .setContentText(String.valueOf(response.body().getMessage()))
+                                    .setConfirmText("Ok")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(MainActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-        Call<FarmerErrorResponse> call = service.createFarmer("Basic YWRtaW46bWFudW5pdGVk", farmerModel);
-        call.enqueue(new Callback<FarmerErrorResponse>() {
-            @Override
-            public void onResponse(Call<FarmerErrorResponse> call, Response<FarmerErrorResponse> response) {
-                pDialog.cancel();
-                try {
-                    if (response.body()!=null){
-                        new SweetAlertDialog(MainActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                .setTitleText("Success")
-                                .setContentText(String.valueOf(response.body().getMessage()))
-                                .setConfirmText("Ok")
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(MainActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                        }
+                                    })
+                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(MainActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                    }
-                                })
-                                .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(MainActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                        }
+                                    })
+                                    .show();
 
-                                    }
-                                })
+                        } else {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("Ooops...")
+                                    .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                    .show();
+
+                        }
+
+                        //Toast.makeText(MainActivity.this, response.body().getHttpStatusCode(), Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText(e.getMessage())
                                 .show();
-
-                    }else{
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("Ooops...")
-                                .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
-                                .show();
-
                     }
 
-                    //Toast.makeText(MainActivity.this, response.body().getHttpStatusCode(), Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
+                }
+
+                @Override
+                public void onFailure(Call<FarmerErrorResponse> call, Throwable t) {
+                    pDialog.cancel();
                     new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText(e.getMessage())
+                            .setContentText(t.getMessage())
                             .show();
                 }
+            });
+        } else {
+            FarmerModelDB book = new FarmerModelDB(farmerModel.getFirstname(), farmerModel.getMobileno(), farmerModel.getEmail(), farmerModel.getGender(), et_idno.getText().toString(), farmerModel.getDateOfBirth(), farmerModel.getActivated(), farmerModel.getCenterid(), farmerModel.getDateFormat(), farmerModel.getLocale(), accountdetails.getAccountno(), accountdetails.getBankId(), accountdetails.getImage(), accountdetails.getFiletype(), identitydetails.getDocId(), identitydetails.getImage(), identitydetails.getFiletype(), identitydetails.getDocno());
+            book.save();
+            pDialog.cancel();
+            new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(MainActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                }
+                        }
+                    })
+                    .show();
+        }
 
-            @Override
-            public void onFailure(Call<FarmerErrorResponse> call, Throwable t) {
-                pDialog.cancel();
-                new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText("Oops...")
-                        .setContentText(t.getMessage())
-                        .show();
-            }
-        });
+
+
 
     }
 

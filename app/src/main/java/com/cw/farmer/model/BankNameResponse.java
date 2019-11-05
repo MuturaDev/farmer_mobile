@@ -18,6 +18,7 @@ public class BankNameResponse {
     @Expose
     private String accountformat;
 
+
     public int getId() {
         return id;
     }

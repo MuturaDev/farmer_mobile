@@ -2,8 +2,10 @@ package com.cw.farmer.model;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,10 @@ import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -72,6 +77,9 @@ public class scheme extends Fragment {
         progressDialog = new ProgressDialog(getActivity());
         if (Utility.isNetworkAvailable(getActivity())) {
             getData();
+        } else {
+            pageItemArrayList = getArrayList("viewfarmer");
+            setData();
         }
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +93,7 @@ public class scheme extends Fragment {
             @Override
             public void onClick(View view) {
                 rv_register.setLayoutManager(new LinearLayoutManager(getActivity()));
-                pageItemArrayList.clear();
+                pageItemArrayList = null;
                 registerAdapter.notifyDataSetChanged();
                 progressDialog.setCancelable(false);
                 // progressBar.setMessage("Please Wait...");
@@ -122,7 +130,7 @@ public class scheme extends Fragment {
                             }
 
                         } catch (Exception e) {
-                            Utility.showToast(getContext(), e.getMessage());
+                            //Utility.showToast(getContext(), e.getMessage());
                         }
 
                     }
@@ -130,7 +138,7 @@ public class scheme extends Fragment {
                     @Override
                     public void onFailure(Call<RegisterResponse> call, Throwable t) {
                         progressDialog.hide();
-                        Utility.showToast(getContext(), t.getMessage());
+                        ////Utility.showToast(getContext(), t.getMessage());
                     }
                 });
             }
@@ -156,6 +164,7 @@ public class scheme extends Fragment {
                     if (String.valueOf(response.body().getPageItems().size())!="0"){
                         if (pageItemArrayList==null){
                             pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
+                            saveArrayList(pageItemArrayList, "viewfarmer");
                         }else{
                             pageItemArrayList .addAll(response.body().getPageItems());
                         }
@@ -171,7 +180,7 @@ public class scheme extends Fragment {
                     }
 
                 } catch (Exception e) {
-                    Utility.showToast(getContext(), e.getMessage());
+                    ////Utility.showToast(getContext(), e.getMessage());
                 }
 
             }
@@ -179,7 +188,7 @@ public class scheme extends Fragment {
             @Override
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
                 progressDialog.hide();
-                Utility.showToast(getContext(), t.getMessage());
+                //Utility.showToast(getContext(), t.getMessage());
             }
         });
     }
@@ -220,6 +229,24 @@ public class scheme extends Fragment {
             }
         });
 
+    }
+
+    public void saveArrayList(ArrayList<PageItem> list, String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+    public ArrayList<PageItem> getArrayList(String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<PageItem>>() {
+        }.getType();
+        return gson.fromJson(json, type);
     }
 
 }

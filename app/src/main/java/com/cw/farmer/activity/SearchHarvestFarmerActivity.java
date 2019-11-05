@@ -1,7 +1,9 @@
 package com.cw.farmer.activity;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.SearchHarvestAdapter;
 import com.cw.farmer.custom.Utility;
@@ -21,7 +24,10 @@ import com.cw.farmer.model.PageItemHarvest;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -62,7 +68,13 @@ public class SearchHarvestFarmerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     public void search(View v){
-        getData();
+
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            getData();
+        } else {
+            pageItemArrayList = getArrayList("harvestfarmer");
+            setData();
+        }
     }
     private void getData() {
         progressDialog.setCancelable(false);
@@ -81,6 +93,7 @@ public class SearchHarvestFarmerActivity extends AppCompatActivity {
                     if (response.body().getPageItemHarvest().size()!=0){
                         if (pageItemArrayList==null){
                             pageItemArrayList = (ArrayList<PageItemHarvest>) response.body().getPageItemHarvest();
+                            saveArrayList(pageItemArrayList, "harvestfarmer");
                         }else{
                             pageItemArrayList .addAll(response.body().getPageItemHarvest());
                         }
@@ -114,6 +127,24 @@ public class SearchHarvestFarmerActivity extends AppCompatActivity {
         rv_register.addItemDecoration(itemDecor);
         rv_register.setAdapter(registerAdapter);
 
+    }
+
+    public void saveArrayList(ArrayList<PageItemHarvest> list, String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+    public ArrayList<PageItemHarvest> getArrayList(String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<PageItemHarvest>>() {
+        }.getType();
+        return gson.fromJson(json, type);
     }
 
 }

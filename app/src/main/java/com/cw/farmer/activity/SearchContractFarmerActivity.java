@@ -1,20 +1,22 @@
 package com.cw.farmer.activity;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
+import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.SearchContractAdapter;
 import com.cw.farmer.custom.Utility;
@@ -23,7 +25,10 @@ import com.cw.farmer.model.SearchContractResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -82,7 +87,12 @@ public class SearchContractFarmerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     public void search(View v){
-        getData();
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            getData();
+        } else {
+            pageItemArrayList = getArrayList("contractfarmer");
+            setData();
+        }
     }
     private void getData() {
         progressDialog.setCancelable(false);
@@ -99,6 +109,7 @@ public class SearchContractFarmerActivity extends AppCompatActivity {
                     if (response.body().getPageItems().size()!=0){
                         if (pageItemArrayList==null){
                             pageItemArrayList = (ArrayList<SearchContractPageItem>) response.body().getPageItems();
+                            saveArrayList(pageItemArrayList, "contractfarmer");
                         }else{
                             pageItemArrayList .addAll(response.body().getPageItems());
                         }
@@ -132,5 +143,23 @@ public class SearchContractFarmerActivity extends AppCompatActivity {
         rv_register.addItemDecoration(itemDecor);
         rv_register.setAdapter(registerAdapter);
 
+    }
+
+    public void saveArrayList(ArrayList<SearchContractPageItem> list, String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+    public ArrayList<SearchContractPageItem> getArrayList(String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<SearchContractPageItem>>() {
+        }.getType();
+        return gson.fromJson(json, type);
     }
 }

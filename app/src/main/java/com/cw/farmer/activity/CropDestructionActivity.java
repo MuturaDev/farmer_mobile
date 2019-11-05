@@ -25,8 +25,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
+import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
+import com.cw.farmer.model.CropDestructionDB;
+import com.cw.farmer.model.CropDestructionPostDB;
 import com.cw.farmer.model.DestructionReasonResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
@@ -137,32 +140,55 @@ public class CropDestructionActivity extends AppCompatActivity {
             spinnerArray1.clear();
             String units =(String) b.get("units");
 
-
-            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-            APIService service = retrofit.create(APIService.class);
-            Call<List<DestructionReasonResponse>> call = service.getdestructionreasons();
-            call.enqueue(new Callback<List<DestructionReasonResponse>>() {
-                @Override
-                public void onResponse(Call<List<DestructionReasonResponse>> call, Response<List<DestructionReasonResponse>> response) {
-                    ArrayList<String> spinnerArray = new ArrayList<String>();
-                    spinnerArray.clear();
-                    reason_ids = new ArrayList<Integer>();
-                    reason_main = new ArrayList<String>();
-                    for(DestructionReasonResponse reason: response.body()) {
-
-                        spinnerArray.add(reason.getDestructionShtDesc());
-                        reason_ids.add(reason.getId());
-                        reason_main.add(reason.getDestructionType());
+            if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                Call<List<DestructionReasonResponse>> call = service.getdestructionreasons();
+                call.enqueue(new Callback<List<DestructionReasonResponse>>() {
+                    @Override
+                    public void onResponse(Call<List<DestructionReasonResponse>> call, Response<List<DestructionReasonResponse>> response) {
+                        ArrayList<String> spinnerArray = new ArrayList<String>();
+                        spinnerArray.clear();
+                        reason_ids = new ArrayList<Integer>();
+                        reason_main = new ArrayList<String>();
+                        CropDestructionDB.deleteAll(CropDestructionDB.class);
+                        for (DestructionReasonResponse reason : response.body()) {
+                            CropDestructionDB book = new CropDestructionDB(reason.getId(), reason.getDestructionShtDesc(), reason.getDestructionReason(), reason.getDestructionType());
+                            book.save();
+                            spinnerArray.add(reason.getDestructionShtDesc());
+                            reason_ids.add(reason.getId());
+                            reason_main.add(reason.getDestructionType());
+                        }
+                        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(CropDestructionActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
+                        reason_destruction.setAdapter(spinnerArrayAdapter);
                     }
-                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(CropDestructionActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
-                    reason_destruction.setAdapter(spinnerArrayAdapter);
+
+                    @Override
+                    public void onFailure(Call<List<DestructionReasonResponse>> call, Throwable t) {
+                        Toast.makeText(CropDestructionActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else {
+                spinnerArray = new ArrayList<String>();
+                spinnerArray.clear();
+                reason_ids = new ArrayList<Integer>();
+                reason_main = new ArrayList<String>();
+                List<CropDestructionDB> books = CropDestructionDB.listAll(CropDestructionDB.class);
+
+                for (CropDestructionDB book : books) {
+                    spinnerArray.add(book.destructionShtDesc);
+                    reason_ids.add(book.id_reason);
+                    reason_main.add(book.destructionType);
+
+
                 }
 
-                @Override
-                public void onFailure(Call<List<DestructionReasonResponse>> call, Throwable t) {
-                    Toast.makeText(CropDestructionActivity.this, t.toString(), Toast.LENGTH_LONG).show();
-                }
-            });
+                spinnerArrayAdapter = new ArrayAdapter<String>(CropDestructionActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
+                reason_destruction.setAdapter(spinnerArrayAdapter);
+            }
+
+
+
 
             reason_destruction.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -297,74 +323,95 @@ public class CropDestructionActivity extends AppCompatActivity {
         pDialog.setTitleText("Submitting Crop Destruction Data...");
         pDialog.setCancelable(false);
         pDialog.show();
-        HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("cropDatesId",cropDateId_list.get(codedate_destruction.getSelectedItemPosition()).toString());
-        hashMap.put("accountNumber",accountNumber_string);
-        hashMap.put("unit", noofunits_destruction.getText().toString());
-        hashMap.put("farmers_id",farmer_id_string);
-        hashMap.put("file",getBase64FromPath());
-        hashMap.put("locale","en");
-        hashMap.put("cropDestructionType",reason_main.get(reason_destruction.getSelectedItemPosition()).toString());
-        hashMap.put("cropDestructionReasonsId",reason_ids.get(reason_destruction.getSelectedItemPosition()).toString());
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("cropDatesId", cropDateId_list.get(codedate_destruction.getSelectedItemPosition()).toString());
+            hashMap.put("accountNumber", accountNumber_string);
+            hashMap.put("unit", noofunits_destruction.getText().toString());
+            hashMap.put("farmers_id", farmer_id_string);
+            hashMap.put("file", getBase64FromPath());
+            hashMap.put("locale", "en");
+            hashMap.put("cropDestructionType", reason_main.get(reason_destruction.getSelectedItemPosition()).toString());
+            hashMap.put("cropDestructionReasonsId", reason_ids.get(reason_destruction.getSelectedItemPosition()).toString());
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
-        Call<AllResponse> call = service.postcropdestruction("Basic YWRtaW46bWFudW5pdGVk",hashMap);
-        call.enqueue(new Callback<AllResponse>() {
-            @Override
-            public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                pDialog.dismissWithAnimation();
-                try {
-                    if (response.body()!=null){
-                        new SweetAlertDialog(CropDestructionActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                .setTitleText("Success")
-                                .setContentText("You have successfully submitted "+farmer_destruction.getText()+" crop destruction details")
-                                .setConfirmText("Ok")
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(CropDestructionActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            Call<AllResponse> call = service.postcropdestruction("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+            call.enqueue(new Callback<AllResponse>() {
+                @Override
+                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                    pDialog.dismissWithAnimation();
+                    try {
+                        if (response.body() != null) {
+                            new SweetAlertDialog(CropDestructionActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                    .setTitleText("Success")
+                                    .setContentText("You have successfully submitted " + farmer_destruction.getText() + " crop destruction details")
+                                    .setConfirmText("Ok")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(CropDestructionActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                    }
-                                })
-                                .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(CropDestructionActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                        }
+                                    })
+                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(CropDestructionActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                    }
-                                })
+                                        }
+                                    })
+                                    .show();
+
+                        } else {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            new SweetAlertDialog(CropDestructionActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("Ooops...")
+                                    .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                    .show();
+
+                        }
+                    } catch (Exception e) {
+                        new SweetAlertDialog(CropDestructionActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText(e.getMessage())
                                 .show();
-
-                    }else{
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        new SweetAlertDialog(CropDestructionActivity.this, SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("Ooops...")
-                                .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
-                                .show();
-
                     }
-                } catch (Exception e) {
+                    //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onFailure(Call<AllResponse> call, Throwable t) {
+                    pDialog.cancel();
                     new SweetAlertDialog(CropDestructionActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText(e.getMessage())
+                            .setContentText(t.getMessage())
                             .show();
                 }
-                //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+            });
+        } else {
+            System.out.println("See me " + reason_ids.get(reason_destruction.getSelectedItemPosition()).toString());
+            CropDestructionPostDB book = new CropDestructionPostDB(cropDateId_list.get(codedate_destruction.getSelectedItemPosition()).toString(), accountNumber_string, noofunits_destruction.getText().toString(), farmer_id_string, getBase64FromPath(), "en", reason_main.get(reason_destruction.getSelectedItemPosition()).toString(), reason_ids.get(reason_destruction.getSelectedItemPosition()).toString());
+            book.save();
+            pDialog.cancel();
+            new SweetAlertDialog(CropDestructionActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(CropDestructionActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-            }
+                        }
+                    })
+                    .show();
+        }
 
-            @Override
-            public void onFailure(Call<AllResponse> call, Throwable t) {
-                pDialog.cancel();
-                new SweetAlertDialog(CropDestructionActivity.this, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText("Oops...")
-                        .setContentText(t.getMessage())
-                        .show();
-            }
-        });
     }
 
 }
