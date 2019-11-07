@@ -90,7 +90,7 @@ public class SearchFarmerActivity extends AppCompatActivity {
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             getData();
         } else {
-            pageItemArrayList = getArrayList("viewfarmer");
+            pageItemArrayList = getArrayList("viewrecruitfarmer");
             setData();
         }
     }
@@ -107,19 +107,12 @@ public class SearchFarmerActivity extends AppCompatActivity {
                 public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                     progressDialog.hide();
                     try {
-                        if (response.body().getPageItems().size() != 0) {
-                            if (pageItemArrayList == null) {
-                                pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
-                                saveArrayList(pageItemArrayList, "viewfarmer");
-                            } else {
-                                pageItemArrayList.addAll(response.body().getPageItems());
-                            }
+                        if (String.valueOf(response.body().getPageItems().size()) != "0") {
+                            pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
+                            saveArrayList(pageItemArrayList, "viewrecruitfarmer");
                             setData();
                         } else {
-                            if (registerAdapter != null) {
-                                registerAdapter.setLoaded();
-                            }
-                            end = true;
+
                             Toast.makeText(SearchFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
                         }
 

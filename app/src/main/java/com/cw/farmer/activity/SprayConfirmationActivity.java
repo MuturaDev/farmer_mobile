@@ -409,9 +409,7 @@ public class SprayConfirmationActivity extends AppCompatActivity {
 
     }
 
-    public void onpenlocation(View v) {
 
-    }
 
 
 }

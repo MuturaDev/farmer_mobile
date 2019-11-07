@@ -87,19 +87,10 @@ public class SearchDestructionFarmerActivity extends AppCompatActivity {
                 try {
 
                     if (response.body().getPageItemsDestruction().size()!=0){
-                        if (pageItemArrayList==null){
-                            pageItemArrayList = (ArrayList<PageItemsDestruction>) response.body().getPageItemsDestruction();
-                            saveArrayList(pageItemArrayList, "destructionfarmer");
-                        }else{
-                            pageItemArrayList .addAll(response.body().getPageItemsDestruction());
-                        }
+                        pageItemArrayList = (ArrayList<PageItemsDestruction>) response.body().getPageItemsDestruction();
+                        saveArrayList(pageItemArrayList, "destructionfarmer");
                         setData();
                     }else {
-                        if (registerAdapter!=null)
-                        {
-                            registerAdapter.setLoaded();
-                        }
-                        end =true;
                         Toast.makeText(SearchDestructionFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
                     }
 

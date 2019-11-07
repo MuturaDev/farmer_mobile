@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -91,18 +92,10 @@ public class SearchSprayActivity extends AppCompatActivity {
                     progressDialog.hide();
                     try {
                         if (response.body().getPageItemsSprayFarmer().size() != 0) {
-                            if (pageItemArrayList == null) {
-                                pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) response.body().getPageItemsSprayFarmer();
-                                saveArrayList(pageItemArrayList, "sprayfarmer");
-                            } else {
-                                pageItemArrayList.addAll(response.body().getPageItemsSprayFarmer());
-                            }
+                            pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) response.body().getPageItemsSprayFarmer();
+                            saveArrayList(pageItemArrayList, "sprayfarmer");
                             setData();
                         } else {
-                            if (registerAdapter != null) {
-                                registerAdapter.setLoaded();
-                            }
-                            end = true;
                             Toast.makeText(SearchSprayActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
                         }
 
@@ -150,6 +143,10 @@ public class SearchSprayActivity extends AppCompatActivity {
         Type type = new TypeToken<ArrayList<PageItemsSprayFarmer>>() {
         }.getType();
         return gson.fromJson(json, type);
+    }
+
+    public void search_button(View v) {
+        search();
     }
 
 }

@@ -82,18 +82,9 @@ public class RegisterActivity extends AppCompatActivity {
                 progressDialog.hide();
                 try {
                     if (response.body().getPageItems().size()!=0){
-                        if (pageItemArrayList==null){
-                            pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
-                        }else{
-                            pageItemArrayList .addAll(response.body().getPageItems());
-                        }
+                        pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
                         setData();
                     }else {
-                        if (registerAdapter!=null)
-                        {
-                            registerAdapter.setLoaded();
-                        }
-                        end =true;
                         Toast.makeText(RegisterActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
                     }
 

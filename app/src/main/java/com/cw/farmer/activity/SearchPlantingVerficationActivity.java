@@ -88,19 +88,10 @@ public class SearchPlantingVerficationActivity extends AppCompatActivity {
                     System.out.println(response.body().getPageItemsPlantVerify());
 
                     if (response.body().getPageItemsPlantVerify().size()!=0){
-                        if (pageItemArrayList==null){
-                            pageItemArrayList = (ArrayList<PageItemsPlantVerify>) response.body().getPageItemsPlantVerify();
-                            saveArrayList(pageItemArrayList, "verifyplantingfarmer");
-                        }else{
-                            pageItemArrayList .addAll(response.body().getPageItemsPlantVerify());
-                        }
+                        pageItemArrayList = (ArrayList<PageItemsPlantVerify>) response.body().getPageItemsPlantVerify();
+                        saveArrayList(pageItemArrayList, "verifyplantingfarmer");
                         setData();
                     }else {
-                        if (registerAdapter!=null)
-                        {
-                            registerAdapter.setLoaded();
-                        }
-                        end =true;
                         Toast.makeText(SearchPlantingVerficationActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
                     }
 

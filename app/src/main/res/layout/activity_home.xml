@@ -30,31 +30,26 @@
 
                 >
 
-                <com.cw.farmer.customfonts.TextView_ProximaNova_Regular
+                <TextView
                     android:id="@+id/tvtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:layout_weight="1"
-                    android:fontFamily="sans-serif"
-                    android:letterSpacing="0.1"
+                    android:layout_marginLeft="@dimen/dimen_18"
                     android:text="My Activities"
                     android:textSize="18dp"
                     android:textStyle="bold"
                     android:visibility="visible" />
 
-                <Button
-
-                    android:id="@+id/btn_search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/dimen_10"
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
                     android:onClick="offlinesync"
                     android:padding="5dp"
-                    android:text="Online synchronize"
-                    android:textAllCaps="true"
-                    android:textColor="@color/colorblack"
-                    android:typeface="normal" />
+                    android:src="@drawable/sync" />
+
             </LinearLayout>
 
 

@@ -107,19 +107,10 @@ public class SearchContractFarmerActivity extends AppCompatActivity {
                 progressDialog.hide();
                 try {
                     if (response.body().getPageItems().size()!=0){
-                        if (pageItemArrayList==null){
-                            pageItemArrayList = (ArrayList<SearchContractPageItem>) response.body().getPageItems();
-                            saveArrayList(pageItemArrayList, "contractfarmer");
-                        }else{
-                            pageItemArrayList .addAll(response.body().getPageItems());
-                        }
+                        pageItemArrayList = (ArrayList<SearchContractPageItem>) response.body().getPageItems();
+                        saveArrayList(pageItemArrayList, "contractfarmer");
                         setData();
                     }else {
-                        if (registerAdapter!=null)
-                        {
-                            registerAdapter.setLoaded();
-                        }
-                        end =true;
                         Toast.makeText(SearchContractFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
                     }
 

@@ -53,6 +53,11 @@ public class FarmerDetailsActivity extends AppCompatActivity {
             tv_address.setText("Mobile No : " + pageItem.getMobileno());
             String gender="";
             dob=(String) bundle.get("dob");
+            if (pageItem.getGender().equals("M")) {
+                gender = "Male";
+            } else {
+                gender = "Female";
+            }
 
             tv_gender.setText("Gender : " +gender );
             tv_centername.setText("Center : " + pageItem.getCentername());

@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cw.farmer.OnLoadMoreListener;
 import com.cw.farmer.R;
 import com.cw.farmer.activity.MainActivity;
 import com.cw.farmer.adapter.RegisterAdapter;
@@ -75,12 +73,7 @@ public class scheme extends Fragment {
         search = root.findViewById(R.id.search);
         rv_register.setLayoutManager(new LinearLayoutManager(getActivity()));
         progressDialog = new ProgressDialog(getActivity());
-        if (Utility.isNetworkAvailable(getActivity())) {
-            getData();
-        } else {
-            pageItemArrayList = getArrayList("viewfarmer");
-            setData();
-        }
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,55 +85,12 @@ public class scheme extends Fragment {
         btn_search_farm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rv_register.setLayoutManager(new LinearLayoutManager(getActivity()));
-                pageItemArrayList = null;
-                registerAdapter.notifyDataSetChanged();
-                progressDialog.setCancelable(false);
-                // progressBar.setMessage("Please Wait...");
-                progressDialog.show();
-                Retrofit retrofit = ApiClient.getClient("/authentication/", getContext());
-                APIService service = retrofit.create(APIService.class);
-                Call<RegisterResponse> call = service.getRegister(0,0,search.getText().toString());
-                call.enqueue(new Callback<RegisterResponse>() {
-                    @Override
-                    public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                        progressDialog.hide();
-                        try {
-                            if (String.valueOf(response.body().getPageItems().size())!="0"){
-//                                    if (pageItemArrayList==null){
-//                                        pageItemArrayList = response.body().getPageItems();
-//                                    }else{
-//                                        pageItemArrayList.removeAll();
-//                                        pageItemArrayList .addAll(response.body().getPageItems());
-//                                    }
-
-                                pageItemArrayList .addAll(response.body().getPageItems());
-                                registerAdapter.notifyItemRangeInserted(0, pageItemArrayList.size());
-                                end =true;
-                                setData();
-
-                            }else {
-                                if (registerAdapter!=null)
-                                {
-                                    registerAdapter.setLoaded();
-                                }
-                                end =true;
-                                Snackbar.make(root, "Search Not Found", Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null).show();
-                            }
-
-                        } catch (Exception e) {
-                            //Utility.showToast(getContext(), e.getMessage());
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                        progressDialog.hide();
-                        ////Utility.showToast(getContext(), t.getMessage());
-                    }
-                });
+                if (Utility.isNetworkAvailable(getActivity())) {
+                    getData();
+                } else {
+                    pageItemArrayList = getArrayList("viewfarmer");
+                    setData();
+                }
             }
         });
 
@@ -149,32 +99,24 @@ public class scheme extends Fragment {
     }
 
     private void getData() {
-        //progressDialog.setCancelable(false);
-        // progressBar.setMessage("Please Wait...");
-        //progressDialog.show();
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Please Wait...");
+        progressDialog.show();
         Retrofit retrofit = ApiClient.getClient("/authentication/", getContext());
         APIService service = retrofit.create(APIService.class);
-        Call<RegisterResponse> call = service.getRegister(limit,offset,null);
+        Call<RegisterResponse> call = service.getRegister(limit, offset, search.getText().toString());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                //progressDialog.hide();
+                progressDialog.hide();
                 try {
                     //Toast.makeText(getContext(),String.valueOf( response.body().getPageItems().size()), Toast.LENGTH_LONG).show();
                     if (String.valueOf(response.body().getPageItems().size())!="0"){
-                        if (pageItemArrayList==null){
-                            pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
-                            saveArrayList(pageItemArrayList, "viewfarmer");
-                        }else{
-                            pageItemArrayList .addAll(response.body().getPageItems());
-                        }
+                        pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
+                        saveArrayList(pageItemArrayList, "viewfarmer");
                         setData();
                     }else {
-                        if (registerAdapter!=null)
-                        {
-                            registerAdapter.setLoaded();
-                        }
-                        end =true;
+
                         Snackbar.make(root, "No more records available", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     }
@@ -198,36 +140,7 @@ public class scheme extends Fragment {
         DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
         rv_register.addItemDecoration(itemDecor);
         //rv_register.setAdapter(registerAdapter);
-        if (offset == 0) {
-            rv_register.setAdapter(registerAdapter);
-        }else{
-            registerAdapter.setdata(pageItemArrayList);
-            rv_register.scrollToPosition(pageItemArrayList.size());
-        }
-        registerAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                pageItemArrayList.add(null);
-                registerAdapter.notifyItemInserted(pageItemArrayList.size() - 1);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pageItemArrayList.remove(pageItemArrayList.size() - 1);
-                        registerAdapter.notifyItemRemoved(pageItemArrayList.size());
-                        //  rv_feed.scrollToPosition(feedDataArrayList.size()-1);
-                        //Generating more data
-                        int index = pageItemArrayList.size();
-                        offset = offset + limit;
-                        if (!end)
-                        {
-                            getData();
-                        }
-                        //feedAdapter.notifyDataSetChanged();
-                    }
-                }, 1000);
-
-            }
-        });
+        rv_register.setAdapter(registerAdapter);
 
     }
 

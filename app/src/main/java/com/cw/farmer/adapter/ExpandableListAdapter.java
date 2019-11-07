@@ -1,7 +1,4 @@
 package com.cw.farmer.adapter;
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -15,6 +12,9 @@ import android.widget.TextView;
 
 import com.cw.farmer.R;
 import com.cw.farmer.activity.RequisitionActivity;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
@@ -121,10 +121,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.image_see);
         if (headerTitle =="Receive Inventory"){
             image_v.setImageResource(R.drawable.hans);
-        }else if (headerTitle =="Manage Sprays"){
-            image_v.setImageResource(R.drawable.checkbox);
         }else{
-            image_v.setImageResource(R.drawable.planting);
+            image_v.setImageResource(R.drawable.message);
         }
 
 

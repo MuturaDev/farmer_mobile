@@ -56,7 +56,7 @@ public class ContractSignActivity extends AppCompatActivity {
     private File compressedImageFile;
     EditText farmer,noofunits,codedate,contract_refno;
     String farmer_id_string;
-    String planting_id_string;
+    String planting_id_string, noofunits_text;
 
     int PERMISSION_ALL = 1;
     String[] PERMISSIONS = {
@@ -112,7 +112,7 @@ public class ContractSignActivity extends AppCompatActivity {
             String crop_date =(String) b.get("crop_date");
             codedate.setText(crop_date);
 
-            String noofunits_text =(String) b.get("noofunits");
+            noofunits_text = (String) b.get("noofunits");
             noofunits.setText(noofunits_text);
 
             String plantingid =(String) b.get("plantingid");
@@ -252,16 +252,39 @@ public class ContractSignActivity extends AppCompatActivity {
             codedate.setError(null);
         }
 
-        if (noofunits.getText().toString().isEmpty()) {
+        //noofunits_text
+        int current;
+        if (noofunits.getText().toString().equals("")) {
+            current = 0;
+        } else {
+            current = Integer.parseInt(noofunits.getText().toString());
+        }
+        int correct;
+        if (noofunits.getText().toString().equals("")) {
+            correct = 0;
+        } else {
+            correct = Integer.parseInt(noofunits_text) + 1;
+        }
+        System.out.println(correct + "<" + current);
 
+        if (noofunits.getText().toString().isEmpty()) {
+            String message = "Must input no of units";
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
-            SpannableStringBuilder ssbuilder = new SpannableStringBuilder("must select a farmer to have the number of units field filled");
-            ssbuilder.setSpan(fgcspan, 0, "must select a farmer to have the number of units field filled".length(), 0);
+            SpannableStringBuilder ssbuilder = new SpannableStringBuilder(message);
+            ssbuilder.setSpan(fgcspan, 0, message.length(), 0);
+            noofunits.setError(ssbuilder);
+            valid = false;
+        } else if (correct < current) {
+            String message = "Max no of units can only " + noofunits_text + " below";
+            ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
+            SpannableStringBuilder ssbuilder = new SpannableStringBuilder(message);
+            ssbuilder.setSpan(fgcspan, 0, message.length(), 0);
             noofunits.setError(ssbuilder);
             valid = false;
         } else {
             noofunits.setError(null);
         }
+
 
         if (contract_refno.getText().toString().isEmpty()) {
 
@@ -273,6 +296,11 @@ public class ContractSignActivity extends AppCompatActivity {
         } else {
             contract_refno.setError(null);
         }
+        if (getBase64FromPath().equals("")) {
+            Toast.makeText(ContractSignActivity.this, "Must upload the contract image", Toast.LENGTH_LONG).show();
+            valid = false;
+        }
+
         return valid;
     }
     public void contract_sign(View v){

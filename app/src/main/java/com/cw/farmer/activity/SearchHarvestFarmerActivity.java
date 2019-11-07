@@ -91,19 +91,10 @@ public class SearchHarvestFarmerActivity extends AppCompatActivity {
                     System.out.println(response.body().getPageItemHarvest());
 
                     if (response.body().getPageItemHarvest().size()!=0){
-                        if (pageItemArrayList==null){
-                            pageItemArrayList = (ArrayList<PageItemHarvest>) response.body().getPageItemHarvest();
-                            saveArrayList(pageItemArrayList, "harvestfarmer");
-                        }else{
-                            pageItemArrayList .addAll(response.body().getPageItemHarvest());
-                        }
+                        pageItemArrayList = (ArrayList<PageItemHarvest>) response.body().getPageItemHarvest();
+                        saveArrayList(pageItemArrayList, "harvestfarmer");
                         setData();
                     }else {
-                        if (registerAdapter!=null)
-                        {
-                            registerAdapter.setLoaded();
-                        }
-                        end =true;
                         Toast.makeText(SearchHarvestFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
                     }
 

@@ -113,10 +113,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // Got last known location. In some rare situations this can be null.
                         // GPS location can be null if GPS is switched off
                         SharedPreferences.Editor editor = getSharedPreferences("location", MODE_PRIVATE).edit();
-
-
-                        double currentLat = location.getLatitude();
-                        double currentLong = location.getLongitude();
+                        String latitude = location + "";
+                        Double latitude_final;
+                        String longitude = location + "";
+                        Double longitude_final;
+                        System.out.println(latitude);
+                        if (latitude == null) {
+                            latitude_final = 12345678.3456;
+                        } else {
+                            latitude_final = location.getLatitude();
+                        }
+                        if (longitude == null) {
+                            longitude_final = 12345678.3456;
+                        } else {
+                            longitude_final = location.getLongitude();
+                        }
+                        double currentLat = latitude_final;
+                        double currentLong = longitude_final;
                         String coordinates = currentLat + "," + currentLong;
                         Log.d(TAG, "1 coordinates" + coordinates);
                         editor.putString("coordinates", coordinates);
@@ -194,16 +207,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         //Set the values
                         String center_idss = "";
+                        String center_names = "";
                         for (CentreId elem : response.body().getCentreId()) {
                             center_idss = elem.getCenterId() + "," + center_idss;
+                            center_names = elem.getCentreName() + "," + center_names;
                         }
                         center_idss = removeLastChar(center_idss);
+                        center_names = removeLastChar(center_names);
                         SharedPreferences mEdit1 = getSharedPreferences("PERMISSIONS", Context.MODE_PRIVATE);
                         SharedPreferences.Editor scoreEditor = mEdit1.edit();
                         scoreEditor.putString("userid", center_idss + "");
                         scoreEditor.putString("username", et_username.getText().toString());
                         scoreEditor.putString("password", et_password.getText().toString());
                         scoreEditor.putString("enter", "yes");
+                        scoreEditor.putString("center_names", center_names);
+                        scoreEditor.putString("center_ids", center_idss);
+
 
                         Set<String> set = new HashSet<String>();
                         set.addAll(response.body().getPermissions());
@@ -212,7 +231,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         //Utility.showToast(LoginActivity.this,center_idss);
 
-                        startActivity(new Intent(LoginActivity.this,HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
                     }
                 }catch (Exception e){

@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -79,10 +80,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText et_firstName, et_phoneno, et_idno, et_dob, et_accountno;
     private RadioGroup radioSexGroup;
     private RadioButton radioSexButton;
-    private Spinner et_bankname,document_type;
+    List<Integer> bank_ids, center_id_submit;
     ProgressDialog progressDialog;
     TextView doberror;
-    List<Integer> bank_ids;
+    private Spinner et_bankname, centre_id;
 
     int PERMISSION_ALL = 1;
     String[] PERMISSIONS = {
@@ -171,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return valid;
     }
+
     public boolean validate_bank() {
         boolean valid = true;
         int errorColor;
@@ -202,6 +204,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             valid = false;
         }
+        if (getBase64FromPathBank().equals("")) {
+            Toast.makeText(MainActivity.this, "Must upload the bank ATM card image", Toast.LENGTH_LONG).show();
+            valid = false;
+        }
 
 
         return valid;
@@ -227,6 +233,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             valid = false;
         } else {
             et_idno.setError(null);
+        }
+
+
+        if (getBase64FromPath().equals("")) {
+            Toast.makeText(MainActivity.this, "Must upload ID Document image ", Toast.LENGTH_LONG).show();
+            valid = false;
         }
 
 
@@ -267,6 +279,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cv_farmer_det = findViewById(R.id.cv_farmer_det);
         cv_bank_det = findViewById(R.id.cv_bank_det);
         cv_document = findViewById(R.id.cv_document);
+
+        centre_id = findViewById(R.id.centre_id);
 
         //IMAGE IVON INSTANT
         iv_arrow_icon.setOnClickListener(this);
@@ -323,6 +337,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
             et_bankname.setAdapter(spinnerArrayAdapter);
         }
+
+        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String center_names = prefs.getString("center_names", "");
+        String center_ids = prefs.getString("center_ids", "");
+        //centre_id
+        String[] namesList = center_names.split(",");
+        String[] center_idlist = center_ids.split(",");
+        ArrayList<String> spinnerArray123 = new ArrayList<String>();
+        spinnerArray123.clear();
+        for (String name : namesList) {
+            spinnerArray123.add(name);
+            //System.out.println(name);
+        }
+        center_id_submit = new ArrayList<Integer>();
+
+        for (String centre : center_idlist) {
+            System.out.println(centre);
+            center_id_submit.add(Integer.valueOf(centre));
+        }
+        ArrayAdapter<String> spinnerArrayAdapter123 = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray123);
+        centre_id.setAdapter(spinnerArrayAdapter123);
+        if (namesList.length < 2) {
+            centre_id.setVisibility(View.INVISIBLE);
+        }
+
 
         //int selectedId = radioSexGroup.getCheckedRadioButtonId();
         //
@@ -449,6 +488,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             genstr="F";
         }
 
+
         FarmerModel farmerModel = new FarmerModel();
         Accountdetails accountdetails = new Accountdetails();
         Identitydetails identitydetails = new Identitydetails();
@@ -460,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         farmerModel.getIdno(et_idno.getText().toString().trim());
         farmerModel.setDateOfBirth(et_dob.getText().toString().trim());
         farmerModel.setActivated("true");
-        farmerModel.setCenterid(5);
+        farmerModel.setCenterid(center_id_submit.get(centre_id.getSelectedItemPosition()));
         farmerModel.setDateFormat("DD-MM-YYYY");
         farmerModel.setLocale("en");
 

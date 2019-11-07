@@ -133,12 +133,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         user_id=prefs.getString("userid", "-1");
+        setSupportActionBar(toolbar);
         // preparing list data
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             prepareListData();
         }
 
-        setSupportActionBar(toolbar);
+
         //offlinesync();
 
     }
@@ -251,7 +252,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             // Adding child data
                         listDataHeader.add("Message");
                         //listDataHeader.add("");
-                        List<String> planting = new ArrayList<String>();
+                        List<String> message = new ArrayList<String>();
                         List<String> invent = new ArrayList<String>();
                         for(PageItemstask taks: response.body().getPageItemstasks()) {
 
@@ -261,14 +262,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                     date = elem + "/" + date;
                                 }
                                 invent.add(taks.getCentrename() + " ,Planting," + removeLastChar(date) + " ," + taks.getEntityId());
-                            }else{
-                                String date = "";
-                                for (int elem : taks.getCreatedOn()) {
-                                    date = elem + "/" + date;
-                                }
-                                invent.add(taks.getCentrename() + " ,Inventory," + removeLastChar(date) + " ," + taks.getEntityId());
                             }
-                            System.out.println(taks.getCentreid());
+
 
                         }
 
@@ -539,11 +534,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             List<CropDestructionPostDB> destroys = CropDestructionPostDB.listAll(CropDestructionPostDB.class);
-            SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-            pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-            pDialog.setTitleText("Synchronizing offline data to online ...");
-            pDialog.setCancelable(false);
-            pDialog.show();
+
             for (CropDestructionPostDB destroy : destroys) {
                 HashMap<String, String> hashMap = new HashMap<>();
                 hashMap.put("cropDatesId", destroy.cropDatesId);
@@ -554,6 +545,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 hashMap.put("locale", destroy.locale);
                 hashMap.put("cropDestructionType", destroy.cropDestructionType);
                 hashMap.put("cropDestructionReasonsId", destroy.cropDestructionReasonsId);
+
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Synchronizing offline data to online ...");
+                pDialog.setCancelable(false);
+                pDialog.show();
 
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
@@ -592,6 +589,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             List<HarvestingDB> harvests = HarvestingDB.listAll(HarvestingDB.class);
             for (HarvestingDB harvest : harvests) {
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Synchronizing offline data to online ...");
+                pDialog.setCancelable(false);
+                pDialog.show();
                 HashMap<String, String> hashMap = new HashMap<>();
                 hashMap.put("dateid", harvest.dateid);
                 hashMap.put("noofunits", harvest.noofunits);
@@ -641,6 +643,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 hashMap.put("location", prefs.getString("location_str", "offline"));
                 hashMap.put("sprayconfirmed", spray.sprayconfirmed);
                 hashMap.put("programid", spray.programid);
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Synchronizing offline data to online ...");
+                pDialog.setCancelable(false);
+                pDialog.show();
 
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
