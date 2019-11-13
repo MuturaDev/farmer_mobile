@@ -119,10 +119,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         ImageView image_v = (ImageView) convertView
                 .findViewById(R.id.image_see);
-        if (headerTitle =="Receive Inventory"){
+        if (headerTitle == "Spray") {
             image_v.setImageResource(R.drawable.hans);
         }else{
-            image_v.setImageResource(R.drawable.message);
+            image_v.setImageResource(R.drawable.planting);
         }
 
 

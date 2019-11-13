@@ -42,5 +42,6 @@
     <string name="title_activity_update_docs">Update Documents</string>
     <string name="title_activity_spray_confirmation">Spray Confirmation</string>
     <string name="title_activity_search_spray">Search spraying farmer</string>
+    <string name="title_activity_my_dashboard">My Dashboard</string>
 
 </resources>

@@ -1,11 +1,13 @@
 package com.cw.farmer.server;
 
+import com.cw.farmer.model.AdhocResponse;
 import com.cw.farmer.model.AllCentreResponse;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.BankNameResponse;
 import com.cw.farmer.model.BlacklistPostResponse;
 import com.cw.farmer.model.BlacklistResponse;
 import com.cw.farmer.model.CropDateResponse;
+import com.cw.farmer.model.DashboardResponse;
 import com.cw.farmer.model.DestructionReasonResponse;
 import com.cw.farmer.model.FarmerAccountsResponse;
 import com.cw.farmer.model.FarmerDocResponse;
@@ -160,6 +162,14 @@ public interface APIService {
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/sprayconfirmation")
     Call<AllResponse> spraypost(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/statistics/{id}")
+    Call<DashboardResponse> getdashboard(@Path("id") String groupId);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @GET("/fineract-provider/api/v1/tasks/adhoctasks")
+    Call<AdhocResponse> getAdhoc(@Query("centerId") String centerId);
 
 
 

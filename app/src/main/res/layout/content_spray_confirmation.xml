@@ -20,6 +20,24 @@
             android:padding="10sp">
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:text="Spray Number"
+                android:textColor="@color/textColor" />
+
+            <Spinner
+                android:id="@+id/spraynumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/border_edittext"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/document_type"
+                android:hint="crop date"></Spinner>
+
+
+            <TextView
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,7 +59,7 @@
                     android:focusable="false"
                     android:hint="Select farmer"
                     android:imeOptions="actionSearch"
-                    android:padding="15dp" />
+                    android:padding="10dp" />
             </RelativeLayout>
 
             <TextView
@@ -60,7 +78,7 @@
                 android:drawSelectorOnTop="true"
                 android:entries="@array/section"
                 android:hint=""
-                android:padding="15dp" />
+                android:padding="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -76,24 +94,9 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/border_edittext"
                 android:inputType="numberSigned|number"
-                android:padding="15dp" />
+                android:padding="10dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dimen_10"
-                android:text="Spray Number"
-                android:textColor="@color/textColor" />
 
-            <Spinner
-                android:id="@+id/spraynumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/border_edittext"
-                android:drawSelectorOnTop="true"
-                android:hint="Bank Name"
-                android:padding="15dp" />
 
             <Button
                 android:id="@+id/btn_recruit"

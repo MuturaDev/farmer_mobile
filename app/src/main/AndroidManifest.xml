@@ -21,6 +21,15 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
+            android:name=".activity.MyDashboardActivity"
+            android:label="@string/title_activity_my_dashboard"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.HomeActivity" />
+        </activity>
+        <activity
             android:name=".activity.SearchSprayActivity"
             android:label="@string/title_activity_search_spray"
             android:parentActivityName=".activity.HomeActivity"

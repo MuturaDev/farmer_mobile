@@ -13,19 +13,22 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
+import com.cw.farmer.adapter.AdhocAdapter;
 import com.cw.farmer.adapter.DashboardAdapter;
 import com.cw.farmer.adapter.ExpandableListAdapter;
-import com.cw.farmer.adapter.TaskAdapter;
 import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.Accountdetails;
+import com.cw.farmer.model.AdhocResponse;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.ContractSignDB;
 import com.cw.farmer.model.CropDestructionPostDB;
@@ -34,6 +37,7 @@ import com.cw.farmer.model.FarmerModel;
 import com.cw.farmer.model.FarmerModelDB;
 import com.cw.farmer.model.HarvestingDB;
 import com.cw.farmer.model.Identitydetails;
+import com.cw.farmer.model.PageItemsAdhoc;
 import com.cw.farmer.model.PageItemstask;
 import com.cw.farmer.model.PlantingVerifyDB;
 import com.cw.farmer.model.RecruitFarmerDB;
@@ -57,6 +61,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
+
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
     LinearLayout lin_register, lin_create;
     private Context mContext=HomeActivity.this;
@@ -65,9 +71,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private List<dashboard> dashboardList;
     String user_id;
     RecyclerView rv_register;
-    TaskAdapter registerAdapter;
+    AdhocAdapter registerAdapter;
     ProgressDialog progressDialog;
-    ArrayList<PageItemstask> pageItemArrayList;
+    ArrayList<PageItemsAdhoc> pageItemArrayListAdhoc;
 
     AppBarLayout Appbar;
     Toolbar toolbar;
@@ -233,6 +239,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void opensprayconfirmation(View v) {
         startActivity(new Intent(HomeActivity.this, SprayConfirmationActivity.class));
     }
+
+    public void opendashboard(View v) {
+        startActivity(new Intent(HomeActivity.this, MyDashboardActivity.class));
+    }
     private void prepareListData() {
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
@@ -250,8 +260,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             listDataChild = new HashMap<String, List<String>>();
 
                             // Adding child data
-                        listDataHeader.add("Message");
-                        //listDataHeader.add("");
+                        listDataHeader.add("Planting");
+                        listDataHeader.add("Spray");
                         List<String> message = new ArrayList<String>();
                         List<String> invent = new ArrayList<String>();
                         for(PageItemstask taks: response.body().getPageItemstasks()) {
@@ -262,13 +272,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                     date = elem + "/" + date;
                                 }
                                 invent.add(taks.getCentrename() + " ,Planting," + removeLastChar(date) + " ," + taks.getEntityId());
+                            } else {
+                                String date = "";
+                                for (int elem : taks.getCreatedOn()) {
+                                    date = elem + "/" + date;
+                                }
+                                message.add(taks.getCentrename() + " ,Spray," + removeLastChar(date) + " ," + taks.getEntityId());
                             }
 
 
                         }
 
                             listDataChild.put(listDataHeader.get(0), invent); // Header, Child data
-                        // listDataChild.put(listDataHeader.get(1), planting);
+                        listDataChild.put(listDataHeader.get(1), message);
 
 
 
@@ -276,6 +292,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                         // setting list adapter
                         expListView.setAdapter(listAdapter);
+                        adhoc();
                     }else{
 
                         Utility.showToast(HomeActivity.this, "No Task");
@@ -295,6 +312,44 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+    }
+
+    public void adhoc() {
+        progressDialog.setCancelable(false);
+        // progressBar.setMessage("Please Wait...");
+        progressDialog.show();
+        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            Call<AdhocResponse> call = service.getAdhoc(user_id);
+            call.enqueue(new Callback<AdhocResponse>() {
+                @Override
+                public void onResponse(Call<AdhocResponse> call, Response<AdhocResponse> response) {
+                    progressDialog.hide();
+                    try {
+                        if (response.body().getPageItemsAdhoc().size() != 0) {
+                            pageItemArrayListAdhoc = (ArrayList<PageItemsAdhoc>) response.body().getPageItemsAdhoc();
+                            registerAdapter = new AdhocAdapter(rv_register, HomeActivity.this, pageItemArrayListAdhoc);
+                            DividerItemDecoration itemDecor = new DividerItemDecoration(HomeActivity.this, HORIZONTAL);
+                            rv_register.addItemDecoration(itemDecor);
+                            rv_register.setAdapter(registerAdapter);
+                        } else {
+                            Toast.makeText(HomeActivity.this, "No message found", Toast.LENGTH_LONG).show();
+                        }
+
+                    } catch (Exception e) {
+                        Utility.showToast(HomeActivity.this, e.getMessage());
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<AdhocResponse> call, Throwable t) {
+                    progressDialog.hide();
+                    Utility.showToast(HomeActivity.this, t.getMessage());
+                }
+            });
+        }
     }
     public int getPixelValue(int dp) {
 

@@ -62,13 +62,39 @@
                 android:background="@color/colorblack"
                 android:baselineAligned="false" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_18"
+                android:text="Receive Inventory"
+                android:textAlignment="center"
+                android:textColor="#747474"
+                android:textSize="18sp"
+                android:textStyle="normal" />
 
             <ExpandableListView
                 android:id="@+id/verifyplanting_list"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:groupIndicator="@drawable/settings_selector"
                 android:transcriptMode="alwaysScroll"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_18"
+                android:text="Messages"
+                android:textAlignment="center"
+                android:textColor="#747474"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/adhoc_recylerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/dimen_20"
+                android:paddingRight="@dimen/dimen_20" />
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -459,6 +485,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_10"
                     android:orientation="horizontal"
+                    android:onClick="opendashboard"
                     android:weightSum="2">
                     <androidx.cardview.widget.CardView
                         android:id="@+id/dashboard"
