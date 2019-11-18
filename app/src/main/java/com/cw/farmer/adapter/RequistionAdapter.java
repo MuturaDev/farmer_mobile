@@ -44,7 +44,7 @@ public class RequistionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RequistionAdapter(RecyclerView recyclerView, Context context, ArrayList<RequisitionResponse> pageItemArrayList) {
         this.context = context;
         this.pageItemArrayList = pageItemArrayList;
-        _retData = new ArrayList<RetItem>(pageItemArrayList.size());
+        _retData = new ArrayList<>(pageItemArrayList.size());
         for (int i = 0; i < pageItemArrayList.size(); ++i) {
             _retData.add(new RetItem());
         }
@@ -141,6 +141,8 @@ public class RequistionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         viewHolder.tv_actual.setText(pageItem.getQuantity() + "");
         _retData.get(position).qty = pageItem.getQuantity() + "";
         _retData.get(position).centreid = pageItem.getCentreid() + "";
+        _retData.get(position).reqid = pageItem.getReqid() + "";
+        _retData.get(position).type = pageItem.getReqid() + "";
         viewHolder.tv_actual.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {

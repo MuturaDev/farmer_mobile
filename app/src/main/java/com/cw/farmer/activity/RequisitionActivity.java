@@ -143,6 +143,8 @@ public class RequisitionActivity extends AppCompatActivity {
             student1.addProperty("invid", yes.invid);
             student1.addProperty("centreid", yes.centreid);
             student1.addProperty("qty", yes.qty);
+            student1.addProperty("reqid", yes.reqid);
+            student1.addProperty("type", type);
             jsonArray.add(student1);
 
 

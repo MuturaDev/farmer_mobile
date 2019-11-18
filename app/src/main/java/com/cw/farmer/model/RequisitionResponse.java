@@ -41,6 +41,21 @@ public class RequisitionResponse {
     @SerializedName("reqid")
     @Expose
     private int reqid;
+    @SerializedName("id")
+    @Expose
+    private int id;
+    @SerializedName("reqquantity")
+    @Expose
+    private float reqquantity;
+    @SerializedName("dispquantity")
+    @Expose
+    private float dispquantity;
+    @SerializedName("uomdesc")
+    @Expose
+    private String uomdesc;
+    @SerializedName("ptdesc")
+    @Expose
+    private String ptdesc;
 
     public String getCentreshtdesc() {
         return centreshtdesc;
@@ -198,5 +213,69 @@ public class RequisitionResponse {
         return this;
     }
 
-}
+    public int getId() {
+        return id;
+    }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public RequisitionResponse withId(int id) {
+        this.id = id;
+        return this;
+    }
+
+    public float getReqquantity() {
+        return reqquantity;
+    }
+
+    public void setReqquantity(float reqquantity) {
+        this.reqquantity = reqquantity;
+    }
+
+    public RequisitionResponse withReqquantity(float reqquantity) {
+        this.reqquantity = reqquantity;
+        return this;
+    }
+
+    public float getDispquantity() {
+        return dispquantity;
+    }
+
+    public void setDispquantity(float dispquantity) {
+        this.dispquantity = dispquantity;
+    }
+
+    public RequisitionResponse withDispquantity(float dispquantity) {
+        this.dispquantity = dispquantity;
+        return this;
+    }
+
+    public String getUomdesc() {
+        return uomdesc;
+    }
+
+    public void setUomdesc(String uomdesc) {
+        this.uomdesc = uomdesc;
+    }
+
+    public RequisitionResponse withUomdesc(String uomdesc) {
+        this.uomdesc = uomdesc;
+        return this;
+    }
+
+    public String getPtdesc() {
+        return ptdesc;
+    }
+
+    public void setPtdesc(String ptdesc) {
+        this.ptdesc = ptdesc;
+    }
+
+    public RequisitionResponse withPtdesc(String ptdesc) {
+        this.ptdesc = ptdesc;
+        return this;
+    }
+
+}

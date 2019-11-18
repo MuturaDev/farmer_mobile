@@ -271,13 +271,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 for (int elem : taks.getCropDate()) {
                                     date = elem + "/" + date;
                                 }
-                                invent.add(taks.getCentrename() + " ,Planting," + removeLastChar(date) + " ," + taks.getEntityId());
+                                invent.add(taks.getCentrename() + " ,planting," + removeLastChar(date) + " ," + taks.getEntityId());
                             } else {
                                 String date = "";
                                 for (int elem : taks.getCreatedOn()) {
                                     date = elem + "/" + date;
                                 }
-                                message.add(taks.getCentrename() + " ,Spray," + removeLastChar(date) + " ," + taks.getEntityId());
+                                message.add(taks.getCentrename() + " ,spray," + removeLastChar(date) + " ," + taks.getEntityId());
                             }
 
 
