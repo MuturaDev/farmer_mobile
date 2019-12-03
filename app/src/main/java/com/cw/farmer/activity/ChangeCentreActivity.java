@@ -2,6 +2,7 @@ package com.cw.farmer.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -65,7 +66,9 @@ public class ChangeCentreActivity extends AppCompatActivity {
     public void searchcentre(View v) {
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<List<AllCentreResponse>> call = service.getcentre();
+        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<List<AllCentreResponse>> call = service.getcentre(auth_key);
         call.enqueue(new Callback<List<AllCentreResponse>>() {
             @Override
             public void onResponse(Call<List<AllCentreResponse>> call, Response<List<AllCentreResponse>> response) {
@@ -138,7 +141,9 @@ public class ChangeCentreActivity extends AppCompatActivity {
 
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<AllResponse> call = service.postchangecentre("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<AllResponse> call = service.postchangecentre(auth_key, hashMap);
         call.enqueue(new Callback<AllResponse>() {
             @Override
             public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {

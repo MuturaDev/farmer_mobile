@@ -64,9 +64,6 @@ public class ApiClient {
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor)
                .build();
         context_new = context;
-
-
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())

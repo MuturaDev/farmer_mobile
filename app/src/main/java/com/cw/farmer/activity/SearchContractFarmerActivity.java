@@ -100,7 +100,9 @@ public class SearchContractFarmerActivity extends AppCompatActivity {
         progressDialog.show();
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<SearchContractResponse> call = service.getContractfarmer(limit,offset,farmer_search.getText().toString());
+        SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<SearchContractResponse> call = service.getContractfarmer(limit, offset, farmer_search.getText().toString(), auth_key);
         call.enqueue(new Callback<SearchContractResponse>() {
             @Override
             public void onResponse(Call<SearchContractResponse> call, Response<SearchContractResponse> response) {

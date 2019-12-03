@@ -149,7 +149,9 @@ public class FarmerRecruitActivity extends AppCompatActivity {
             progressDialog.show();
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<List<CropDateResponse>> call = service.getcropdate();
+            SharedPreferences prefs123 = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs123.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<List<CropDateResponse>> call = service.getcropdate(auth_key);
             call.enqueue(new Callback<List<CropDateResponse>>() {
                 @Override
                 public void onResponse(Call<List<CropDateResponse>> call, Response<List<CropDateResponse>> response) {
@@ -361,7 +363,9 @@ public class FarmerRecruitActivity extends AppCompatActivity {
 
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<AllResponse> call = service.recruit("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<AllResponse> call = service.recruit(auth_key, hashMap);
             call.enqueue(new Callback<AllResponse>() {
                 @Override
                 public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {

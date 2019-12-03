@@ -327,7 +327,9 @@ public class ContractSignActivity extends AppCompatActivity {
 
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<AllResponse> call = service.postcontract("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<AllResponse> call = service.postcontract(auth_key, hashMap);
             call.enqueue(new Callback<AllResponse>() {
                 @Override
                 public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {

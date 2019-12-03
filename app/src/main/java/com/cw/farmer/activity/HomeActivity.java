@@ -249,7 +249,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         progressDialog.show();
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<TasksResponse> call = service.gettask("Basic YWRtaW46bWFudW5pdGVk", user_id+"");
+        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<TasksResponse> call = service.gettask(auth_key, user_id + "");
         call.enqueue(new Callback<TasksResponse>() {
             @Override
             public void onResponse(Call<TasksResponse> call, Response<TasksResponse> response) {
@@ -262,11 +264,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             // Adding child data
                         listDataHeader.add("Planting");
                         listDataHeader.add("Spray");
+                        listDataHeader.add("Return");
                         List<String> message = new ArrayList<String>();
                         List<String> invent = new ArrayList<String>();
+                        List<String> return_inve = new ArrayList<String>();
                         for(PageItemstask taks: response.body().getPageItemstasks()) {
 
                             if (taks.getEntityName().equals("VERIFY_PLANTING_MOBILE")) {
+                                String date = "";
+                                for (int elem : taks.getCropDate()) {
+                                    date = elem + "/" + date;
+                                }
+                                invent.add(taks.getCentrename() + " ,planting," + removeLastChar(date) + " ," + taks.getEntityId());
+                            } else if (taks.getEntityName().equals("VERIFY_SPRAY_MOBILE")) {
                                 String date = "";
                                 for (int elem : taks.getCropDate()) {
                                     date = elem + "/" + date;
@@ -277,14 +287,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 for (int elem : taks.getCreatedOn()) {
                                     date = elem + "/" + date;
                                 }
-                                message.add(taks.getCentrename() + " ,spray," + removeLastChar(date) + " ," + taks.getEntityId());
+                                return_inve.add(taks.getCentrename() + " ,return," + removeLastChar(date) + " ," + taks.getEntityId());
                             }
 
 
                         }
 
-                            listDataChild.put(listDataHeader.get(0), invent); // Header, Child data
+                        listDataChild.put(listDataHeader.get(0), invent); // Header, Child data
                         listDataChild.put(listDataHeader.get(1), message);
+                        listDataChild.put(listDataHeader.get(2), return_inve);
 
 
 
@@ -321,7 +332,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<AdhocResponse> call = service.getAdhoc(user_id);
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<AdhocResponse> call = service.getAdhoc(user_id, auth_key);
             call.enqueue(new Callback<AdhocResponse>() {
                 @Override
                 public void onResponse(Call<AdhocResponse> call, Response<AdhocResponse> response) {
@@ -361,6 +374,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void offlinesync(View v) {
+        Toast.makeText(HomeActivity.this, "Synchronisation process has started", Toast.LENGTH_SHORT).show();
 
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             SharedPreferences prefs = getSharedPreferences("location", MODE_PRIVATE);
@@ -403,7 +417,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
-                Call<FarmerErrorResponse> call = service.createFarmer("Basic YWRtaW46bWFudW5pdGVk", farmerModel);
+                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<FarmerErrorResponse> call = service.createFarmer(auth_key, farmerModel);
                 call.enqueue(new Callback<FarmerErrorResponse>() {
                     @Override
                     public void onResponse(Call<FarmerErrorResponse> call, Response<FarmerErrorResponse> response) {
@@ -456,7 +472,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
-                Call<AllResponse> call = service.recruit("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<AllResponse> call = service.recruit(auth_key, hashMap);
                 call.enqueue(new Callback<AllResponse>() {
                     @Override
                     public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
@@ -507,7 +525,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
-                Call<AllResponse> call = service.postcontract("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<AllResponse> call = service.postcontract(auth_key, hashMap);
                 call.enqueue(new Callback<AllResponse>() {
                     @Override
                     public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
@@ -557,7 +577,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
-                Call<AllResponse> call = service.postplantverify("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<AllResponse> call = service.postplantverify(auth_key, hashMap);
                 call.enqueue(new Callback<AllResponse>() {
                     @Override
                     public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
@@ -609,7 +631,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
-                Call<AllResponse> call = service.postcropdestruction("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<AllResponse> call = service.postcropdestruction(auth_key, hashMap);
                 call.enqueue(new Callback<AllResponse>() {
                     @Override
                     public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
@@ -658,7 +682,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
-                Call<AllResponse> call = service.postharvesting("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<AllResponse> call = service.postharvesting(auth_key, hashMap);
                 call.enqueue(new Callback<AllResponse>() {
                     @Override
                     public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
@@ -706,7 +732,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
-                Call<AllResponse> call = service.spraypost("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<AllResponse> call = service.spraypost(auth_key, hashMap);
                 call.enqueue(new Callback<AllResponse>() {
                     @Override
                     public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
@@ -742,5 +770,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
+        Toast.makeText(HomeActivity.this, "Synchronisation process has ended", Toast.LENGTH_SHORT).show();
+
     }
+
 }

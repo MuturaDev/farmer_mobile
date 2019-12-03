@@ -1,6 +1,7 @@
 package com.cw.farmer.activity;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -69,7 +70,9 @@ public class MyDashboardActivity extends AppCompatActivity {
             progressDialog.show();
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<List<CropDateResponse>> call = service.getcropdate();
+            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<List<CropDateResponse>> call = service.getcropdate(auth_key);
             call.enqueue(new Callback<List<CropDateResponse>>() {
                 @Override
                 public void onResponse(Call<List<CropDateResponse>> call, Response<List<CropDateResponse>> response) {
@@ -103,7 +106,9 @@ public class MyDashboardActivity extends AppCompatActivity {
 
                                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                                 APIService service = retrofit.create(APIService.class);
-                                Call<DashboardResponse> call = service.getdashboard(crop_id.get(position) + "");
+                                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                                Call<DashboardResponse> call = service.getdashboard(crop_id.get(position) + "", auth_key);
                                 call.enqueue(new Callback<DashboardResponse>() {
                                     @Override
                                     public void onResponse(Call<DashboardResponse> call, Response<DashboardResponse> response) {
@@ -176,7 +181,9 @@ public class MyDashboardActivity extends AppCompatActivity {
 
                         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                         APIService service = retrofit.create(APIService.class);
-                        Call<DashboardResponse> call = service.getdashboard(crop_id.get(position) + "");
+                        SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                        String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                        Call<DashboardResponse> call = service.getdashboard(crop_id.get(position) + "", auth_key);
                         call.enqueue(new Callback<DashboardResponse>() {
                             @Override
                             public void onResponse(Call<DashboardResponse> call, Response<DashboardResponse> response) {

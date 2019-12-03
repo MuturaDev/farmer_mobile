@@ -1,6 +1,7 @@
 package com.cw.farmer.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Base64;
@@ -64,7 +65,9 @@ public class FarmerDocumentsActivity extends AppCompatActivity {
             pDialog.show();
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<List<FarmerDocResponse>> call = service.getfamerdocs(id);
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<List<FarmerDocResponse>> call = service.getfamerdocs(id, auth_key);
             call.enqueue(new Callback<List<FarmerDocResponse>>() {
                 @Override
                 public void onResponse(Call<List<FarmerDocResponse>> call, Response<List<FarmerDocResponse>> response) {

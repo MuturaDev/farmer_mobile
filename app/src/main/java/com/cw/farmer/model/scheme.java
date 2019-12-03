@@ -35,6 +35,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
 public class scheme extends Fragment {
@@ -104,7 +105,9 @@ public class scheme extends Fragment {
         progressDialog.show();
         Retrofit retrofit = ApiClient.getClient("/authentication/", getContext());
         APIService service = retrofit.create(APIService.class);
-        Call<RegisterResponse> call = service.getRegister(limit, offset, search.getText().toString());
+        SharedPreferences prefs = this.getActivity().getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<RegisterResponse> call = service.getRegister(limit, offset, search.getText().toString(), auth_key);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {

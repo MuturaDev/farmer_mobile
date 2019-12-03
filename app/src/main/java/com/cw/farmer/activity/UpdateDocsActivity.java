@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -241,7 +242,9 @@ public class UpdateDocsActivity extends AppCompatActivity {
 
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<AllResponse> call = service.changedocs("Basic YWRtaW46bWFudW5pdGVk", hashMap, farmer_id, entry_id);
+        SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<AllResponse> call = service.changedocs(auth_key, hashMap, farmer_id, entry_id);
         call.enqueue(new Callback<AllResponse>() {
             @Override
             public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {

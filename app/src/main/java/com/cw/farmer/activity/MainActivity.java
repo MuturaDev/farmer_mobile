@@ -301,7 +301,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<List<BankNameResponse>> call = service.getbankname();
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<List<BankNameResponse>> call = service.getbankname(auth_key);
             call.enqueue(new Callback<List<BankNameResponse>>() {
                 @Override
                 public void onResponse(Call<List<BankNameResponse>> call, Response<List<BankNameResponse>> response) {
@@ -521,7 +523,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<FarmerErrorResponse> call = service.createFarmer("Basic YWRtaW46bWFudW5pdGVk", farmerModel);
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<FarmerErrorResponse> call = service.createFarmer(auth_key, farmerModel);
             call.enqueue(new Callback<FarmerErrorResponse>() {
                 @Override
                 public void onResponse(Call<FarmerErrorResponse> call, Response<FarmerErrorResponse> response) {
@@ -530,7 +534,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (response.body() != null) {
                             new SweetAlertDialog(MainActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                                     .setTitleText("Success")
-                                    .setContentText(String.valueOf(response.body().getMessage()))
+                                    .setContentText("Farmer Details Registered Successfully")
                                     .setConfirmText("Ok")
                                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                         @Override

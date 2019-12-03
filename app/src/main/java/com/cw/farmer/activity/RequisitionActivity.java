@@ -2,6 +2,7 @@ package com.cw.farmer.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -85,7 +86,9 @@ public class RequisitionActivity extends AppCompatActivity {
         progressDialog.show();
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<List<RequisitionResponse>> call = service.getrequsition(entity_id);
+        SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<List<RequisitionResponse>> call = service.getrequsition(entity_id, auth_key);
         call.enqueue(new Callback<List<RequisitionResponse>>() {
             @Override
             public void onResponse(Call<List<RequisitionResponse>> call, Response<List<RequisitionResponse>> response) {
@@ -165,8 +168,9 @@ public class RequisitionActivity extends AppCompatActivity {
 
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-
-        Call<JsonObject> call = service.postreceiveinventory("Basic YWRtaW46bWFudW5pdGVk", studentsObj);
+        SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<JsonObject> call = service.postreceiveinventory(auth_key, studentsObj);
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

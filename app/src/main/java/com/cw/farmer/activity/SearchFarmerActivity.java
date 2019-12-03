@@ -101,7 +101,9 @@ public class SearchFarmerActivity extends AppCompatActivity {
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<RegisterResponse> call = service.getRegister(limit, offset, farmer_search.getText().toString());
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<RegisterResponse> call = service.getRegister(limit, offset, farmer_search.getText().toString(), auth_key);
             call.enqueue(new Callback<RegisterResponse>() {
                 @Override
                 public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {

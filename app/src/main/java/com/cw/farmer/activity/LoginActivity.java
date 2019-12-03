@@ -118,12 +118,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         String longitude = location + "";
                         Double longitude_final;
                         System.out.println(latitude);
-                        if (latitude == null) {
+                        if (location == null) {
                             latitude_final = 12345678.3456;
                         } else {
                             latitude_final = location.getLatitude();
                         }
-                        if (longitude == null) {
+                        if (location == null) {
                             longitude_final = 12345678.3456;
                         } else {
                             longitude_final = location.getLongitude();
@@ -201,8 +201,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //progressBar.hide();
 
                 try {
-                    if (response.body().getBase64EncodedAuthenticationKey() != null){
-                        //Utility.showToast(LoginActivity.this,"success");
+                    if (response.code() == 200) {
+
                         //Utility.showToast(LoginActivity.this,response.body().getPermissions());
 
                         //Set the values
@@ -222,6 +222,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         scoreEditor.putString("enter", "yes");
                         scoreEditor.putString("center_names", center_names);
                         scoreEditor.putString("center_ids", center_idss);
+                        scoreEditor.putString("auth_key", "Basic " + response.body().getBase64EncodedAuthenticationKey());
+                        startActivity(new Intent(LoginActivity.this, Home2Activity.class));
 
 
                         Set<String> set = new HashSet<String>();
@@ -232,9 +234,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         //Utility.showToast(LoginActivity.this,center_idss);
 
 
+                    } else {
+                        errorview.setText("Wrong Username or Password");
                     }
                 }catch (Exception e){
-                    errorview.setText("Wrong Username or Password");
+
                     //Utility.showToast(LoginActivity.this,e.getMessage());
                 }
             }

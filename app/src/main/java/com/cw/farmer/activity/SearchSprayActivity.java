@@ -85,7 +85,9 @@ public class SearchSprayActivity extends AppCompatActivity {
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<SprayFarmerResponse> call = service.getSprayfarmer(limit, offset, farmer_search.getText().toString());
+            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<SprayFarmerResponse> call = service.getSprayfarmer(limit, offset, farmer_search.getText().toString(), auth_key);
             call.enqueue(new Callback<SprayFarmerResponse>() {
                 @Override
                 public void onResponse(Call<SprayFarmerResponse> call, Response<SprayFarmerResponse> response) {

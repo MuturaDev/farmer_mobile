@@ -79,7 +79,9 @@ public class SearchPlantingVerficationActivity extends AppCompatActivity {
         progressDialog.show();
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<PlantVerifyResponse> call = service.getplantingfarmer(limit,offset,farmer_search.getText().toString());
+        SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<PlantVerifyResponse> call = service.getplantingfarmer(limit, offset, farmer_search.getText().toString(), auth_key);
         call.enqueue(new Callback<PlantVerifyResponse>() {
             @Override
             public void onResponse(Call<PlantVerifyResponse> call, Response<PlantVerifyResponse> response) {

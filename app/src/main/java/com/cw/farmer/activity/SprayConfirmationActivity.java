@@ -132,7 +132,9 @@ public class SprayConfirmationActivity extends AppCompatActivity {
             progressDialog.show();
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<SprayNumbersResponse> call = service.getspraynumber();
+            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<SprayNumbersResponse> call = service.getspraynumber(auth_key);
             call.enqueue(new Callback<SprayNumbersResponse>() {
                 @Override
                 public void onResponse(Call<SprayNumbersResponse> call, Response<SprayNumbersResponse> response) {
@@ -302,7 +304,9 @@ public class SprayConfirmationActivity extends AppCompatActivity {
 
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<AllResponse> call = service.spraypost("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<AllResponse> call = service.spraypost(auth_key, hashMap);
             call.enqueue(new Callback<AllResponse>() {
                 @Override
                 public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {

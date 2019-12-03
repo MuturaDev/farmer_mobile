@@ -143,7 +143,9 @@ public class CropDestructionActivity extends AppCompatActivity {
             if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
                 Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                 APIService service = retrofit.create(APIService.class);
-                Call<List<DestructionReasonResponse>> call = service.getdestructionreasons();
+                SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<List<DestructionReasonResponse>> call = service.getdestructionreasons(auth_key);
                 call.enqueue(new Callback<List<DestructionReasonResponse>>() {
                     @Override
                     public void onResponse(Call<List<DestructionReasonResponse>> call, Response<List<DestructionReasonResponse>> response) {
@@ -336,7 +338,9 @@ public class CropDestructionActivity extends AppCompatActivity {
 
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
-            Call<AllResponse> call = service.postcropdestruction("Basic YWRtaW46bWFudW5pdGVk", hashMap);
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<AllResponse> call = service.postcropdestruction(auth_key, hashMap);
             call.enqueue(new Callback<AllResponse>() {
                 @Override
                 public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {

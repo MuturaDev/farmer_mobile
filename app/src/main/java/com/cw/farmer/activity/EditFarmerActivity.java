@@ -2,6 +2,7 @@ package com.cw.farmer.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -176,7 +177,9 @@ public class EditFarmerActivity extends AppCompatActivity {
 
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<AllResponse> call = service.posteditfarmer("Basic YWRtaW46bWFudW5pdGVk",hashMap,farmer_id);
+        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<AllResponse> call = service.posteditfarmer(auth_key, hashMap, farmer_id);
         call.enqueue(new Callback<AllResponse>() {
             @Override
             public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
@@ -191,14 +194,14 @@ public class EditFarmerActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog.dismissWithAnimation();
-                                        finish();
+                                        startActivity(new Intent(EditFarmerActivity.this, ListFarmerActivity.class));
                                     }
                                 })
                                 .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog.dismissWithAnimation();
-                                        finish();
+                                        startActivity(new Intent(EditFarmerActivity.this, ListFarmerActivity.class));
                                     }
                                 })
                                 .show();

@@ -3,6 +3,7 @@ package com.cw.farmer.activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
@@ -125,7 +126,9 @@ public class BlacklistActivity extends AppCompatActivity {
         });
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<List<BlacklistResponse>> call = service.getblacklistreasons();
+        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<List<BlacklistResponse>> call = service.getblacklistreasons(auth_key);
         call.enqueue(new Callback<List<BlacklistResponse>>() {
             @Override
             public void onResponse(Call<List<BlacklistResponse>> call, Response<List<BlacklistResponse>> response) {
@@ -162,7 +165,9 @@ public class BlacklistActivity extends AppCompatActivity {
         hashMap.put("reasonId",blacklist_id.get(blacklist_reasons.getSelectedItemPosition()).toString());
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
-        Call<BlacklistPostResponse> call = service.createblacklist("Basic YWRtaW46bWFudW5pdGVk",pageItem.getId(),"blacklist",hashMap);
+        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Call<BlacklistPostResponse> call = service.createblacklist(auth_key, pageItem.getId(), "blacklist", hashMap);
         call.enqueue(new Callback<BlacklistPostResponse>() {
             @Override
             public void onResponse(Call<BlacklistPostResponse> call, Response<BlacklistPostResponse> response) {

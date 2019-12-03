@@ -99,7 +99,7 @@ public class AdhocAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_harvesting, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_task, viewGroup, false);
             return new ViewHolder(view);
         } else {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_loading, viewGroup, false);

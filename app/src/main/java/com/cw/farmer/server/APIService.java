@@ -40,6 +40,7 @@ import retrofit2.http.Query;
 
 public interface APIService {
 
+
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/authentication")
     Call<Result> userLogin(
@@ -47,21 +48,21 @@ public interface APIService {
             @Query("password") String password
     );
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/farmerscapture")
-    Call<RegisterResponse> getRegister(@Query("limit") int limit,@Query("offset") int offset,@Query("sqlSearch") String search);
+    Call<RegisterResponse> getRegister(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search, @Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/farmerscapture")
     Call<FarmerErrorResponse> createFarmer(@Header("Authorization") String authorization, @Body FarmerModel farmerModel);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/banks")
-    Call<List<BankNameResponse>> getbankname();
+    Call<List<BankNameResponse>> getbankname(@Header("Authorization") String authorization);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/reasonsforchange")
-    Call<List<BlacklistResponse>> getblacklistreasons();
+    Call<List<BlacklistResponse>> getblacklistreasons(@Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/farmerscapture/{id}")
@@ -71,41 +72,41 @@ public interface APIService {
     @POST("/fineract-provider/api/v1/recruitment")
     Call<AllResponse> recruit(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/cropdates/activecropdates")
-    Call<List<CropDateResponse>> getcropdate();
+    Call<List<CropDateResponse>> getcropdate(@Header("Authorization") String authorization);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/contractsigning/contractfarmers")
-    Call<SearchContractResponse> getContractfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+    Call<SearchContractResponse> getContractfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search, @Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/contractsigning")
     Call<AllResponse> postcontract(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/contractsigning")
-    Call<SearchDestructionResponse> getDestructionfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+    Call<SearchDestructionResponse> getDestructionfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search, @Header("Authorization") String authorization);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/cropdestructionreason")
-    Call<List<DestructionReasonResponse>> getdestructionreasons();
+    Call<List<DestructionReasonResponse>> getdestructionreasons(@Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/capturecropdestruction")
     Call<AllResponse> postcropdestruction(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default",})
     @GET("/fineract-provider/api/v1/{id}/farmerdocs")
-    Call<List<FarmerDocResponse>> getfamerdocs( @Path("id") int groupId);
+    Call<List<FarmerDocResponse>> getfamerdocs(@Path("id") int groupId, @Header("Authorization") String authorization);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/{id}/farmeraccounts")
-    Call<List<FarmerAccountsResponse>> getfameraccount(@Path("id") int groupId);
+    Call<List<FarmerAccountsResponse>> getfameraccount(@Path("id") int groupId, @Header("Authorization") String authorization);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/contractsigning/contractedfarmers")
-    Call<FarmerHarvestResponse> getHarvestfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+    Call<FarmerHarvestResponse> getHarvestfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search, @Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/harvesting")
@@ -115,29 +116,29 @@ public interface APIService {
     @PUT("/fineract-provider/api/v1/farmerscapture/{id}")
     Call<AllResponse> posteditfarmer(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl,@Path("id") int groupId);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/plantingverification/contractedFarmers")
-    Call<PlantVerifyResponse> getplantingfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+    Call<PlantVerifyResponse> getplantingfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search, @Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/plantingverification")
     Call<AllResponse> postplantverify(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/tasks/")
     Call<TasksResponse> gettask(@Header("Authorization") String authorization, @Query("centerId") String groupId);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/plantrequisition/requistionitems/{id}")
-    Call<List<RequisitionResponse>> getrequsition(@Path("id") String groupId);
+    Call<List<RequisitionResponse>> getrequsition(@Path("id") String groupId, @Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/centrestore")
     Call<JsonObject> postreceiveinventory(@Header("Authorization") String authorization, @Body JsonObject registerApiPayloadl);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/hierarchy/template")
-    Call<List<AllCentreResponse>> getcentre();
+    Call<List<AllCentreResponse>> getcentre(@Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/farmercentres")
@@ -151,25 +152,25 @@ public interface APIService {
     @PUT("/fineract-provider/api/v1/{id}/farmerdocs/{entry}")
     Call<AllResponse> changedocs(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl, @Path("id") String groupId, @Path("entry") String entry);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/plantingverification/verifiedFarmers")
-    Call<SprayFarmerResponse> getSprayfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search);
+    Call<SprayFarmerResponse> getSprayfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search, @Header("Authorization") String authorization);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/sprayprogram/regionprograms")
-    Call<SprayNumbersResponse> getspraynumber();
+    Call<SprayNumbersResponse> getspraynumber(@Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/sprayconfirmation")
     Call<AllResponse> spraypost(@Header("Authorization") String authorization, @Body HashMap registerApiPayloadl);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/statistics/{id}")
-    Call<DashboardResponse> getdashboard(@Path("id") String groupId);
+    Call<DashboardResponse> getdashboard(@Path("id") String groupId, @Header("Authorization") String authorization);
 
-    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default", "Authorization:Basic YWRtaW46bWFudW5pdGVk"})
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/tasks/adhoctasks")
-    Call<AdhocResponse> getAdhoc(@Query("centerId") String centerId);
+    Call<AdhocResponse> getAdhoc(@Query("centerId") String centerId, @Header("Authorization") String authorization);
 
 
 
