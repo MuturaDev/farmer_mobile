@@ -1,3 +1,4 @@
+
 package com.cw.farmer.model;
 
 import com.google.gson.annotations.Expose;
@@ -28,21 +29,21 @@ public class PageItemsAdhoc {
     @SerializedName("raisedBy")
     @Expose
     private String raisedBy;
+    @SerializedName("sendTo")
+    @Expose
+    private String sendTo;
     @SerializedName("createdOn")
     @Expose
     private List<Integer> createdOn = null;
     @SerializedName("approvedByUserId")
     @Expose
     private int approvedByUserId;
+    @SerializedName("comment")
+    @Expose
+    private String comment;
     @SerializedName("status")
     @Expose
     private String status;
-    @SerializedName("centrename")
-    @Expose
-    private String centrename;
-    @SerializedName("cropDate")
-    @Expose
-    private List<Integer> cropDate = null;
 
     public int getId() {
         return id;
@@ -135,6 +136,19 @@ public class PageItemsAdhoc {
         return this;
     }
 
+    public String getSendTo() {
+        return sendTo;
+    }
+
+    public void setSendTo(String sendTo) {
+        this.sendTo = sendTo;
+    }
+
+    public PageItemsAdhoc withSendTo(String sendTo) {
+        this.sendTo = sendTo;
+        return this;
+    }
+
     public List<Integer> getCreatedOn() {
         return createdOn;
     }
@@ -161,6 +175,19 @@ public class PageItemsAdhoc {
         return this;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public PageItemsAdhoc withComment(String comment) {
+        this.comment = comment;
+        return this;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -171,32 +198,6 @@ public class PageItemsAdhoc {
 
     public PageItemsAdhoc withStatus(String status) {
         this.status = status;
-        return this;
-    }
-
-    public String getCentrename() {
-        return centrename;
-    }
-
-    public void setCentrename(String centrename) {
-        this.centrename = centrename;
-    }
-
-    public PageItemsAdhoc withCentrename(String centrename) {
-        this.centrename = centrename;
-        return this;
-    }
-
-    public List<Integer> getCropDate() {
-        return cropDate;
-    }
-
-    public void setCropDate(List<Integer> cropDate) {
-        this.cropDate = cropDate;
-    }
-
-    public PageItemsAdhoc withCropDate(List<Integer> cropDate) {
-        this.cropDate = cropDate;
         return this;
     }
 

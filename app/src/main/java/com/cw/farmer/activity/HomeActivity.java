@@ -1,5 +1,7 @@
 package com.cw.farmer.activity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,15 +12,22 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.NetworkUtil;
@@ -74,6 +83,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     AdhocAdapter registerAdapter;
     ProgressDialog progressDialog;
     ArrayList<PageItemsAdhoc> pageItemArrayListAdhoc;
+    private PopupWindow POPUP_WINDOW_SCORE = null;
 
     AppBarLayout Appbar;
     Toolbar toolbar;
@@ -91,11 +101,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_home);
         Appbar = (AppBarLayout)findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         progressDialog = new ProgressDialog(this);
         // get the listview
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         expListView = (ExpandableListView) findViewById(R.id.verifyplanting_list);
+        rv_register = findViewById(R.id.adhoc_recylerview);
+        rv_register.setLayoutManager(new LinearLayoutManager(this));
         int width = getResources().getDisplayMetrics().widthPixels;
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
             expListView.setIndicatorBounds(width - getPixelValue(40), width - getPixelValue(10));
@@ -144,6 +157,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             prepareListData();
         }
+
 
 
         //offlinesync();
@@ -244,6 +258,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(new Intent(HomeActivity.this, MyDashboardActivity.class));
     }
     private void prepareListData() {
+
+
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
         progressDialog.show();
@@ -258,6 +274,32 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 progressDialog.hide();
                 try {
                     if (response.body().getTotalFilteredRecords() > 0){
+                        int NOTIFICATION_ID = 23134;
+                        String CHANNEL_ID = "my_channel_01";
+                        CharSequence name = "my_channel";
+                        String Description = "This is my channel";
+                        NotificationManager notificationManager = (NotificationManager) HomeActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+                            int importance = NotificationManager.IMPORTANCE_HIGH;
+                            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+                            mChannel.setDescription(Description);
+                            mChannel.enableLights(true);
+                            mChannel.setLightColor(Color.RED);
+                            mChannel.enableVibration(true);
+                            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                            mChannel.setShowBadge(false);
+                            notificationManager.createNotificationChannel(mChannel);
+                        }
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(HomeActivity.this, CHANNEL_ID)
+                                .setSmallIcon(R.drawable.logo_nice)
+                                .setContentTitle("You have a new task")
+                                .setContentText("Open farmer application to view the tasks");
+
+                        notificationManager.notify(NOTIFICATION_ID, builder.build());
+
                             listDataHeader = new ArrayList<String>();
                             listDataChild = new HashMap<String, List<String>>();
 
@@ -341,6 +383,31 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     progressDialog.hide();
                     try {
                         if (response.body().getPageItemsAdhoc().size() != 0) {
+                            int NOTIFICATION_ID = 23135;
+                            String CHANNEL_ID = "my_channel_02";
+                            CharSequence name = "my_channel";
+                            String Description = "This is my channel";
+                            NotificationManager notificationManager = (NotificationManager) HomeActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+                                int importance = NotificationManager.IMPORTANCE_HIGH;
+                                NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+                                mChannel.setDescription(Description);
+                                mChannel.enableLights(true);
+                                mChannel.setLightColor(Color.RED);
+                                mChannel.enableVibration(true);
+                                mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                                mChannel.setShowBadge(false);
+                                notificationManager.createNotificationChannel(mChannel);
+                            }
+
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(HomeActivity.this, CHANNEL_ID)
+                                    .setSmallIcon(R.drawable.logo_nice)
+                                    .setContentTitle("You have a new message")
+                                    .setContentText("Open farmer application to view the messages");
+
+                            notificationManager.notify(NOTIFICATION_ID, builder.build());
                             pageItemArrayListAdhoc = (ArrayList<PageItemsAdhoc>) response.body().getPageItemsAdhoc();
                             registerAdapter = new AdhocAdapter(rv_register, HomeActivity.this, pageItemArrayListAdhoc);
                             DividerItemDecoration itemDecor = new DividerItemDecoration(HomeActivity.this, HORIZONTAL);
@@ -771,6 +838,54 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         Toast.makeText(HomeActivity.this, "Synchronisation process has ended", Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void ShowPopup(View v) {
+        DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+        int width = displayMetrics.widthPixels;
+        int height = displayMetrics.heightPixels;
+
+        // Inflate the popup_layout.xml
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.layout_popup, null);
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                POPUP_WINDOW_SCORE.dismiss();
+            }
+        });
+
+        // Creating the PopupWindow
+        POPUP_WINDOW_SCORE = new PopupWindow(this);
+        POPUP_WINDOW_SCORE.setContentView(layout);
+        POPUP_WINDOW_SCORE.setWidth(width);
+        POPUP_WINDOW_SCORE.setHeight(height);
+        POPUP_WINDOW_SCORE.setFocusable(true);
+
+        // prevent clickable background
+        POPUP_WINDOW_SCORE.setBackgroundDrawable(null);
+
+        POPUP_WINDOW_SCORE.showAtLocation(layout, Gravity.CENTER, 1, 1);
+        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String center_names = prefs.getString("center_names", " ");
+        String username = prefs.getString("name", " ");
+
+        TextView txtMessage = (TextView) layout.findViewById(R.id.layout_popup_txtMessage);
+        txtMessage.setText("Name: " + username);
+
+        TextView txtCentre = (TextView) layout.findViewById(R.id.layout_popup_txtcentre);
+        txtCentre.setText("Centres: " + center_names);
+
+        // Getting a reference to button one and do something
+        Button butOne = (Button) layout.findViewById(R.id.layout_popup_butOne);
+        butOne.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                POPUP_WINDOW_SCORE.dismiss();
+                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+            }
+        });
 
     }
 

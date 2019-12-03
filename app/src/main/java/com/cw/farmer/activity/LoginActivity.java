@@ -222,8 +222,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         scoreEditor.putString("enter", "yes");
                         scoreEditor.putString("center_names", center_names);
                         scoreEditor.putString("center_ids", center_idss);
+                        scoreEditor.putString("name", "" + response.body().getName());
                         scoreEditor.putString("auth_key", "Basic " + response.body().getBase64EncodedAuthenticationKey());
-                        startActivity(new Intent(LoginActivity.this, Home2Activity.class));
+                        //startActivity(new Intent(LoginActivity.this, Home2Activity.class));
 
 
                         Set<String> set = new HashSet<String>();

@@ -1,8 +1,9 @@
 package com.cw.farmer.model;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class Result {
 
@@ -27,6 +28,9 @@ public class Result {
     @SerializedName("permissions")
     @Expose
     private List<String> permissions = null;
+    @SerializedName("name")
+    @Expose
+    private String name;
     @SerializedName("shouldRenewPassword")
     @Expose
     private boolean shouldRenewPassword;
@@ -74,7 +78,7 @@ public class Result {
     }
 
     public String getBase64EncodedAuthenticationKey() {
-        return base64EncodedAuthenticationKey+"";
+        return base64EncodedAuthenticationKey;
     }
 
     public void setBase64EncodedAuthenticationKey(String base64EncodedAuthenticationKey) {
@@ -122,6 +126,19 @@ public class Result {
 
     public Result withPermissions(List<String> permissions) {
         this.permissions = permissions;
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Result withName(String name) {
+        this.name = name;
         return this;
     }
 

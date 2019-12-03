@@ -21,10 +21,6 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
-            android:name=".activity.Home2Activity"
-            android:label="@string/title_activity_home2"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
             android:name=".activity.MajorActivity"
             android:label="@string/title_activity_major"
             android:theme="@style/AppTheme.NoActionBar" />
