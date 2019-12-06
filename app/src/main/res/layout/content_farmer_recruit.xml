@@ -54,7 +54,7 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/border_edittext"
                 android:drawSelectorOnTop="true"
-                android:padding="15dp"
+                android:padding="10dp"
                 android:hint="Bank Name" />
 
             <TextView

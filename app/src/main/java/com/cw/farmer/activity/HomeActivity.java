@@ -98,6 +98,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedPrefs = getSharedPreferences("PERMISSIONS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed;
+        if (!sharedPrefs.contains("userid")) {
+            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+
+        }
         setContentView(R.layout.activity_home);
         Appbar = (AppBarLayout)findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -883,7 +889,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 POPUP_WINDOW_SCORE.dismiss();
+                SharedPreferences settings = getSharedPreferences("PERMISSIONS", Context.MODE_PRIVATE);
+                settings.edit().clear().commit();
                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+
             }
         });
 

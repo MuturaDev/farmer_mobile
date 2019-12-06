@@ -82,8 +82,7 @@
                 android:padding="10dp"
                 android:text="@string/login"
                 android:textAllCaps="true"
-                android:textColor="@color/colorwhite"
-                android:typeface="normal" />
+                android:textColor="@color/colorwhite" />
         </LinearLayout>
 
     </LinearLayout>

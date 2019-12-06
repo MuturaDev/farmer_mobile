@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +26,7 @@ import com.cw.farmer.server.ApiClient;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
@@ -166,12 +166,13 @@ public class AdhocAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 pDialog.setTitleText("Marking message task as complete...");
                 pDialog.setCancelable(false);
                 pDialog.show();
-                Toast.makeText(context, "Hello Javatpoint", Toast.LENGTH_SHORT).show();
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("", " ");
                 Retrofit retrofit = ApiClient.getClient("/authentication/", context);
                 APIService service = retrofit.create(APIService.class);
                 SharedPreferences prefs_auth = context.getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
                 String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                Call<AllResponse> call = service.approvetasks(pageItem.getId() + "", auth_key, "approve");
+                Call<AllResponse> call = service.approvetasks(pageItem.getId() + "", auth_key, "approve", hashMap);
                 call.enqueue(new Callback<AllResponse>() {
                     @Override
                     public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {

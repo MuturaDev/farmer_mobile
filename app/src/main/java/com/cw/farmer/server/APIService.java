@@ -174,7 +174,7 @@ public interface APIService {
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/tasks/{taskid}")
-    Call<AllResponse> approvetasks(@Path("taskid") String taskid, @Header("Authorization") String authorization, @Query("command") String command);
+    Call<AllResponse> approvetasks(@Path("taskid") String taskid, @Header("Authorization") String authorization, @Query("command") String command, @Body HashMap registerApiPayloadl);
 
 
 
