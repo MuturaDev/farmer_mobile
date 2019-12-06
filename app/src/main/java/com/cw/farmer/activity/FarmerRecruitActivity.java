@@ -375,7 +375,7 @@ public class FarmerRecruitActivity extends AppCompatActivity {
                             pDialog.dismissWithAnimation();
                             new SweetAlertDialog(FarmerRecruitActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                                     .setTitleText("Success")
-                                    .setContentText("You have successfully submitted farmer recruitment details")
+                                    .setContentText("You have successfully recruited the farmer")
                                     .setConfirmText("Ok")
                                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                         @Override
