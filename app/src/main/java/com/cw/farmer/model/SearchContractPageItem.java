@@ -24,6 +24,9 @@ public class SearchContractPageItem {
     @SerializedName("plantingId")
     @Expose
     private int plantingId;
+    @SerializedName("recruitid")
+    @Expose
+    private int recruitid;
 
     public int getFarmerId() {
         return farmerId;
@@ -35,6 +38,19 @@ public class SearchContractPageItem {
 
     public SearchContractPageItem withFarmerId(int farmerId) {
         this.farmerId = farmerId;
+        return this;
+    }
+
+    public int getRecruitId() {
+        return recruitid;
+    }
+
+    public void setRecruitId(int recruitId) {
+        this.recruitid = recruitid;
+    }
+
+    public SearchContractPageItem withRecruitId(int recruitid) {
+        this.recruitid = recruitid;
         return this;
     }
 

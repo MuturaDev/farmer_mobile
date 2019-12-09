@@ -68,6 +68,7 @@ public class SearchContractFarmerActivity extends AppCompatActivity {
             String crop_date =(String) b.get("crop_date");
             String noofunits =(String) b.get("noofunits");
             String plantingid =(String) b.get("plantingid");
+            String recruitid =(String) b.get("recruitid");
             Intent intent = null;
             SharedPreferences prefs = getSharedPreferences("search", MODE_PRIVATE);
                 intent = new Intent(SearchContractFarmerActivity.this, ContractSignActivity.class);
@@ -76,6 +77,7 @@ public class SearchContractFarmerActivity extends AppCompatActivity {
                 intent.putExtra("crop_date",crop_date);
                 intent.putExtra("noofunits",noofunits);
                 intent.putExtra("plantingid",plantingid);
+                intent.putExtra("recruitid",recruitid);
                 startActivity(intent);
 
         }

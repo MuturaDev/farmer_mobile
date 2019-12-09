@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -56,7 +57,7 @@ public class ContractSignActivity extends AppCompatActivity {
     private File compressedImageFile;
     EditText farmer,noofunits,codedate,contract_refno;
     String farmer_id_string;
-    String planting_id_string, noofunits_text;
+    String planting_id_string, noofunits_text, recruit_id_string;;
 
     int PERMISSION_ALL = 1;
     String[] PERMISSIONS = {
@@ -117,6 +118,9 @@ public class ContractSignActivity extends AppCompatActivity {
 
             String plantingid =(String) b.get("plantingid");
             planting_id_string=plantingid;
+
+            String recruitId = (String)b.get("recruitid");
+            recruit_id_string = recruitId;
 
         }
     }
@@ -321,6 +325,7 @@ public class ContractSignActivity extends AppCompatActivity {
             hashMap.put("cropDateId", planting_id_string);
             hashMap.put("units", noofunits.getText().toString().trim());
             hashMap.put("farmerId", farmer_id_string);
+            hashMap.put("recruitId", recruit_id_string);
             hashMap.put("file", getBase64FromPath());
             hashMap.put("dateFormat", "DD/M/YYYY");
             hashMap.put("locale", "en");
@@ -387,7 +392,7 @@ public class ContractSignActivity extends AppCompatActivity {
                 }
             });
         } else {
-            ContractSignDB book = new ContractSignDB(contract_refno.getText().toString().trim(), planting_id_string, noofunits.getText().toString().trim(), farmer_id_string, getBase64FromPath(), "DD/M/YYYY", "en");
+            ContractSignDB book = new ContractSignDB(contract_refno.getText().toString().trim(), planting_id_string, noofunits.getText().toString().trim(), farmer_id_string, getBase64FromPath(), "DD/M/YYYY", "en",recruit_id_string);
             book.save();
             pDialog.hide();
             new SweetAlertDialog(ContractSignActivity.this, SweetAlertDialog.WARNING_TYPE)

@@ -148,6 +148,7 @@ public class SearchContractAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 intent.putExtra("crop_date",removeLastChar(date)+"");
                 intent.putExtra("noofunits",pageItem.getTotalUnits()+"");
                 intent.putExtra("plantingid",pageItem.getPlantingId()+"");
+                intent.putExtra("recruitid",pageItem.getRecruitId()+"");
                 context.startActivity(intent);
             }
         });
