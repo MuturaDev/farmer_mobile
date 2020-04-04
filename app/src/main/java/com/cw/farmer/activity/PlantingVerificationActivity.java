@@ -52,7 +52,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class PlantingVerificationActivity extends AppCompatActivity {
-    EditText farmer,account_no;
+    EditText farmer,account_no,nounits;
     Spinner codedate_harvesting;
     String farmer_id_string,noofunits,plantingId;
     List<String> cropDateId_list,reason_main;
@@ -72,6 +72,9 @@ public class PlantingVerificationActivity extends AppCompatActivity {
         Plantconfirmed_radio = findViewById(R.id.Plantconfirmed);
         Waterconfirmed_radio = findViewById(R.id.Waterconfirmed);
         farmer = findViewById(R.id.farmer);
+        nounits = findViewById(R.id.no_units);
+        Plantconfirmed_radio.check(R.id.radioYes);
+        Waterconfirmed_radio.check(R.id.radioYesW);
         farmer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,6 +105,9 @@ public class PlantingVerificationActivity extends AppCompatActivity {
             cropDateId_list = new ArrayList<String>();
             String cropDateId =(String) b.get("crop_date");
             cropDateId_list.add(cropDateId);
+
+            String noofunits = (String)b.get("nounits");
+            nounits.setText(noofunits);
 
             ArrayList<String> spinnerArray = new ArrayList<String>();
             spinnerArray.clear();
