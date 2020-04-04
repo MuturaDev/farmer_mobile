@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -70,6 +71,7 @@ public class SearchHarvestFarmerActivity extends AppCompatActivity {
     public void search(View v){
 
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+            Log.d("Search","Searching Harvest data...");
             getData();
         } else {
             pageItemArrayList = getArrayList("harvestfarmer");
@@ -84,12 +86,14 @@ public class SearchHarvestFarmerActivity extends AppCompatActivity {
         APIService service = retrofit.create(APIService.class);
         SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
         String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        Log.d("Search","Searching Harvest data..icon.....");
         Call<FarmerHarvestResponse> call = service.getHarvestfarmer(limit, offset, farmer_search.getText().toString(), auth_key);
         call.enqueue(new Callback<FarmerHarvestResponse>() {
             @Override
             public void onResponse(Call<FarmerHarvestResponse> call, Response<FarmerHarvestResponse> response) {
                 progressDialog.hide();
                 try {
+                    Log.d("Data count...",String.valueOf(response.body().getPageItemHarvest().size()));
                     System.out.println(response.body().getPageItemHarvest());
 
                     if (response.body().getPageItemHarvest().size()!=0){

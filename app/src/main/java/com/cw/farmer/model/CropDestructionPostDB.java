@@ -12,11 +12,12 @@ public class CropDestructionPostDB extends SugarRecord<CropDestructionPostDB> {
     public String locale;
     public String cropDestructionType;
     public String cropDestructionReasonsId;
+    public String contractId;
 
     public CropDestructionPostDB() {
     }
 
-    public CropDestructionPostDB(String cropDatesId, String accountNumber, String unit, String farmers_id, String file, String locale, String cropDestructionType, String cropDestructionReasonsId) {
+    public CropDestructionPostDB(String cropDatesId, String accountNumber, String unit, String farmers_id, String file, String locale, String cropDestructionType, String cropDestructionReasonsId,String contractId) {
         this.cropDatesId = cropDatesId;
         this.accountNumber = accountNumber;
         this.unit = unit;
@@ -25,6 +26,7 @@ public class CropDestructionPostDB extends SugarRecord<CropDestructionPostDB> {
         this.locale = locale;
         this.cropDestructionType = cropDestructionType;
         this.cropDestructionReasonsId = cropDestructionReasonsId;
+        this.contractId = contractId;
 
     }
 

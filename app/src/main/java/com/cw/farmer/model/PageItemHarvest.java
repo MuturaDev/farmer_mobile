@@ -6,70 +6,83 @@ import com.google.gson.annotations.SerializedName;
 
 public class PageItemHarvest {
 
-    @SerializedName("farmerId")
+    @SerializedName("id")
     @Expose
-    private int farmerId;
-    @SerializedName("farmerName")
+    private int id;
+    @SerializedName("accountNumber")
     @Expose
-    private String farmerName;
-    @SerializedName("farmerCode")
+    private String accountNumber;
+    @SerializedName("referenceNo")
     @Expose
-    private String farmerCode;
+    private String referenceNo;
     @SerializedName("cropDate")
     @Expose
     private List<Integer> cropDate = null;
-    @SerializedName("totalUnits")
+    @SerializedName("units")
     @Expose
-    private int totalUnits;
-    @SerializedName("plantingId")
+    private int units;
+    @SerializedName("fileId")
     @Expose
-    private int plantingId;
-    @SerializedName("idno")
+    private int fileId;
+    @SerializedName("famerName")
     @Expose
-    private String idno;
-    @SerializedName("centreName")
+    private String famerName;
+    @SerializedName("farmerCode")
     @Expose
-    private String centreName;
+    private String farmerCode;
+    @SerializedName("farmerId")
+    @Expose
+    private int farmerId;
+    @SerializedName("cropDateId")
+    @Expose
+    private int cropDateId;
+    @SerializedName("contractDate")
+    @Expose
+    private List<Integer> contractDate = null;
     @SerializedName("mobileno")
     @Expose
     private String mobileno;
 
-    public int getFarmerId() {
-        return farmerId;
+    @SerializedName("centrename")
+    @Expose
+    private String centrename;
+
+    public int getId() {
+        return id;
     }
 
-    public void setFarmerId(int farmerId) {
-        this.farmerId = farmerId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public PageItemHarvest withFarmerId(int farmerId) {
-        this.farmerId = farmerId;
+    public PageItemHarvest withId(int id) {
+        this.id = id;
         return this;
     }
 
-    public String getFarmerName() {
-        return farmerName;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    public void setFarmerName(String farmerName) {
-        this.farmerName = farmerName;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
-    public PageItemHarvest withFarmerName(String farmerName) {
-        this.farmerName = farmerName;
+    public PageItemHarvest withAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
         return this;
     }
 
-    public String getFarmerCode() {
-        return farmerCode;
+    public String getReferenceNo() {
+        return referenceNo;
     }
 
-    public void setFarmerCode(String farmerCode) {
-        this.farmerCode = farmerCode;
+    public void setReferenceNo(String referenceNo) {
+        this.referenceNo = referenceNo;
     }
 
-    public PageItemHarvest withFarmerCode(String farmerCode) {
-        this.farmerCode = farmerCode;
+    public PageItemHarvest withReferenceNo(String referenceNo) {
+        this.referenceNo = referenceNo;
         return this;
     }
 
@@ -86,55 +99,94 @@ public class PageItemHarvest {
         return this;
     }
 
-    public int getTotalUnits() {
-        return totalUnits;
+    public int getUnits() {
+        return units;
     }
 
-    public void setTotalUnits(int totalUnits) {
-        this.totalUnits = totalUnits;
+    public void setUnits(int units) {
+        this.units = units;
     }
 
-    public PageItemHarvest withTotalUnits(int totalUnits) {
-        this.totalUnits = totalUnits;
+    public PageItemHarvest withUnits(int units) {
+        this.units = units;
         return this;
     }
 
-    public int getPlantingId() {
-        return plantingId;
+    public int getFileId() {
+        return fileId;
     }
 
-    public void setPlantingId(int plantingId) {
-        this.plantingId = plantingId;
+    public void setFileId(int fileId) {
+        this.fileId = fileId;
     }
 
-    public PageItemHarvest withPlantingId(int plantingId) {
-        this.plantingId = plantingId;
+    public PageItemHarvest withFileId(int fileId) {
+        this.fileId = fileId;
         return this;
     }
 
-    public String getIdno() {
-        return idno;
+    public String getFamerName() {
+        return famerName;
     }
 
-    public void setIdno(String idno) {
-        this.idno = idno;
+    public void setFamerName(String famerName) {
+        this.famerName = famerName;
     }
 
-    public PageItemHarvest withIdno(String idno) {
-        this.idno = idno;
+    public PageItemHarvest withFamerName(String famerName) {
+        this.famerName = famerName;
         return this;
     }
 
-    public String getCentreName() {
-        return centreName;
+    public String getFarmerCode() {
+        return farmerCode;
     }
 
-    public void setCentreName(String centreName) {
-        this.centreName = centreName;
+    public void setFarmerCode(String farmerCode) {
+        this.farmerCode = farmerCode;
     }
 
-    public PageItemHarvest withCentreName(String centreName) {
-        this.centreName = centreName;
+    public PageItemHarvest withFarmerCode(String farmerCode) {
+        this.farmerCode = farmerCode;
+        return this;
+    }
+
+    public int getFarmerId() {
+        return farmerId;
+    }
+
+    public void setFarmerId(int farmerId) {
+        this.farmerId = farmerId;
+    }
+
+    public PageItemHarvest withFarmerId(int farmerId) {
+        this.farmerId = farmerId;
+        return this;
+    }
+
+    public int getCropDateId() {
+        return cropDateId;
+    }
+
+    public void setCropDateId(int cropDateId) {
+        this.cropDateId = cropDateId;
+    }
+
+    public PageItemHarvest withCropDateId(int cropDateId) {
+        this.cropDateId = cropDateId;
+        return this;
+    }
+
+    public List<Integer> getContractDate() {
+        return contractDate;
+    }
+
+    public void setContractDate(List<Integer> contractDate) {
+        this.contractDate = contractDate;
+    }
+
+    public PageItemHarvest withContractDate(List<Integer> contractDate) {
+        this.contractDate = contractDate;
         return this;
     }
 
@@ -151,4 +203,16 @@ public class PageItemHarvest {
         return this;
     }
 
+    public String getCentrename() {
+        return centrename;
+    }
+
+    public void setCentrename(String centrename) {
+        this.centrename = centrename;
+    }
+
+    public PageItemHarvest withCentrename(String centrename) {
+        this.centrename = centrename;
+        return this;
+    }
 }

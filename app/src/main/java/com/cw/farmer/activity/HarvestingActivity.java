@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -40,7 +41,7 @@ import retrofit2.Retrofit;
 public class HarvestingActivity extends AppCompatActivity {
     EditText farmer_harvesting,crop_weight;
     Spinner codedate_harvesting;
-    String farmer_id_string,noofunits,plantingId;
+    String farmer_id_string,noofunits,plantingId, contract_id_string;
     List<String> cropDateId_list,reason_main;
 
     @Override
@@ -54,6 +55,7 @@ public class HarvestingActivity extends AppCompatActivity {
         farmer_harvesting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("harvesting","Search harvesting.....");
                 SharedPreferences.Editor searcheditor = getSharedPreferences("search", MODE_PRIVATE).edit();
                 searcheditor.putString("activity","destruction");
                 searcheditor.apply();
@@ -82,10 +84,13 @@ public class HarvestingActivity extends AppCompatActivity {
             String plantingId_now =(String) b.get("plantingId");
             plantingId=plantingId_now;
 
+            String contract_idnow =(String) b.get("id");
+            contract_id_string=contract_idnow;
+
 
 
             cropDateId_list = new ArrayList<String>();
-            String cropDateId =(String) b.get("crop_date");
+            String cropDateId =(String) b.get("plantingId");
             cropDateId_list.add(cropDateId);
 
             ArrayList<String> spinnerArray = new ArrayList<String>();
@@ -171,6 +176,7 @@ public class HarvestingActivity extends AppCompatActivity {
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("dateid", plantingId);
             hashMap.put("noofunits", noofunits);
+            hashMap.put("contractId", contract_id_string);
             hashMap.put("farmerid", farmer_id_string);
             hashMap.put("harvestkilos", crop_weight.getText().toString());
             hashMap.put("locale", "en");
@@ -179,6 +185,7 @@ public class HarvestingActivity extends AppCompatActivity {
             APIService service = retrofit.create(APIService.class);
             SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
             String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Log.d("Payload",hashMap.toString());
             Call<AllResponse> call = service.postharvesting(auth_key, hashMap);
             call.enqueue(new Callback<AllResponse>() {
                 @Override
@@ -236,7 +243,7 @@ public class HarvestingActivity extends AppCompatActivity {
                 }
             });
         } else {
-            HarvestingDB book = new HarvestingDB(plantingId, noofunits, farmer_id_string, crop_weight.getText().toString(), "en");
+            HarvestingDB book = new HarvestingDB(plantingId, noofunits, farmer_id_string, crop_weight.getText().toString(), "en",contract_id_string);
             book.save();
             pDialog.cancel();
             new SweetAlertDialog(HarvestingActivity.this, SweetAlertDialog.WARNING_TYPE)

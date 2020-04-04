@@ -124,6 +124,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
         Set<String> permission = prefs.getStringSet("key", null);
 
+        if(permission==null){
+            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+            return;
+        }
+
         if (!permission.contains("ALL_FUNCTIONS")){
             register_farmer=findViewById(R.id.register_farmer);
             if (!permission.contains("CREATE_FARMER")) {

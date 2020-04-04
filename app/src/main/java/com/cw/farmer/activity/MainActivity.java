@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -57,6 +58,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -302,6 +304,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
             SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            Set<String> permission = prefs.getStringSet("key", null);
+
+            if(permission==null){
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                return;
+            }
+
             String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
             Call<List<BankNameResponse>> call = service.getbankname(auth_key);
             call.enqueue(new Callback<List<BankNameResponse>>() {
@@ -341,6 +350,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+
+        Set<String> permission = prefs.getStringSet("key", null);
+
+        if(permission==null){
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            return;
+        }
+
         String center_names = prefs.getString("center_names", "");
         String center_ids = prefs.getString("center_ids", "");
         //centre_id
@@ -355,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         center_id_submit = new ArrayList<Integer>();
 
         for (String centre : center_idlist) {
-            System.out.println(centre);
+            Log.d("Centre...",centre);
             center_id_submit.add(Integer.valueOf(centre));
         }
         ArrayAdapter<String> spinnerArrayAdapter123 = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerArray123);

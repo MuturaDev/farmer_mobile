@@ -61,7 +61,7 @@ public class CropDestructionActivity extends AppCompatActivity {
     private File compressedImageFile;
     EditText farmer_destruction, noofunits_destruction;
     Spinner codedate_destruction, type_destruction, reason_destruction;
-    String farmer_id_string,accountNumber_string,referenceNo_string,units_string;
+    String farmer_id_string,accountNumber_string,referenceNo_string,units_string,contract_id_string;
     String planting_id_string;
     List<Integer> reason_ids;
     List<String> cropDateId_list,reason_main;
@@ -123,6 +123,9 @@ public class CropDestructionActivity extends AppCompatActivity {
 
             String referenceNo =(String) b.get("referenceNo");
             referenceNo_string=referenceNo;
+
+            String contractid =(String) b.get("id");
+            contract_id_string = contractid;
 
 
             cropDateId_list = new ArrayList<String>();
@@ -331,6 +334,7 @@ public class CropDestructionActivity extends AppCompatActivity {
             hashMap.put("accountNumber", accountNumber_string);
             hashMap.put("unit", noofunits_destruction.getText().toString());
             hashMap.put("farmers_id", farmer_id_string);
+            hashMap.put("contractId", contract_id_string);
             hashMap.put("file", getBase64FromPath());
             hashMap.put("locale", "en");
             hashMap.put("cropDestructionType", reason_main.get(reason_destruction.getSelectedItemPosition()).toString());
@@ -398,7 +402,7 @@ public class CropDestructionActivity extends AppCompatActivity {
             });
         } else {
             System.out.println("See me " + reason_ids.get(reason_destruction.getSelectedItemPosition()).toString());
-            CropDestructionPostDB book = new CropDestructionPostDB(cropDateId_list.get(codedate_destruction.getSelectedItemPosition()).toString(), accountNumber_string, noofunits_destruction.getText().toString(), farmer_id_string, getBase64FromPath(), "en", reason_main.get(reason_destruction.getSelectedItemPosition()).toString(), reason_ids.get(reason_destruction.getSelectedItemPosition()).toString());
+            CropDestructionPostDB book = new CropDestructionPostDB(cropDateId_list.get(codedate_destruction.getSelectedItemPosition()).toString(), accountNumber_string, noofunits_destruction.getText().toString(), farmer_id_string, getBase64FromPath(), "en", reason_main.get(reason_destruction.getSelectedItemPosition()).toString(), reason_ids.get(reason_destruction.getSelectedItemPosition()).toString(),contract_id_string);
             book.save();
             pDialog.cancel();
             new SweetAlertDialog(CropDestructionActivity.this, SweetAlertDialog.WARNING_TYPE)

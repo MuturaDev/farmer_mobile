@@ -27,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class ApiClient {
-    private static String BASE_URL = "https://skyplusapps.co.ke:8080/";
+    private static String BASE_URL = "https://frigokenapp.co.ke:8080/";
     private static Retrofit retrofit = null;
     private static final Interceptor REWRITE_RESPONSE_INTERCEPTOR = chain -> {
         Response originalResponse = chain.proceed(chain.request());

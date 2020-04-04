@@ -105,7 +105,7 @@ public interface APIService {
     Call<List<FarmerAccountsResponse>> getfameraccount(@Path("id") int groupId, @Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
-    @GET("/fineract-provider/api/v1/contractsigning/activecontractedfarmers")
+    @GET("/fineract-provider/api/v1/contractsigning")
     Call<FarmerHarvestResponse> getHarvestfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search, @Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})

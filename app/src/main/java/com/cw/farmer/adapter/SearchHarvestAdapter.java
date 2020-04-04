@@ -139,12 +139,12 @@ public class SearchHarvestAdapter extends RecyclerView.Adapter<RecyclerView.View
         //ID No
         //Crop Date
         //Centre Name
-        viewHolder.tv_first_midel_last_name.setText(pageItem.getFarmerName());
+        viewHolder.tv_first_midel_last_name.setText(pageItem.getFamerName());
         viewHolder.tv_mobile.setText("Mobile No: "+pageItem.getMobileno());
-        viewHolder.tv_idno.setText("ID No: "+pageItem.getIdno());
+        viewHolder.tv_idno.setText("ID No: "+pageItem.getAccountNumber());
         viewHolder.crop_date.setText("Crop Date: "+removeLastChar(date));
 
-        viewHolder.tv_noofunits.setText("Centre Name: "+pageItem.getCentreName());
+        viewHolder.tv_noofunits.setText("Centre Name: "+pageItem.getCentrename());
 
 
         viewHolder.lin_item.setOnClickListener(new View.OnClickListener() {
@@ -156,14 +156,15 @@ public class SearchHarvestAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
                 String finalDate = date;
                 Intent intent = new Intent(context, HarvestingActivity.class);
-                intent.putExtra("name",pageItem.getFarmerName());
+                intent.putExtra("name",pageItem.getFamerName());
                 intent.putExtra("farmerId",pageItem.getFarmerId()+"");
+                intent.putExtra("id",pageItem.getId()+"");
                 intent.putExtra("farmerCode",pageItem.getFarmerCode()+"");
                 intent.putExtra("crop_date",removeLastChar(finalDate)+"");
-                intent.putExtra("totalUnits",pageItem.getTotalUnits()+"");
-                intent.putExtra("plantingId",pageItem.getPlantingId()+"");
-                intent.putExtra("idno",pageItem.getIdno()+"");
-                intent.putExtra("centreName",pageItem.getCentreName()+"");
+                intent.putExtra("totalUnits",pageItem.getUnits()+"");
+                intent.putExtra("plantingId",pageItem.getCropDateId()+"");
+                intent.putExtra("idno",pageItem.getAccountNumber()+"");
+                intent.putExtra("centreName",pageItem.getCentrename()+"");
                 intent.putExtra("mobileno",pageItem.getMobileno()+"");
                 context.startActivity(intent);
             }
