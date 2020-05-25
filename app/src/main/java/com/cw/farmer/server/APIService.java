@@ -77,6 +77,10 @@ public interface APIService {
     Call<List<CropDateResponse>> getcropdate(@Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @GET("/fineract-provider/api/v1/cropdates/activerecruitmentcropdates")
+    Call<List<CropDateResponse>> getRecruitCropDates(@Header("Authorization") String authorization);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @GET("/fineract-provider/api/v1/contractsigning/contractfarmers")
     Call<SearchContractResponse> getContractfarmer(@Query("limit") int limit, @Query("offset") int offset, @Query("sqlSearch") String search, @Header("Authorization") String authorization);
 

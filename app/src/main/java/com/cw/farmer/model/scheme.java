@@ -111,7 +111,7 @@ public class scheme extends Fragment {
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                progressDialog.hide();
+                progressDialog.dismiss();
                 try {
                     //Toast.makeText(getContext(),String.valueOf( response.body().getPageItems().size()), Toast.LENGTH_LONG).show();
                     if (String.valueOf(response.body().getPageItems().size())!="0"){

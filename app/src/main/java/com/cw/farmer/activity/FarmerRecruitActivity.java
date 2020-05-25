@@ -145,13 +145,12 @@ public class FarmerRecruitActivity extends AppCompatActivity {
         cropdate.setAdapter(spinnerArrayAdapter);
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             progressDialog.setCancelable(false);
-            // progressBar.setMessage("Please Wait...");
-            progressDialog.show();
+            progressDialog.dismiss();
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
             SharedPreferences prefs123 = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
             String auth_key = prefs123.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-            Call<List<CropDateResponse>> call = service.getcropdate(auth_key);
+            Call<List<CropDateResponse>> call = service.getRecruitCropDates(auth_key);
             call.enqueue(new Callback<List<CropDateResponse>>() {
                 @Override
                 public void onResponse(Call<List<CropDateResponse>> call, Response<List<CropDateResponse>> response) {

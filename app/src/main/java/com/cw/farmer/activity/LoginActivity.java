@@ -180,11 +180,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void login() {
 
-        //progressBar.setCancelable(false);
-       // progressBar.setMessage("Please Wait...");
-        //progressBar.show();
+        progressBar.setCancelable(false);
+        progressBar.setMessage("Please Wait...");
+        progressBar.show();
         SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-        if (prefs.getString("username", "aggrey1234").equals(et_username.getText().toString()) && prefs.getString("password", "woow").equals(et_password.getText().toString())) {
+        if (prefs.getString("username", "9990988").equals(et_username.getText().toString()) && prefs.getString("password", "-2000099").equals(et_password.getText().toString())) {
 
             startActivity(new Intent(LoginActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
@@ -198,7 +198,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         call.enqueue(new Callback<Result>() {
             @Override
             public void onResponse(Call<Result> call, Response<Result> response) {
-                //progressBar.hide();
+                progressBar.dismiss();
 
                 try {
                     if (response.code() == 200) {
@@ -214,6 +214,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                         center_idss = removeLastChar(center_idss);
                         center_names = removeLastChar(center_names);
+                        Log.d("Centers",center_names);
+                        Log.d("Centers Ids",center_idss);
                         SharedPreferences mEdit1 = getSharedPreferences("PERMISSIONS", Context.MODE_PRIVATE);
                         SharedPreferences.Editor scoreEditor = mEdit1.edit();
                         scoreEditor.putString("userid", center_idss + "");
@@ -231,6 +233,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         set.addAll(response.body().getPermissions());
                         scoreEditor.putStringSet("key", set);
                         scoreEditor.commit();
+
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
                         //Utility.showToast(LoginActivity.this,center_idss);
 

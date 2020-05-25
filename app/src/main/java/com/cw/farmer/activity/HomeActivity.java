@@ -282,7 +282,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         call.enqueue(new Callback<TasksResponse>() {
             @Override
             public void onResponse(Call<TasksResponse> call, Response<TasksResponse> response) {
-                progressDialog.hide();
+                progressDialog.dismiss();
                 try {
                     if (response.body().getTotalFilteredRecords() > 0){
                         int NOTIFICATION_ID = 23134;
@@ -381,7 +381,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void adhoc() {
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
-        progressDialog.show();
+        progressDialog.dismiss();
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
