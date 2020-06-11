@@ -1,13 +1,13 @@
 package com.cw.farmer.model;
 
-public class FarmNamesResponse {
+public class GeneralSpinnerResponse {
 
 
     int id;
     String shtDesc;
     String desc;
 
-    public FarmNamesResponse(int id, String shtDesc, String desc) {
+    public GeneralSpinnerResponse(int id, String shtDesc, String desc) {
         this.id = id;
         this.shtDesc = shtDesc;
         this.desc = desc;

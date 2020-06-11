@@ -1,12 +1,12 @@
 package com.cw.farmer.spinner_models;
 
-public class FarmSpinner {
+public class GeneralSpinner {
 
         int id;
         String shtDesc;
 
 
-    public FarmSpinner(int id, String shtDesc) {
+    public GeneralSpinner(int id, String shtDesc) {
         this.id = id;
         this.shtDesc = shtDesc;
 

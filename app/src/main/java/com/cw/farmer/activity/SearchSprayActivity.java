@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.SearchSprayAdapter;
@@ -37,7 +38,7 @@ import retrofit2.Retrofit;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
-public class SearchSprayActivity extends AppCompatActivity {
+public class SearchSprayActivity extends HandleConnectionAppCompatActivity {
 
     RecyclerView rv_register;
     SearchSprayAdapter registerAdapter;
@@ -65,7 +66,8 @@ public class SearchSprayActivity extends AppCompatActivity {
         farmer_search = findViewById(R.id.farmer_search);
         btn_search = findViewById(R.id.btn_search);
         progressDialog = new ProgressDialog(this);
-        search();
+        //prevents fetching records after the page is open.. and allows fetching records only after clicking on search
+        //search();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

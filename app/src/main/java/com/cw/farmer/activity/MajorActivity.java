@@ -11,10 +11,11 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
 import com.google.android.material.navigation.NavigationView;
 
-public class MajorActivity extends AppCompatActivity {
+public class MajorActivity extends HandleConnectionAppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 

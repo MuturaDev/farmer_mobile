@@ -494,10 +494,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dimen_10"
                     android:orientation="horizontal"
-                    android:onClick="opendashboard"
                     android:weightSum="2">
                     <androidx.cardview.widget.CardView
                         android:id="@+id/dashboard"
+                        android:onClick="opendashboard"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="@dimen/dimen_5"
@@ -527,6 +527,186 @@
                                 android:textAlignment="center"
                                 android:layout_height="match_parent"
                                 android:text="My Dashboard"
+                                android:textColor="#747474"
+                                android:textSize="18sp"
+                                android:textStyle="normal" />
+
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/register_block_Card"
+                        android:layout_width="match_parent"
+                        android:onClick="registerBlock"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/dimen_5"
+                        android:layout_weight="1"
+                        android:padding="@dimen/dimen_10">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/dimen_5"
+                            android:orientation="vertical">
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/register_farm"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/colorblack" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textAlignment="center"
+                                android:layout_height="match_parent"
+                                android:text="Register Block"
+                                android:textColor="#747474"
+                                android:textSize="18sp"
+                                android:textStyle="normal" />
+
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/harvest_block_Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:onClick="harvestBlock"
+                        android:layout_margin="@dimen/dimen_5"
+                        android:layout_weight="1"
+                        android:padding="@dimen/dimen_10">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/dimen_5"
+                            android:orientation="vertical">
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/harvest_block"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/colorblack" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textAlignment="center"
+                                android:layout_height="match_parent"
+                                android:text="Harvest Block"
+                                android:textColor="#747474"
+                                android:textSize="18sp"
+                                android:textStyle="normal" />
+
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/plant_block_Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:onClick="plantBlock"
+                        android:layout_margin="@dimen/dimen_5"
+                        android:layout_weight="1"
+                        android:padding="@dimen/dimen_10">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/dimen_5"
+                            android:orientation="vertical">
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/plant_block"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/colorblack" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textAlignment="center"
+                                android:layout_height="match_parent"
+                                android:text="Plant Block"
+                                android:textColor="#747474"
+                                android:textSize="18sp"
+                                android:textStyle="normal" />
+
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/irrigation_block_Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:onClick="irrigateBlock"
+                        android:layout_margin="@dimen/dimen_5"
+                        android:layout_weight="1"
+                        android:padding="@dimen/dimen_10">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/dimen_5"
+                            android:orientation="vertical">
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/irrigate"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/colorblack" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textAlignment="center"
+                                android:layout_height="match_parent"
+                                android:text="Irrigate Block"
                                 android:textColor="#747474"
                                 android:textSize="18sp"
                                 android:textStyle="normal" />

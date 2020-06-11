@@ -4,11 +4,13 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -22,6 +24,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -30,6 +33,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.AdhocAdapter;
@@ -55,6 +59,7 @@ import com.cw.farmer.model.TasksResponse;
 import com.cw.farmer.model.dashboard;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.testexamples.SampleActivity;
 import com.google.android.material.appbar.AppBarLayout;
 
 import org.json.JSONObject;
@@ -72,7 +77,11 @@ import retrofit2.Retrofit;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class HomeActivity extends HandleConnectionAppCompatActivity implements View.OnClickListener {
+
+
+
+
     LinearLayout lin_register, lin_create;
     private Context mContext=HomeActivity.this;
 
@@ -88,6 +97,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     AppBarLayout Appbar;
     Toolbar toolbar;
     CardView register_farmer,view_farmer,recruit_farmer,contract_signing,verify_planting,crop_destruction,harvest_collection,inventory_mgt,dashboard;
+    CardView register_block_Card,harvest_block_Card,plant_block_Card;
 
     boolean ExpandedActionBar = true;
     ExpandableListAdapter listAdapter;
@@ -160,6 +170,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             dashboard=findViewById(R.id.dashboard);
             inventory_mgt=findViewById(R.id.inventory_mgt);
+
+            register_block_Card = findViewById(R.id.register_block_Card);
+            harvest_block_Card = findViewById(R.id.harvest_block_Card);
+            plant_block_Card = findViewById(R.id.plant_block_Card);
         }
 
         user_id=prefs.getString("userid", "-1");
@@ -246,6 +260,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(new Intent(HomeActivity.this, ListFarmerActivity.class));
     }
     public void openrecruit(View v){
+
         startActivity(new Intent(HomeActivity.this, FarmerRecruitActivity.class));
     }
     public void opencontract(View v){
@@ -257,8 +272,32 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void openharvesting(View v){
         startActivity(new Intent(HomeActivity.this, HarvestingActivity.class));
     }
+
+    public void registerBlock(View view){
+        startActivity(new Intent(HomeActivity.this, RegisterBlockActivity.class));
+    }
+
+    public void harvestBlock(View vivew){
+        startActivity(new Intent(HomeActivity.this, HarvestBlockActivity.class));
+    }
+
+    public void plantBlock(View view){
+        startActivity(new Intent(HomeActivity.this, PlantBlockActivity.class));
+    }
+
+    public void irrigateBlock(View view){
+
+        startActivity(new Intent(HomeActivity.this, IrrigateBlockActivity.class));
+        // TODO: 2020-06-06 Testing for Location using SampleActivity. 
+        //startActivity(new Intent(HomeActivity.this, SampleActivity.class));
+        
+    }
+
+
+
+
     public void openplantverfication(View v){
-        startActivity(new Intent(HomeActivity.this, PlantingVerificationActivity.class));
+            startActivity(new Intent(HomeActivity.this, PlantingVerificationActivity.class));
     }
 
     public void opensprayconfirmation(View v) {
@@ -285,31 +324,34 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 progressDialog.dismiss();
                 try {
                     if (response.body().getTotalFilteredRecords() > 0){
-                        int NOTIFICATION_ID = 23134;
-                        String CHANNEL_ID = "my_channel_01";
-                        CharSequence name = "my_channel";
-                        String Description = "This is my channel";
-                        NotificationManager notificationManager = (NotificationManager) HomeActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
-                            int importance = NotificationManager.IMPORTANCE_HIGH;
-                            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-                            mChannel.setDescription(Description);
-                            mChannel.enableLights(true);
-                            mChannel.setLightColor(Color.RED);
-                            mChannel.enableVibration(true);
-                            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-                            mChannel.setShowBadge(false);
-                            notificationManager.createNotificationChannel(mChannel);
-                        }
-
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(HomeActivity.this, CHANNEL_ID)
-                                .setSmallIcon(R.drawable.logo_nice)
-                                .setContentTitle("You have a new task")
-                                .setContentText("Open farmer application to view the tasks");
-
-                        notificationManager.notify(NOTIFICATION_ID, builder.build());
+                        // TODO: 2020-06-02 Until they say what this notificaiton is for, we can not continue using it.
+//                        int NOTIFICATION_ID = 23134;
+//                        String CHANNEL_ID = "my_channel_01";
+//                        CharSequence name = "my_channel";
+//                        String Description = "This is my channel";
+//                        NotificationManager notificationManager = (NotificationManager) HomeActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//
+//                            int importance = NotificationManager.IMPORTANCE_HIGH;
+//                            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+//                            mChannel.setDescription(Description);
+//                            mChannel.enableLights(true);
+//                            mChannel.setLightColor(Color.RED);
+//                            mChannel.enableVibration(true);
+//                          //  mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+//                            mChannel.setShowBadge(false);
+//                            notificationManager.createNotificationChannel(mChannel);
+//                        }
+//
+//                        NotificationCompat.Builder builder = new NotificationCompat.Builder(HomeActivity.this, CHANNEL_ID)
+//                                .setSmallIcon(R.drawable.logo_nice)
+//                                .setContentTitle("You have a new task")
+//                                .setContentText("Open farmer application to view the tasks");
+//
+//                        notificationManager.notify(NOTIFICATION_ID, builder.build());
 
                             listDataHeader = new ArrayList<String>();
                             listDataChild = new HashMap<String, List<String>>();
@@ -328,19 +370,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 for (int elem : taks.getCropDate()) {
                                     date = elem + "/" + date;
                                 }
-                                invent.add(taks.getCentrename() + " ,planting," + removeLastChar(date) + " ," + taks.getEntityId());
+                                invent.add(taks.getCentrename()/*0*/ + " ,planting,"/*1*/  + removeLastChar(date)/*2*/  + " ," + taks.getEntityId()/*3*/  + "," + taks.getId()/*4*/ );
                             } else if (taks.getEntityName().equals("VERIFY_SPRAY_MOBILE")) {
                                 String date = "";
                                 for (int elem : taks.getCropDate()) {
                                     date = elem + "/" + date;
                                 }
-                                invent.add(taks.getCentrename() + " ,planting," + removeLastChar(date) + " ," + taks.getEntityId());
+                                invent.add(taks.getCentrename() + " ,planting," + removeLastChar(date) + " ," + taks.getEntityId() + "," + taks.getId());
                             } else {
                                 String date = "";
                                 for (int elem : taks.getCreatedOn()) {
                                     date = elem + "/" + date;
                                 }
-                                return_inve.add(taks.getCentrename() + " ,return," + removeLastChar(date) + " ," + taks.getEntityId());
+                                return_inve.add(taks.getCentrename() + " ,return," + removeLastChar(date) + " ," + taks.getEntityId() + "," + taks.getId());
                             }
 
 
@@ -903,4 +945,35 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+
+    @Override
+    public void onBackPressed() {
+        Context context = HomeActivity.this;
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if( !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ) {
+
+            super.onBackPressed();
+        }else
+        {
+
+            new AlertDialog.Builder(context)
+                    .setCancelable(false)
+                    .setTitle("Disable GPS")  // GPS not found
+                    .setMessage("If exiting the farmer app, disable your gps.") // Want to enable?
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    })
+                    .show();
+
+        }
+
+    }
 }

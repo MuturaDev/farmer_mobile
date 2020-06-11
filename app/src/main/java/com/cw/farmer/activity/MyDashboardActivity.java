@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.CropDateDB;
@@ -33,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class MyDashboardActivity extends AppCompatActivity {
+public class MyDashboardActivity extends HandleConnectionAppCompatActivity {
     TextView farmer_planting_not_verify, farmer_kilo_harvest, farmer_recruit_no, farmer_contract_signed, farmer_planting_verify;
     Spinner cropdate;
     List<Integer> crop_id;

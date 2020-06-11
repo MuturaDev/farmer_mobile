@@ -16,9 +16,9 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllCentreResponse;
 import com.cw.farmer.model.AllResponse;
@@ -37,7 +37,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class ChangeCentreActivity extends AppCompatActivity {
+public class ChangeCentreActivity extends HandleConnectionAppCompatActivity {
     List<Integer> centre_id;
     String user_id, centre;
     EditText search_centre;

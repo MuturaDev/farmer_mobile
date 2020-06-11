@@ -15,11 +15,13 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.RequistionAdapter;
 import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.CentreRequiste;
 import com.cw.farmer.model.Centrestore;
+import com.cw.farmer.model.PlantingVerificationResponse;
 import com.cw.farmer.model.RequisitionResponse;
 import com.cw.farmer.model.RetItem;
 import com.cw.farmer.server.APIService;
@@ -29,6 +31,7 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +43,7 @@ import retrofit2.Retrofit;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
-public class RequisitionActivity extends AppCompatActivity {
+public class RequisitionActivity extends HandleConnectionAppCompatActivity {
     String entity_id,crop_date,type,centrename;
     RecyclerView rv_register;
     RequistionAdapter registerAdapter;
@@ -49,6 +52,7 @@ public class RequisitionActivity extends AppCompatActivity {
     CentreRequiste centremain;
 
 
+   // private TextView tv_centre,tv_crop_date,tv_farmer_name,tv_no_of_units;
 
 
 
@@ -65,12 +69,31 @@ public class RequisitionActivity extends AppCompatActivity {
         centremain = new CentreRequiste();
 
 
+
+
+
         if(b!=null) {
-            entity_id=(String) b.get("id");
+            entity_id=(String) b.get("entityId");
             crop_date=(String) b.get("crop_date");
             type=(String) b.get("type");
             centrename=(String) b.get("centrename");
+
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(" EntityID: " + entity_id);
+            sb.append(" CropDate: " + crop_date);
+            sb.append(" Type: "+ type);
+            sb.append(" Centrename: " + centrename);
+
+
+
+            Log.d(RequisitionActivity.this.getPackageName().toUpperCase(), sb.toString());
         }
+
+//        tv_centre = findViewById(R.id.tv_centre);
+//        tv_crop_date = findViewById(R.id.tv_crop_date);
+//        tv_farmer_name = findViewById(R.id.tv_farmer_name);
+//        tv_no_of_units = findViewById(R.id.tv_no_of_units);
 
         TextView tv_centre= findViewById(R.id.tv_centre);
         tv_centre.setText(centrename);
@@ -89,13 +112,24 @@ public class RequisitionActivity extends AppCompatActivity {
         SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
         String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
         Call<List<RequisitionResponse>> call = service.getrequsition(entity_id, auth_key);
+
         call.enqueue(new Callback<List<RequisitionResponse>>() {
             @Override
             public void onResponse(Call<List<RequisitionResponse>> call, Response<List<RequisitionResponse>> response) {
                 progressDialog.hide();
-                try {
-                    if (response.body() != null){
-                            pageItemArrayList = (ArrayList<RequisitionResponse>) response.body();
+
+                if (response.body() != null) {
+                    Log.d(RequisitionActivity.this.getPackageName().toUpperCase(), response.body().toString());
+
+//                        tv_centre.setText(response.body().getCentreName());
+//                        tv_crop_date.setText(response.body().getCropDate().get(2) + "/"  +response.body().getCropDate().get(1) + "/" + response.body().getCropDate().get(0));
+//                        tv_farmer_name.setText(response.body().getFarmerName());
+//                        tv_no_of_units.setText(response.body().getContractUnits());
+
+
+                    // What was there before
+                    if (response.body().size() > 0) {
+                        pageItemArrayList = (ArrayList<RequisitionResponse>) response.body();
                         for (RequisitionResponse pageitem : response.body()) {
 
                             Centrestore centersub = new Centrestore();
@@ -105,26 +139,25 @@ public class RequisitionActivity extends AppCompatActivity {
 
                             centremain.setCentrestores(centersub);
                         }
-                            setData();
+                        setData();
 
-                    }else{
+                    } else {
 
                         Utility.showToast(RequisitionActivity.this, "No requisition details");
                     }
 
-                } catch (Exception e) {
-                    Utility.showToast(RequisitionActivity.this, e.getMessage());
-                    Log.w("myApp",  e.getMessage());
-                }
 
+                }
             }
 
             @Override
             public void onFailure(Call<List<RequisitionResponse>> call, Throwable t) {
                 progressDialog.hide();
                 Utility.showToast(RequisitionActivity.this, t.getMessage());
+                Log.e(RequisitionActivity.this.getPackageName().toUpperCase(),  t.getMessage());
             }
         });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     private void setData() {
@@ -134,6 +167,8 @@ public class RequisitionActivity extends AppCompatActivity {
         rv_register.setAdapter(registerAdapter);
 
     }
+
+
 
     public void submit_requsition(View v) {
 

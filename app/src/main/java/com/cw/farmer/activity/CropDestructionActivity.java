@@ -20,11 +20,11 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
@@ -56,7 +56,7 @@ import retrofit2.Retrofit;
 
 import static com.cw.farmer.ManifestPermission.hasPermissions;
 
-public class CropDestructionActivity extends AppCompatActivity {
+public class CropDestructionActivity extends HandleConnectionAppCompatActivity {
     private ImageView iv_destruction_image;
     private File compressedImageFile;
     EditText farmer_destruction, noofunits_destruction;
@@ -269,7 +269,8 @@ public class CropDestructionActivity extends AppCompatActivity {
                                 public void accept(File file) {
                                     if (type==1){
                                         compressedImageFile = file;
-
+                                        iv_destruction_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                                        iv_destruction_image.setAdjustViewBounds(true);
                                         Glide.with(CropDestructionActivity.this).load(compressedImageFile).into(iv_destruction_image);
                                     }
 
@@ -290,6 +291,8 @@ public class CropDestructionActivity extends AppCompatActivity {
                 }
             });
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
 
     }
     public String getBase64FromPath() {

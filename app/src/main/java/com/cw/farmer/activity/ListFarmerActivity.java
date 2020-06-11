@@ -2,6 +2,7 @@ package com.cw.farmer.activity;
 
 import android.os.Bundle;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +17,7 @@ import com.cw.farmer.R;
 import com.cw.farmer.model.contract;
 import com.cw.farmer.model.scheme;
 
-public class ListFarmerActivity extends AppCompatActivity {
+public class ListFarmerActivity extends HandleConnectionAppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;

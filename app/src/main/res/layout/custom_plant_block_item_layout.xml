@@ -1,6 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/dimen_10"
+    android:id="@+id/lin_item"
+    android:orientation="horizontal"
+    android:weightSum="2"
+    android:layout_marginBottom="@dimen/dimen_5"
+    android:layout_height="wrap_content">
+
+
+
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_10"
+        android:orientation="vertical"
+        android:padding="@dimen/dimen_10">
+
+        <LinearLayout
+            android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+
+                android:id="@+id/tv_first_midel_last_name"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Block Area:"
+                android:textSize="@dimen/dimen_15"
+                android:textColor="@color/colorblack" />
+            <TextView
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:id="@+id/tv_area"
+                android:textColor="@color/colorblack"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AR1 - 1 HA" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textSize="@dimen/dimen_15"
+                android:textColor="@color/colorblack"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Crop Date:" />
+
+            <TextView
+                android:id="@+id/tv_crop_date"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textColor="@color/colorblack"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="19/12/2020" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textSize="@dimen/dimen_15"
+                android:textColor="@color/colorblack"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Product:" />
+
+            <TextView
+
+                android:textColor="@color/colorblack"
+                android:textStyle="bold"
+                android:id="@+id/tv_product"
+                android:layout_width="0dp"
+                android:textAlignment="center"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Tomatoes" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textSize="@dimen/dimen_15"
+                android:textColor="@color/colorblack"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Farm:" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/tv_farm"
+                android:textColor="@color/colorblack"
+                android:textStyle="bold"
+                android:layout_width="0dp"
+                android:textAlignment="center"
+                android:layout_height="wrap_content"
+                android:text="Runda" />
+
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:src="@drawable/plant_block"
+            android:layout_height="60dp"/>
+
+    </LinearLayout>
 
 </LinearLayout>

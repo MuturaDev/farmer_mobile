@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.PageItem;
@@ -48,7 +49,7 @@ import retrofit2.Retrofit;
 
 import static com.cw.farmer.ManifestPermission.hasPermissions;
 
-public class UpdateDocsActivity extends AppCompatActivity {
+public class UpdateDocsActivity extends HandleConnectionAppCompatActivity {
     int PERMISSION_ALL = 1;
     String[] PERMISSIONS = {
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -181,7 +182,8 @@ public class UpdateDocsActivity extends AppCompatActivity {
                                 public void accept(File file) {
                                     if (type == 0) {
                                         compressedImageFile = file;
-
+                                        iv_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                                        iv_image.setAdjustViewBounds(true);
                                         Glide.with(UpdateDocsActivity.this).load(compressedImageFile).into(iv_image);
                                     }
 

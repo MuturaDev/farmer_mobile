@@ -9,9 +9,11 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cw.farmer.R;
 import com.cw.farmer.activity.RequisitionActivity;
+import com.cw.farmer.activity.ReturnActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -56,26 +58,46 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.tv_centre);
-
         txtListChild.setText(result[0]);
+
         TextView cropdate = (TextView) convertView
                 .findViewById(R.id.tv_crop_date);
-
         cropdate.setText(result[2]);
+
         TextView type = (TextView) convertView
                 .findViewById(R.id.tv_type);
-
         type.setText(result[1]);
+
         LinearLayout lin_item = (LinearLayout)  convertView.findViewById(R.id.lin_item);
         lin_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(_context, RequisitionActivity.class);
-                intent.putExtra("id",result[3]+"");
-                intent.putExtra("crop_date", result[2]);
-                intent.putExtra("type", result[1]);
-                intent.putExtra("centrename",result[0]);
-                _context.startActivity(intent);
+
+                if(type.getText().toString().equals("return")){
+                    Intent intent = new Intent(_context, ReturnActivity.class);
+                    intent.putExtra("taskID",result[4]+"");
+                    intent.putExtra("entityId",result[3]+"");
+                    intent.putExtra("crop_date", result[2]);
+                    intent.putExtra("type", result[1]);
+                    intent.putExtra("centrename",result[0]);
+                    _context.startActivity(intent);
+                   // Toast.makeText(_context, "Return", Toast.LENGTH_SHORT).show();
+                }else if(type.getText().toString().equals("planting")){
+                    Intent intent = new Intent(_context, RequisitionActivity.class);
+                    intent.putExtra("entityId",result[3]+"");
+                    intent.putExtra("crop_date", result[2]);
+                    intent.putExtra("type", result[1]);
+                    intent.putExtra("centrename",result[0]);
+                    _context.startActivity(intent);
+                    //Toast.makeText(_context, "Planting", Toast.LENGTH_SHORT).show();
+                }else if(type.getText().toString().equals("spray")){
+//                    Intent intent = new Intent(_context, RequisitionActivity.class);
+//                    intent.putExtra("id",result[3]+"");
+//                    intent.putExtra("crop_date", result[2]);
+//                    intent.putExtra("type", result[1]);
+//                    intent.putExtra("centrename",result[0]);
+//                    _context.startActivity(intent);
+                }
             }
         });
         return convertView;
@@ -120,12 +142,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ImageView image_v = (ImageView) convertView
                 .findViewById(R.id.image_see);
         if (headerTitle == "Planting") {
-            image_v.setImageResource(R.drawable.planting);
+          image_v.setImageResource(R.drawable.planting);
+           // image_v.setImageDrawable(_context.getDrawable(R.mipmap.return_item));
         }
         else if (headerTitle == "Spray") {
-            image_v.setImageResource(R.drawable.spray);
+            image_v.setImageDrawable(_context.getDrawable(R.drawable.spray));
+         //   image_v.setImageResource(R.drawable.spray);
         }else{
-            image_v.setImageResource(R.drawable.return_item);
+            image_v.setImageResource(R.mipmap.return_item);
         }
 
 

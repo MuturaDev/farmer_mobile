@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.custom.Utility;
@@ -60,11 +61,10 @@ import retrofit2.Retrofit;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class SprayConfirmationActivity extends AppCompatActivity {
+public class SprayConfirmationActivity extends HandleConnectionAppCompatActivity {
     EditText farmer, noofunits, cropdate;
     Spinner spraynumber, section, farmerspinner;
-    String location_str, coordinates;
-    Double currentLat, currentLong;
+
     ProgressDialog progressDialog;
     String farmer_id_string;
     List<Integer> crop_id;
@@ -82,6 +82,7 @@ public class SprayConfirmationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spray_confirmation);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        enableLocationTracking();
         setSupportActionBar(toolbar);
         progressDialog = new ProgressDialog(this);
         cropdate = findViewById(R.id.cropdate);
@@ -174,67 +175,9 @@ public class SprayConfirmationActivity extends AppCompatActivity {
                 }
             });
         }
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    Activity#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for Activity#requestPermissions for more details.
-                return;
-            }
-        }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        // GPS location can be null if GPS is switched off
-                        SharedPreferences.Editor editor = getSharedPreferences("location", MODE_PRIVATE).edit();
 
 
-                        currentLat = location.getLatitude();
-                        currentLong = location.getLongitude();
-                        coordinates = currentLat + "," + currentLong;
-                        Log.d(TAG, "1 coordinates" + coordinates);
-                        editor.putString("coordinates", coordinates);
 
-                        Geocoder geocoder;
-                        List<Address> addresses;
-                        geocoder = new Geocoder(SprayConfirmationActivity.this, Locale.getDefault());
-
-                        try {
-                            addresses = geocoder.getFromLocation(currentLat, currentLong, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                            String city = addresses.get(0).getLocality();
-                            String state = addresses.get(0).getAdminArea();
-                            String country = addresses.get(0).getCountryName();
-                            String postalCode = addresses.get(0).getPostalCode();
-                            String knownName = addresses.get(0).getFeatureName();
-                            //Toast.makeText(FarmerRecruitActivity.this, "lat " + city + "\nlong " + address, Toast.LENGTH_LONG).show();
-                            location_str = address;
-                            Log.d(TAG, "1 location_str" + location_str);
-                            editor.putString("location_str", location_str);
-                            editor.apply();
-
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-                });
 
     }
 
@@ -286,6 +229,26 @@ public class SprayConfirmationActivity extends AppCompatActivity {
                     .setAction("Action", null).show();
             return;
         }
+
+
+
+        if(locationText != null && !location_str.isEmpty() && !coordinates.isEmpty()) {
+            //Toast.makeText(this, "Location: " + location_str, Toast.LENGTH_SHORT).show();
+            //return;
+            StringBuilder sb = new StringBuilder();
+            sb.append("Location Lat-Long: ");
+            sb.append( "FusedLocationProviderClient = " +coordinates + " LocationBaseActivity = " + locationText );
+            sb.append("\n");
+            sb.append("Location Address: ");
+            sb.append(location_str);
+
+            Log.d(getPackageName().toUpperCase(), sb.toString());
+
+
+        }else{
+            return;
+        }
+
         Log.d(TAG, "2 location_str" + location_str);
         Log.d(TAG, "2 coordinates" + coordinates);
 

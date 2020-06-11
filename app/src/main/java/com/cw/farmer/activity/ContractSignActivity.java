@@ -11,19 +11,18 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
@@ -52,7 +51,7 @@ import retrofit2.Retrofit;
 
 import static com.cw.farmer.ManifestPermission.hasPermissions;
 
-public class ContractSignActivity extends AppCompatActivity {
+public class ContractSignActivity extends HandleConnectionAppCompatActivity {
     private ImageView iv_contract_image;
     private File compressedImageFile;
     EditText farmer,noofunits,codedate,contract_refno;
@@ -159,6 +158,7 @@ public class ContractSignActivity extends AppCompatActivity {
         builder.show();
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (resultCode == RESULT_OK) {
 
             EasyImage.handleActivityResult(requestCode, resultCode, data, ContractSignActivity.this, new EasyImage.Callbacks() {
@@ -181,7 +181,10 @@ public class ContractSignActivity extends AppCompatActivity {
                                     if (type==1){
                                         compressedImageFile = file;
 
+                                        iv_contract_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                                        iv_contract_image.setAdjustViewBounds(true);
                                         Glide.with(ContractSignActivity.this).load(compressedImageFile).into(iv_contract_image);
+
                                     }
 
                                 }
@@ -201,6 +204,8 @@ public class ContractSignActivity extends AppCompatActivity {
                 }
             });
         }
+
+        super.onActivityResult(requestCode,requestCode,data);
 
     }
     public String getBase64FromPath() {

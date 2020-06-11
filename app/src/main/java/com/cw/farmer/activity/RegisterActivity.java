@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.OnLoadMoreListener;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.RegisterAdapter;
@@ -32,7 +33,8 @@ import retrofit2.Retrofit;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
-public class RegisterActivity extends AppCompatActivity {
+
+public class RegisterActivity extends HandleConnectionAppCompatActivity {
     RecyclerView rv_register;
     RegisterAdapter registerAdapter;
     ProgressDialog progressDialog;

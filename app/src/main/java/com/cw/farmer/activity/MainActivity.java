@@ -36,6 +36,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.Accountdetails;
@@ -74,7 +75,7 @@ import retrofit2.Retrofit;
 
 import static com.cw.farmer.ManifestPermission.hasPermissions;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends HandleConnectionAppCompatActivity implements View.OnClickListener {
     private ImageView iv_arrow_icon, iv_bank_arrow_icon, iv_document_arrow_icon, iv_image,iv_bank_image;
     private LinearLayout lin_farmer_det, lin_farmer_bank_det, lin_farmer_doc_det;
     private Button btn_farmel_det_next, btn_farmel_bank_det_pre, btn_farmel_bank_det_next, btn_farmel_doc_det_pre, btn_farmel_doc_det_next, btn_finish;
@@ -796,11 +797,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 public void accept(File file) {
                                     if (type==0){
                                         compressedImageFile = file;
-
+                                        iv_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                                        iv_image.setAdjustViewBounds(true);
                                         Glide.with(MainActivity.this).load(compressedImageFile).into(iv_image);
                                     }else{
                                         bankImageFile = file;
-
+                                        iv_bank_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                                        iv_bank_image.setAdjustViewBounds(true);
                                         Glide.with(MainActivity.this).load(bankImageFile).into(iv_bank_image);
                                     }
 

@@ -1,6 +1,8 @@
 package com.cw.farmer.activity;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -8,10 +10,14 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -21,10 +27,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
@@ -51,20 +59,22 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class PlantingVerificationActivity extends AppCompatActivity {
-    EditText farmer,account_no,nounits;
+public class PlantingVerificationActivity extends HandleConnectionAppCompatActivity {
+    EditText farmer,account_no,nounits,confirmedUnits;
     Spinner codedate_harvesting;
     String farmer_id_string,noofunits,plantingId;
     List<String> cropDateId_list,reason_main;
     RadioGroup Plantconfirmed_radio,Waterconfirmed_radio;
     RadioButton plant_btn,water_btn;
-    String location_str, coordinates;
-    Double currentLat,currentLong;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planting_verification);
+
+        enableLocationTracking();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -73,6 +83,7 @@ public class PlantingVerificationActivity extends AppCompatActivity {
         Waterconfirmed_radio = findViewById(R.id.Waterconfirmed);
         farmer = findViewById(R.id.farmer);
         nounits = findViewById(R.id.no_units);
+        confirmedUnits = findViewById(R.id.confirmedUnits);
         Plantconfirmed_radio.check(R.id.radioYes);
         Waterconfirmed_radio.check(R.id.radioYesW);
         farmer.setOnClickListener(new View.OnClickListener() {
@@ -109,6 +120,8 @@ public class PlantingVerificationActivity extends AppCompatActivity {
             String noofunits = (String)b.get("nounits");
             nounits.setText(noofunits);
 
+
+
             ArrayList<String> spinnerArray = new ArrayList<String>();
             spinnerArray.clear();
             String crop_date =(String) b.get("crop_date");
@@ -118,59 +131,8 @@ public class PlantingVerificationActivity extends AppCompatActivity {
 
 
         }
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    Activity#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for Activity#requestPermissions for more details.
-                return;
-            }
-        }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        // GPS location can be null if GPS is switched off
-                        currentLat = location.getLatitude();
-                        currentLong = location.getLongitude();
-                        coordinates = currentLat+","+currentLong;
-
-                        Geocoder geocoder;
-                        List<Address> addresses;
-                        geocoder = new Geocoder(PlantingVerificationActivity.this, Locale.getDefault());
-
-                        try {
-                            addresses = geocoder.getFromLocation(currentLat, currentLong, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                            String city = addresses.get(0).getLocality();
-                            String state = addresses.get(0).getAdminArea();
-                            String country = addresses.get(0).getCountryName();
-                            String postalCode = addresses.get(0).getPostalCode();
-                            String knownName = addresses.get(0).getFeatureName();
-                            //Toast.makeText(FarmerRecruitActivity.this, "lat " + city + "\nlong " + address, Toast.LENGTH_LONG).show();
-                            location_str = address;
 
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-                });
     }
     public boolean validate() {
         boolean valid = true;
@@ -184,7 +146,7 @@ public class PlantingVerificationActivity extends AppCompatActivity {
             errorColor = getResources().getColor(R.color.errorColor);
         }
 
-        if (codedate_harvesting == null && codedate_harvesting.getSelectedItem() ==null) {
+        if (codedate_harvesting == null && codedate_harvesting.getSelectedItem() == null) {
 
             TextView errorText = (TextView)codedate_harvesting.getSelectedView();
             errorText.setError("select crop date");
@@ -192,6 +154,7 @@ public class PlantingVerificationActivity extends AppCompatActivity {
 
             valid = false;
         }
+
         if (account_no.getText().toString().isEmpty()) {
 
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
@@ -214,6 +177,16 @@ public class PlantingVerificationActivity extends AppCompatActivity {
             farmer.setError(null);
         }
 
+        if(confirmedUnits.getText().toString().isEmpty()){
+            ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(errorColor);
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("must confirm No. of Units");
+            spannableStringBuilder.setSpan(foregroundColorSpan, 0, "must confirm No. of Units".length(), 0);
+            confirmedUnits.setError(spannableStringBuilder);
+            valid = false;
+        }else{
+            confirmedUnits.setError(null);
+        }
+
 
 
 
@@ -225,14 +198,30 @@ public class PlantingVerificationActivity extends AppCompatActivity {
                     .setAction("Action", null).show();
             return;
         }
+
+        if(locationText != null && !location_str.isEmpty() && !coordinates.isEmpty()) {
+            //Toast.makeText(this, "Location: " + location_str, Toast.LENGTH_SHORT).show();
+            //return;
+            StringBuilder sb = new StringBuilder();
+            sb.append("Location Lat-Long: ");
+            sb.append( "FusedLocationProviderClient = " +coordinates + " LocationBaseActivity = " + locationText );
+            sb.append("\n");
+            sb.append("Location Address: ");
+            sb.append(location_str);
+
+            Log.d(getPackageName().toUpperCase(), sb.toString());
+        }else{
+            return;
+        }
+
         /*{
-  “contractid”: 23,
- “cordinates”:””,
-“location”:””,
-“Plantconfirmed”:”Y” or “N”,
-“Waterconfirmed”:”Y” or “N”,
-}
-*/
+              “contractid”: 23,
+              “cordinates”:””,
+              “location”:””,
+              “Plantconfirmed”:”Y” or “N”,
+              “Waterconfirmed”:”Y” or “N”,
+          }
+         */
         int selectedId = Plantconfirmed_radio.getCheckedRadioButtonId();
         plant_btn = (RadioButton) findViewById(selectedId);
         String plant_print =plant_btn.getText().toString();
@@ -273,6 +262,8 @@ public class PlantingVerificationActivity extends AppCompatActivity {
             hashMap.put("contractid", farmer_id_string);
             hashMap.put("plantconfirmed", plant_value);
             hashMap.put("waterconfirmed", water_value);
+            hashMap.put("confirmedUnits", confirmedUnits.getText().toString());
+
 
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
@@ -297,14 +288,14 @@ public class PlantingVerificationActivity extends AppCompatActivity {
 
                                         }
                                     })
-                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
-                                        @Override
-                                        public void onClick(SweetAlertDialog sDialog) {
-                                            sDialog.dismissWithAnimation();
-                                            startActivity(new Intent(PlantingVerificationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-
-                                        }
-                                    })
+//                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+//                                        @Override
+//                                        public void onClick(SweetAlertDialog sDialog) {
+//                                            sDialog.dismissWithAnimation();
+//                                            startActivity(new Intent(PlantingVerificationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+//
+//                                        }
+//                                    })
                                     .show();
 
                         } else {

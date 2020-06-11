@@ -55,7 +55,7 @@
                 android:drawSelectorOnTop="true"
                 android:entries="@array/empty"
                 android:hint="crop date"
-                android:background="@drawable/border_edittext"></Spinner>
+                android:background="@drawable/border_edittext"/>
 
 
 
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:padding="15dp"
                 android:inputType="numberDecimal"
-                android:background="@drawable/border_edittext"></EditText>
+                android:background="@drawable/border_edittext"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -90,7 +90,24 @@
                 android:padding="15dp"
                 android:inputType="numberDecimal"
                 android:background="@drawable/border_edittext"
-                android:enabled="false"></EditText>
+                android:enabled="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:textColor="@color/textColor"
+                android:text="Confirm Units" />
+
+            <EditText
+                android:layout_marginBottom="20dp"
+                android:id="@+id/confirmedUnits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:inputType="numberDecimal"
+                android:background="@drawable/border_edittext"
+                android:enabled="true"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -98,6 +115,8 @@
                 android:padding="@dimen/dimen_10"
                 android:textColor="@color/textColor"
                 android:text="Planting Confirmed?" />
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

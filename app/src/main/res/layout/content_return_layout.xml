@@ -1,6 +1,257 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.ReturnActivity"
+    tools:showIn="@layout/activity_return_layout">
 
-</LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/dimen_10"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/dimen_30">
+
+            <!--            https://stackoverflow.com/questions/16623337/how-to-scroll-table-layout-in-horizontal-and-vertical-in-android-->
+            <ScrollView
+                android:id="@+id/layout"
+                android:layout_height="match_parent"
+                android:scrollbars="horizontal"
+                android:layout_width="match_parent"
+                android:layout_marginTop="5dp"
+                android:scrollbarStyle="outsideInset"
+                android:fillViewport="true">
+
+                <HorizontalScrollView
+                    android:id="@+id/horizontalView"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="horizontal|vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="5dip">
+
+                    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_10"
+                        android:layout_marginRight="@dimen/dimen_20"
+                        android:layout_marginBottom="@dimen/dimen_30"
+                        android:stretchColumns="1">
+
+                        <TableRow
+                            android:padding="@dimen/dimen_5"
+                            >
+
+                            <TextView
+                                android:paddingRight="@dimen/table_row_column_padding"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Centre"
+
+                                android:gravity="center"
+                                android:textColor="@color/colorblack"
+                                android:textStyle="bold" />
+
+
+
+                            <TextView
+                                android:paddingRight="@dimen/table_row_column_padding"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Crop Date"
+
+                                android:textColor="@color/colorblack"
+                                android:textStyle="bold" />
+
+
+
+                            <TextView
+                                android:paddingRight="@dimen/table_row_column_padding"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Farmer"
+                                android:textColor="@color/colorblack"
+                                android:textStyle="bold" />
+
+
+
+
+
+                        </TableRow>
+
+                        <TableRow
+                            android:padding="@dimen/dimen_5"
+                            >
+
+                            <TextView
+                                android:paddingRight="@dimen/table_row_column_padding"
+                                android:id="@+id/tv_centre"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text=""
+                                android:textSize="12sp"
+                                android:textColor="@color/colorblack" />
+
+                            <TextView
+                                android:paddingRight="@dimen/table_row_column_padding"
+                                android:id="@+id/tv_crop_date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text=""
+                                android:textSize="12sp"
+                                android:textColor="@color/colorblack" />
+
+
+
+                            <TextView
+                                android:paddingRight="@dimen/table_row_column_padding"
+                                android:id="@+id/tv_farmer_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text=""
+
+                                android:textSize="12sp"
+                                android:textColor="@color/colorblack" />
+
+
+
+                        </TableRow>
+                    </TableLayout>
+
+                </HorizontalScrollView>
+            </ScrollView>
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="@dimen/dimen_5"
+                android:layout_marginBottom="@dimen/dimen_5"
+                android:background="@color/colorblack"
+                android:baselineAligned="false" />
+
+
+
+            <TextView
+                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="No. of Units"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorblack" />
+
+            <TextView
+                android:id="@+id/tv_no_of_units"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="0"
+                android:textSize="13sp"
+                android:textColor="@color/colorblack" />
+
+
+
+            <Button
+                android:layout_marginTop="@dimen/dimen_20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_rectangle"
+                android:onClick="submit_requsition"
+                android:padding="1dp"
+                android:text="Confirm"
+                android:textAllCaps="true"
+                android:textColor="@color/colorwhite"
+                android:typeface="normal" />
+
+            <!--This part below is removed-->
+            <LinearLayout
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/dimen_10"
+                    android:text="Inventory Details"
+                    android:textSize="@dimen/dimen_20"
+                    android:textStyle="bold" />
+
+                <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_20">
+
+                    <TableRow>
+
+                        <TextView
+                            android:id="@+id/tv_itemcode"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingRight="@dimen/dimen_10"
+                            android:text="Item Code"
+                            android:textColor="@color/colorblack" />
+
+                        <TextView
+                            android:id="@+id/tv_itemname"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingRight="@dimen/dimen_10"
+                            android:text="Item Name"
+                            android:textColor="@color/colorblack" />
+
+                        <TextView
+                            android:id="@+id/tv_quanity"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingRight="@dimen/dimen_10"
+                            android:text="Quality"
+                            android:textColor="@color/colorblack" />
+
+                        <TextView
+                            android:id="@+id/tv_actual"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingRight="@dimen/dimen_10"
+                            android:text="Actual"
+                            android:textColor="@color/colorblack" />
+
+                    </TableRow>
+                </TableLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/requistion_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/dimen_20"
+                    android:paddingRight="@dimen/dimen_20" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

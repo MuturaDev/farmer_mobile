@@ -10,14 +10,13 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
 import com.cw.farmer.model.PageItem;
 
 import java.util.List;
 
-public class FarmerDetailsActivity extends AppCompatActivity {
+public class FarmerDetailsActivity extends HandleConnectionAppCompatActivity {
     TextView tv_farmerstatus,tv_full_name, tv_mobileno, tv_email, tv_gender, tv_dateOfbirth, tv_address, tv_centername;
     PageItem pageItem;
     Button btn_blacklist;

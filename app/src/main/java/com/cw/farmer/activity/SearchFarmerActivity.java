@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.SearchAdapter;
@@ -38,7 +39,7 @@ import retrofit2.Retrofit;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
-public class SearchFarmerActivity extends AppCompatActivity {
+public class SearchFarmerActivity extends HandleConnectionAppCompatActivity {
     RecyclerView rv_register;
     SearchAdapter registerAdapter;
     ProgressDialog progressDialog;

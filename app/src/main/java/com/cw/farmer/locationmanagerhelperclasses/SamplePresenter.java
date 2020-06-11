@@ -1,4 +1,4 @@
-package com.yayandroid.locationmanager.sample;
+package com.cw.farmer.locationmanagerhelperclasses;
 
 import android.location.Location;
 import android.text.TextUtils;

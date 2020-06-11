@@ -1,6 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.PlantBlockActivity"
+    tools:showIn="@layout/activity_plant_block_layout">
 
-</LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:orientation="vertical"
+            android:padding="10sp">
+
+
+            <RelativeLayout
+                android:onClick="searchBlock"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/search_bg"
+                android:layout_height="60dp">
+
+                <TextView
+                    android:layout_centerInParent="true"
+                    android:id="@+id/select_block"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:text="Select Block"
+                    android:textStyle="bold"
+                    android:textSize="15dp"
+                    android:paddingLeft="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="60dp"/>
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:background="@drawable/spinner_backgroung"
+                android:layout_height="60dp">
+
+                <Spinner
+
+                    android:visibility="gone"
+                    android:background="@null"
+                    android:layout_alignParentLeft="true"
+                    android:id="@+id/spinner_variety"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:paddingLeft="10dp"
+                    android:entries="@array/variety_spinner"
+                    android:drawSelectorOnTop="true"
+                    android:hint="Select Variety"/>
+
+
+
+                <ProgressBar
+                    android:id="@+id/spinner_progress"
+                    android:visibility="visible"
+                    android:layout_centerInParent="true"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+
+
+            </RelativeLayout>
+
+
+
+
+
+
+            <EditText
+                android:id="@+id/txt_bags_planted"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/spinner_bg"
+                android:layout_width="match_parent"
+                android:hint="Bags Planted"
+                android:textStyle="bold"
+                android:inputType="number"
+                android:textSize="15dp"
+                android:paddingLeft="10dp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_height="60dp"/>
+
+            <Spinner
+                android:layout_marginTop="20dp"
+                android:background="@drawable/spinner_backgroung"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/spinner_seed_rate"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:paddingLeft="10dp"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/seed_rate_spinner"
+                android:hint="crop date"/>
+
+
+            <EditText
+                android:id="@+id/txt_bags_lot_no"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/spinner_bg"
+                android:layout_width="match_parent"
+                android:hint="Bag Lot no."
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:inputType="number"
+                android:paddingLeft="10dp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_height="60dp"/>
+
+            <Button
+                android:id="@+id/btn_recruit"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="@dimen/dimen_30"
+                android:layout_marginBottom="20sp"
+                android:background="@drawable/shape_rectangle"
+                android:onClick="submit"
+                android:padding="10dp"
+                android:text="Submit"
+                android:textAllCaps="true"
+                android:textColor="@color/colorwhite"
+                android:typeface="normal" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

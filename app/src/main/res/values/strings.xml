@@ -36,7 +36,8 @@
     <string name="title_activity_edit_farmer">Edit Farmer</string>
     <string name="title_activity_planting_verification">Planting Verification</string>
     <string name="title_activity_search_planting_verfication">Planting Verification Farmer</string>
-    <string name="title_activity_requisition">"Returns "</string>
+    <string name="title_activity_requisition">Requisition</string>
+    <string name="title_activity_return">Return</string>
     <string name="title_activity_change_centre">Change Centre</string>
     <string name="title_activity_update_bank">Update Bank</string>
     <string name="title_activity_update_docs">Update Documents</string>
@@ -61,4 +62,31 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="title_activity_home2">Home2Activity</string>
+
+
+
+    <string name="gps_not_found_title">Farmer requires access to location</string>
+    <string name="gps_not_found_message">To enjoy all that Framer has to offer, turn on your GPS and give Farmer access to your location.</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+
+
+    <!--Spinner list-->
+    <string-array name="variety_spinner">
+        <item>Variety</item>
+    </string-array>
+
+    <string-array name="seed_rate_spinner">
+        <item>Select seed rate</item>
+        <item>200,000</item>
+        <item>300,000</item>
+        <item>400,000</item>
+        <item>450,000</item>
+    </string-array>
+
+    <string-array name="farm_spinner">
+        <item>Select Farm</item>
+    </string-array>
+
+
 </resources>

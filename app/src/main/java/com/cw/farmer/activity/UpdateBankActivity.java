@@ -24,6 +24,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.BankNameResponse;
@@ -53,7 +54,7 @@ import retrofit2.Retrofit;
 
 import static com.cw.farmer.ManifestPermission.hasPermissions;
 
-public class UpdateBankActivity extends AppCompatActivity {
+public class UpdateBankActivity extends HandleConnectionAppCompatActivity {
     int PERMISSION_ALL = 1;
     String[] PERMISSIONS = {
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -107,6 +108,8 @@ public class UpdateBankActivity extends AppCompatActivity {
             pageItem = b.getParcelable("item");
 
             byte[] imageByteArray = Base64.decode(account_image, Base64.DEFAULT);
+            iv_bank_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            iv_bank_image.setAdjustViewBounds(true);
             Glide.with(UpdateBankActivity.this).asBitmap().load(imageByteArray).into(iv_bank_image);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -200,7 +203,8 @@ public class UpdateBankActivity extends AppCompatActivity {
 
                                     } else {
                                         bankImageFile = file;
-
+                                        iv_bank_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                                        iv_bank_image.setAdjustViewBounds(true);
                                         Glide.with(UpdateBankActivity.this).load(bankImageFile).into(iv_bank_image);
                                     }
 
@@ -222,6 +226,7 @@ public class UpdateBankActivity extends AppCompatActivity {
             });
         }
 
+        super.onActivityResult(requestCode,resultCode,data);
     }
 
     public void submit_changes(View v) {

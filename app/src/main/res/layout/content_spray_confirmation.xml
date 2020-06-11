@@ -18,25 +18,6 @@
             android:layout_marginTop="@dimen/dimen_10"
             android:orientation="vertical"
             android:padding="10sp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dimen_10"
-                android:text="Spray Number"
-                android:textColor="@color/textColor" />
-
-            <Spinner
-                android:id="@+id/spraynumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/border_edittext"
-                android:drawSelectorOnTop="true"
-                android:entries="@array/document_type"
-                android:hint="crop date"></Spinner>
-
-
             <TextView
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
@@ -61,6 +42,25 @@
                     android:imeOptions="actionSearch"
                     android:padding="10dp" />
             </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_10"
+                android:text="Spray Number"
+                android:textColor="@color/textColor" />
+
+            <Spinner
+                android:id="@+id/spraynumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/border_edittext"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/document_type"
+                android:hint="crop date"/>
+
 
             <TextView
                 android:layout_width="wrap_content"

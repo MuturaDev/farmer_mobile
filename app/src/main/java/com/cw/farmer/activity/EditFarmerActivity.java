@@ -16,10 +16,10 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.PageItem;
@@ -39,7 +39,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class EditFarmerActivity extends AppCompatActivity {
+public class EditFarmerActivity extends HandleConnectionAppCompatActivity {
     private EditText full_name, mobile_no, dateofbirth, et_dob, et_accountno;
     private RadioGroup radioSexGroup;
     private RadioButton radioSexButton;

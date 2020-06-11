@@ -13,10 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
 import com.cw.farmer.model.FarmerAccountsResponse;
 import com.cw.farmer.model.PageItem;
@@ -31,7 +31,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class FarmerAccountsActivity extends AppCompatActivity {
+public class FarmerAccountsActivity extends HandleConnectionAppCompatActivity {
     TextView bankName,accountno;
     ImageView imageView;
     PageItem pageItem;
@@ -87,6 +87,8 @@ public class FarmerAccountsActivity extends AppCompatActivity {
                         String imageBytes = doc.getBase64ImageData().replace("data:image/png;base64,", "");
                         account_image = imageBytes;
                         byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
+                        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        imageView.setAdjustViewBounds(true);
                         Glide.with(FarmerAccountsActivity.this).asBitmap().load(imageByteArray).into(imageView);
                     }
 

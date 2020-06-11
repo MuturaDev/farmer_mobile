@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
@@ -38,7 +39,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class HarvestingActivity extends AppCompatActivity {
+public class HarvestingActivity extends HandleConnectionAppCompatActivity {
     EditText farmer_harvesting,crop_weight;
     Spinner codedate_harvesting;
     String farmer_id_string,noofunits,plantingId, contract_id_string;

@@ -131,14 +131,14 @@
                 android:drawSelectorOnTop="true"
                 android:entries="@array/empty"
                 android:hint="crop date"
-                android:background="@drawable/border_edittext"></Spinner>
+                android:background="@drawable/border_edittext"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorblack"
                 android:textAlignment="center"
-                android:text="Take a clear picture of the contract"/>
+                android:text="Take a clear picture of the destruction."/>
 
             <ImageView
                 android:id="@+id/iv_destruction_image"
