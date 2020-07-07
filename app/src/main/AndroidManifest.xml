@@ -294,7 +294,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.SearchHarvestBlockActivity">
+        <activity android:name=".activity.SearchSearchAreaActivity">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -307,6 +307,20 @@
         </activity>
 
         <activity android:name=".activity.IrrigateBlockActivity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activity.ScoutingBlockActivity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activity.ApplyFertilizerBlockActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

@@ -12,7 +12,7 @@
 
 
     <LinearLayout
-        android:layout_weight="1"
+        android:layout_weight="1.5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dimen_10"
@@ -26,21 +26,20 @@
             android:layout_height="wrap_content">
 
             <TextView
-
                 android:id="@+id/tv_first_midel_last_name"
-                android:textStyle="bold"
-                android:layout_weight="1"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Block Area:"
-                android:textSize="@dimen/dimen_15"
+                android:text="Area:"
                 android:textColor="@color/colorblack" />
             <TextView
-                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:textStyle="bold"
+                android:textSize="13sp"
+
                 android:textAlignment="center"
                 android:id="@+id/tv_area"
                 android:textColor="@color/colorblack"
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="AR1 - 1 HA" />
@@ -49,23 +48,21 @@
         </LinearLayout>
 
         <LinearLayout
-            android:weightSum="2"
+
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:textSize="@dimen/dimen_15"
                 android:textColor="@color/colorblack"
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Crop Date:" />
 
             <TextView
+                android:layout_marginLeft="5dp"
+                android:textSize="13sp"
                 android:id="@+id/tv_crop_date"
-                android:layout_weight="1"
                 android:textAlignment="center"
                 android:textColor="@color/colorblack"
                 android:textStyle="bold"
@@ -77,28 +74,25 @@
         </LinearLayout>
 
         <LinearLayout
-            android:weightSum="2"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:textSize="@dimen/dimen_15"
+
                 android:textColor="@color/colorblack"
-                android:textStyle="bold"
-                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Product:" />
 
             <TextView
-
+                android:layout_marginLeft="5dp"
+                android:textSize="13sp"
                 android:textColor="@color/colorblack"
                 android:textStyle="bold"
                 android:id="@+id/tv_product"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:textAlignment="center"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Tomatoes" />
 
@@ -106,25 +100,22 @@
         </LinearLayout>
 
         <LinearLayout
-            android:weightSum="2"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:textSize="@dimen/dimen_15"
                 android:textColor="@color/colorblack"
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Farm:" />
             <TextView
-                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:textSize="13sp"
                 android:id="@+id/tv_farm"
                 android:textColor="@color/colorblack"
                 android:textStyle="bold"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:textAlignment="center"
                 android:layout_height="wrap_content"
                 android:text="Runda" />
@@ -133,21 +124,19 @@
         </LinearLayout>
 
 
-
-
     </LinearLayout>
 
     <LinearLayout
-        android:layout_gravity="center_vertical"
-        android:gravity="center"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
         <ImageView
-            android:layout_width="60dp"
+            android:id="@+id/item_image"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="top"
+            android:layout_width="30dp"
             android:src="@drawable/plant_block"
-            android:layout_height="60dp"/>
+            android:layout_height="30dp"/>
 
     </LinearLayout>
 

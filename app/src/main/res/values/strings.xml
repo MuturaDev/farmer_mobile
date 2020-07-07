@@ -76,6 +76,40 @@
         <item>Variety</item>
     </string-array>
 
+    <string-array name="fertilizer_spinner">
+        <item>Select Fertilizer</item>
+    </string-array>
+
+    <string-array name="method_spinner">
+        <item>Select Method</item>
+        <item>Manual</item>
+        <item>Fumigation</item>
+    </string-array>
+
+    <string-array name="equipment_spinner">
+        <item>Select Equipment</item>
+        <item>Manual</item>
+    </string-array>
+
+    <string-array name="watered_spinner">
+        <item>Watered?</item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+    <string-array name="germination_spinner">
+        <item>Germination?</item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+    <string-array name="weeded_spinner">
+        <item>Weeded?</item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+
     <string-array name="seed_rate_spinner">
         <item>Select seed rate</item>
         <item>200,000</item>

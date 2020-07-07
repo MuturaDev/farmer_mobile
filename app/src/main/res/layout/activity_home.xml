@@ -88,6 +88,18 @@
                 android:groupIndicator="@drawable/settings_selector"
                 android:transcriptMode="alwaysScroll"/>
 
+            <ProgressBar
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/progress"
+                android:indeterminateOnly="true"
+                android:max="100"
+                />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,6 +119,7 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -585,47 +598,7 @@
                     android:layout_marginTop="@dimen/dimen_10"
                     android:orientation="horizontal"
                     android:weightSum="2">
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/harvest_block_Card"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:onClick="harvestBlock"
-                        android:layout_margin="@dimen/dimen_5"
-                        android:layout_weight="1"
-                        android:padding="@dimen/dimen_10">
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_margin="@dimen/dimen_5"
-                            android:orientation="vertical">
-                            <ImageView
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/harvest_block"/>
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:layout_marginTop="10dp"
-                                android:background="@color/colorblack" />
-
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:textAlignment="center"
-                                android:layout_height="match_parent"
-                                android:text="Harvest Block"
-                                android:textColor="#747474"
-                                android:textSize="18sp"
-                                android:textStyle="normal" />
-
-
-                        </LinearLayout>
-
-
-                    </androidx.cardview.widget.CardView>
                     <androidx.cardview.widget.CardView
                         android:id="@+id/plant_block_Card"
                         android:layout_width="match_parent"
@@ -667,14 +640,6 @@
 
 
                     </androidx.cardview.widget.CardView>
-
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_10"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
                     <androidx.cardview.widget.CardView
                         android:id="@+id/irrigation_block_Card"
                         android:layout_width="match_parent"
@@ -695,6 +660,7 @@
                                 android:layout_height="50dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/irrigate"/>
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
@@ -716,6 +682,195 @@
 
 
                     </androidx.cardview.widget.CardView>
+
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/apply_fertilizer_block_Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:onClick="applyFertilizer"
+                        android:layout_margin="@dimen/dimen_5"
+                        android:layout_weight="1"
+                        android:padding="@dimen/dimen_10">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/dimen_5"
+                            android:orientation="vertical">
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/fertilizer"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/colorblack" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textAlignment="center"
+                                android:layout_height="match_parent"
+                                android:text="Apply Fertilizer"
+                                android:textColor="#747474"
+                                android:textSize="18sp"
+                                android:textStyle="normal" />
+
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/scouting_block_Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:onClick="scoutingBlock"
+                        android:layout_margin="@dimen/dimen_5"
+                        android:layout_weight="1"
+                        android:padding="@dimen/dimen_10">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/dimen_5"
+                            android:orientation="vertical">
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/monitor"/>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/colorblack" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textAlignment="center"
+                                android:layout_height="match_parent"
+                                android:text="Scouting"
+                                android:textColor="#747474"
+                                android:textSize="18sp"
+                                android:textStyle="normal" />
+
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/harvest_block_Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:onClick="harvestBlock"
+                        android:layout_margin="@dimen/dimen_5"
+                        android:layout_weight="1"
+                        android:padding="@dimen/dimen_10">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/dimen_5"
+                            android:orientation="vertical">
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/harvest_block"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/colorblack" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textAlignment="center"
+                                android:layout_height="match_parent"
+                                android:text="Harvest Block"
+                                android:textColor="#747474"
+                                android:textSize="18sp"
+                                android:textStyle="normal" />
+
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+<!--                    <androidx.cardview.widget.CardView-->
+<!--                        android:id="@+id/apply_fertilizer_block_Card"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:onClick="irrigateBlock"-->
+<!--                        android:layout_margin="@dimen/dimen_5"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:padding="@dimen/dimen_10">-->
+
+<!--                        <LinearLayout-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:layout_margin="@dimen/dimen_5"-->
+<!--                            android:orientation="vertical">-->
+<!--                            <ImageView-->
+<!--                                android:layout_width="50dp"-->
+<!--                                android:layout_height="50dp"-->
+<!--                                android:layout_gravity="center"-->
+<!--                                android:src="@drawable/fertilizer"/>-->
+<!--                            <View-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="1dp"-->
+<!--                                android:layout_marginTop="10dp"-->
+<!--                                android:background="@color/colorblack" />-->
+
+
+<!--                            <TextView-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:textAlignment="center"-->
+<!--                                android:layout_height="match_parent"-->
+<!--                                android:text="Apply Fertilizer"-->
+<!--                                android:textColor="#747474"-->
+<!--                                android:textSize="18sp"-->
+<!--                                android:textStyle="normal" />-->
+
+
+<!--                        </LinearLayout>-->
+
+
+<!--                    </androidx.cardview.widget.CardView>-->
 
 
                 </LinearLayout>

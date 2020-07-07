@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.OnLoadMoreListener;
 import com.cw.farmer.R;
-import com.cw.farmer.activity.CropDestructionActivity;
 import com.cw.farmer.activity.HarvestingActivity;
 import com.cw.farmer.model.PageItemHarvest;
 
@@ -99,7 +98,7 @@ public class SearchHarvestAdapter extends RecyclerView.Adapter<RecyclerView.View
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_harvesting, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_searchsearcharea_item_layout, viewGroup, false);
             return new ViewHolder(view);
         } else {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_loading, viewGroup, false);

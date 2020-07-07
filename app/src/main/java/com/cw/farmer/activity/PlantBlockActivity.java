@@ -1,14 +1,9 @@
 package com.cw.farmer.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,37 +19,26 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
-import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.GeneralSpinnerResponse;
-import com.cw.farmer.model.PageItemHarvestBlocks;
 import com.cw.farmer.model.PageItemPlantBlock;
+import com.cw.farmer.model.PageItemSearchArea;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.cw.farmer.spinner_models.GeneralSpinner;
-import com.google.android.gms.common.internal.ResourceUtils;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -64,24 +48,24 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-import static androidx.constraintlayout.widget.Constraints.TAG;
-
 public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
 
    
     private ProgressBar spinner_progress;
     private Spinner spinner_variety;
-    private GeneralSpinner selectedValue;
+    private GeneralSpinner varietyValue;
 
     private TextView select_block;
     private EditText txt_bags_planted;
     private Spinner spinner_seed_rate;
     private String seedrate_spinner_selectedValue;
     private EditText txt_bags_lot_no;
-    private PageItemPlantBlock returnPlantBlock;
+    private PageItemSearchArea returnPlantBlock;
 
 
-
+    public void back(View view){
+        finish();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,8 +81,8 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
         if(getIntent() != null){
             if(getIntent().getExtras() != null){
                 Bundle bundle = getIntent().getExtras();
-                returnPlantBlock = (PageItemPlantBlock)  bundle.getSerializable("Message");
-                select_block.setText(returnPlantBlock.getBlockname());
+                returnPlantBlock = (PageItemSearchArea)  bundle.getSerializable("Message");
+                select_block.setText(returnPlantBlock.getArea() + " " + returnPlantBlock.getAreaType());
             }
         }
 
@@ -134,13 +118,13 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (spinner_variety.getId()){
                     case -1:
-                        selectedValue = null;
+                        varietyValue = null;
                         break;
                     default:
-                        selectedValue = (GeneralSpinner)  adapterView.getSelectedItem();
-                        Log.d(PlantBlockActivity.this.getPackageName().toUpperCase(), "Selected Spinner Value: " + selectedValue.getId() + " " + selectedValue.toString());
-                        if(selectedValue.getId() == -1)
-                            selectedValue = null;
+                        varietyValue = (GeneralSpinner)  adapterView.getSelectedItem();
+                        Log.d(PlantBlockActivity.this.getPackageName().toUpperCase(), "Selected Spinner Value: " + varietyValue.getId() + " " + varietyValue.toString());
+                        if(varietyValue.getId() == -1)
+                            varietyValue = null;
 
 
                         break;
@@ -150,13 +134,11 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
+                varietyValue = null;
             }
         });
 
         populateSpinner();
-
-
 
 
     }
@@ -209,12 +191,20 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
             spinner_seed_rate.setBackground(getResources().getDrawable(R.drawable.spinner_backgroung));
         }
 
-        if(selectedValue == null){
-            spinner_variety.setBackground(getResources().getDrawable(R.drawable.shake_spinner_bg));
-            spinner_variety.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake));
+        if(varietyValue == null){
+            (findViewById(R.id.spinner_layout)).setBackground(getResources().getDrawable(R.drawable.shake_spinner_bg));
+            (findViewById(R.id.spinner_layout)).startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake));
             valid = false;
         }else{
-            spinner_variety.setBackground(getResources().getDrawable(R.drawable.spinner_backgroung));
+            (findViewById(R.id.spinner_layout)).setBackground(getResources().getDrawable(R.drawable.spinner_backgroung));
+        }
+
+        if( select_block.getText().toString().isEmpty()){
+            (findViewById(R.id.select_block_layout)).setBackground(getResources().getDrawable(R.drawable.shake_search_bg));
+            (findViewById(R.id.select_block_layout)).startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake));
+            valid = false;
+        }else{
+            (findViewById(R.id.select_block_layout)).setBackground(getResources().getDrawable(R.drawable.search_bg));
         }
 
 
@@ -223,7 +213,7 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
 
 
     public void searchBlock(View view) {
-        startActivity(new Intent(PlantBlockActivity.this, SearchPlantBlockActivity.class));
+        startActivity(new Intent(PlantBlockActivity.this, SearchSearchAreaActivity.class));
     }
 
     public void submit(View v) {
@@ -266,7 +256,7 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("bagsPlanted", txt_bags_planted.getText().toString());
             hashMap.put("seedRate", seedrate_spinner_selectedValue);
-            hashMap.put("varietyId",String.valueOf(selectedValue.getId()));
+            hashMap.put("varietyId",String.valueOf(varietyValue.getId()));
             hashMap.put("blockId", String.valueOf(returnPlantBlock.getId()));
             hashMap.put("cordinates", coordinates);
             hashMap.put("location",location_str);

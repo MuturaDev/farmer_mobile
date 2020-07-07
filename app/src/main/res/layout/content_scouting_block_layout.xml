@@ -1,0 +1,280 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.ScoutingBlockActivity"
+    tools:showIn="@layout/activity_scouting_block_layout">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_first"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorblack"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0.0px"
+            android:elevation="8dp"
+            android:padding="10dp"
+            android:visibility="visible"
+            card_view:cardElevation="10dp"
+            card_view:cardPreventCornerOverlap="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:animateLayoutChanges="true"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+
+                        <RelativeLayout
+                            android:id="@+id/select_block_layout"
+                            android:onClick="searchBlock"
+                            android:layout_width="match_parent"
+                            android:layout_marginBottom="20dp"
+                            android:background="@drawable/search_bg"
+                            android:layout_height="60dp">
+
+                            <TextView
+                                android:layout_centerInParent="true"
+                                android:id="@+id/select_block"
+                                android:layout_marginTop="20dp"
+                                android:layout_width="match_parent"
+                                android:hint="Select Block"
+                                android:textStyle="bold"
+                                android:textSize="15dp"
+                                android:paddingLeft="10dp"
+                                android:gravity="center_vertical"
+                                android:layout_gravity="center_vertical"
+                                android:layout_height="60dp"/>
+
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:background="@drawable/spinner_backgroung"
+                            android:layout_height="60dp">
+
+                            <Spinner
+
+                                android:visibility="visible"
+                                android:background="@null"
+                                android:layout_alignParentLeft="true"
+                                android:id="@+id/spinner_watered"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                android:paddingLeft="10dp"
+                                android:entries="@array/watered_spinner"
+                                android:drawSelectorOnTop="true"
+                                />
+
+
+
+                            <ProgressBar
+
+                                android:visibility="gone"
+                                android:layout_centerInParent="true"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"/>
+
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_marginTop="20dp"
+                            android:layout_width="match_parent"
+
+                            android:layout_height="60dp">
+
+                            <Spinner
+                                android:background="@drawable/spinner_backgroung"
+                                android:visibility="visible"
+                                android:layout_alignParentLeft="true"
+                                android:id="@+id/spinner_germination"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                android:paddingLeft="10dp"
+                                android:entries="@array/germination_spinner"
+                                android:drawSelectorOnTop="true"
+                                />
+
+
+
+                            <ProgressBar
+
+                                android:visibility="gone"
+                                android:layout_centerInParent="true"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"/>
+
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_marginTop="20dp"
+                            android:layout_width="match_parent"
+
+                            android:layout_height="60dp">
+
+                            <Spinner
+                                android:background="@drawable/spinner_backgroung"
+                                android:visibility="visible"
+                                android:layout_alignParentLeft="true"
+                                android:id="@+id/spinner_weeded"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                android:paddingLeft="10dp"
+                                android:entries="@array/weeded_spinner"
+                                android:drawSelectorOnTop="true"
+                                />
+
+
+
+                            <ProgressBar
+                                android:visibility="gone"
+                                android:layout_centerInParent="true"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"/>
+
+
+                        </RelativeLayout>
+
+
+
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/shape_rectangle"
+                            android:padding="15dp"
+                            android:onClick="nextClick"
+                            android:text="Next"
+                            android:textColor="@color/colorwhite" />
+                    </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorblack"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0.0px"
+            android:elevation="8dp"
+            android:padding="10dp"
+            android:visibility="gone"
+            card_view:cardElevation="10dp"
+            card_view:cardPreventCornerOverlap="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="none">
+                    <LinearLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:animateLayoutChanges="true"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+
+                        <EditText
+                            android:id="@+id/txt_crop_survival_rate"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/spinner_bg"
+                            android:layout_width="match_parent"
+                            android:hint="Crop Survival Rate (%)"
+                            android:textStyle="bold"
+                            android:inputType="number"
+                            android:textSize="15dp"
+                            android:paddingLeft="10dp"
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center_vertical"
+                            android:layout_height="60dp"/>
+
+
+                        <EditText
+                            android:id="@+id/txt_flowering"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/spinner_bg"
+                            android:layout_width="match_parent"
+                            android:hint="Flowering (%)"
+                            android:textStyle="bold"
+                            android:inputType="number"
+                            android:textSize="15dp"
+                            android:paddingLeft="10dp"
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center_vertical"
+                            android:layout_height="60dp"/>
+
+
+                        <EditText
+                            android:id="@+id/txt_average_pods"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/spinner_bg"
+                            android:layout_width="match_parent"
+                            android:hint="Average Pods (%)"
+                            android:textStyle="bold"
+                            android:inputType="number"
+                            android:textSize="15dp"
+                            android:paddingLeft="10dp"
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center_vertical"
+                            android:layout_height="60dp"/>
+
+
+                        <Button
+                            android:layout_marginTop="20dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/shape_rectangle"
+                            android:padding="15dp"
+                            android:onClick="submit"
+                            android:text="Submit"
+                            android:textColor="@color/colorwhite"/>
+
+                    </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

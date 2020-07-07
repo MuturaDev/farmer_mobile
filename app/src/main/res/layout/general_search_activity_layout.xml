@@ -16,7 +16,29 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/general_activity_image"
+                    android:layout_centerVertical="true"
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"/>
+
+                <TextView
+                    android:id="@+id/general_activity_title"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorwhite"
+                    android:textSize="18sp"
+                    android:text=""
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -25,45 +47,77 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".activity.SearchHarvestFarmerActivity"
+        android:layout_margin="5dp"
         tools:showIn="@layout/activity_search_harvest_farmer">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_marginTop="20sp"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/border_edittext"
+            android:background="@drawable/spinner_bg"
             android:orientation="horizontal">
+
             <EditText
                 android:id="@+id/farmer_search"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:singleLine = "true"
+                android:textSize="@dimen/dimen_12"
                 android:maxLines="1"
-                android:background="@drawable/border_edittext"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:hint="Type Area"
+                android:background="@null"
+                android:hint="Type Block"
                 android:padding="15dp"/>
-            <Button
-                android:id="@+id/btn_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:onClick="search"
-                android:text="Search"
+            <LinearLayout
                 android:background="@drawable/shape_rectangle"
-                android:textAllCaps="true"
-                android:textColor="@color/colorwhite"
-                android:typeface="normal"
-                android:layout_marginBottom="10dp"/>
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:onClick="search"
+                android:padding="5dp"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_margin="2dp"
+                    android:id="@+id/btn_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textAlignment="center"
+                    android:text="Search"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorwhite"
+                    android:typeface="normal"
+                    />
+
+                <ImageView
+                    android:layout_margin="2dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/search_white_icon"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
         </LinearLayout>
+
+        <ProgressBar
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/progress"
+            android:indeterminateOnly="true"
+            android:max="100"
+            />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/search_recylerview"
             android:paddingLeft="@dimen/dimen_20"

@@ -45,12 +45,13 @@ public class SearchPlantingVerficationActivity extends HandleConnectionAppCompat
     ArrayList<PageItemsPlantVerify> pageItemArrayList;
     FloatingActionButton fab;
     EditText farmer_search;
-    Button btn_search;
+
 
     private int page=0;
     private int limit=0;
     private int offset=0;
-    private boolean end=false;
+    private boolean end = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +62,6 @@ public class SearchPlantingVerficationActivity extends HandleConnectionAppCompat
         rv_register = findViewById(R.id.search_recylerview);
         rv_register.setLayoutManager(new LinearLayoutManager(this));
         farmer_search = findViewById(R.id.farmer_search);
-        btn_search = findViewById(R.id.btn_search);
         progressDialog = new ProgressDialog(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

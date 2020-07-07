@@ -7,60 +7,86 @@ import java.util.List;
 
 public class PageItemPlantBlock implements Serializable {
 
+
+
     @SerializedName("id")
     private int id;
-    @SerializedName("blockname")
-    private String blockname;
-    @SerializedName("farmNameId")
-    private String farmNameId;
+    @SerializedName("seedrate")
+    private String seedrate;
+    @SerializedName("bagsplanted")
+    private int bagsplanted;
+    @SerializedName("baglotno")
+    private int baglotno;
+    @SerializedName("cordinates")
+    private String cordinates;
+    @SerializedName("location")
+    private String location;
+    @SerializedName("createdon")
+    private List<Integer> createdon;
+    @SerializedName("createdby")
+    private String createdby;
+    @SerializedName("blockName")
+    private String blockName;
+    @SerializedName("varietyName")
+    private String varietyName;
     @SerializedName("farmName")
     private String farmName;
-    @SerializedName("dateCreated")
-    private List<Integer> dateCreated;
-    @SerializedName("userId")
-    private String userId;
-    @SerializedName("username")
-    private String username;
-    @SerializedName("centerId")
-    private String centerId;
-    @SerializedName("centerName")
-    private String centerName;
-
+    @SerializedName("cropDate")
+    private List<Integer> cropDate;
+    @SerializedName("product")
+    private String product;
 
     public int getId() {
         return id;
     }
 
-    public String getBlockname() {
-        return blockname;
+    public String getSeedrate() {
+        return seedrate;
     }
 
-    public String getFarmNameId() {
-        return farmNameId;
+    public int getBagsplanted() {
+        return bagsplanted;
     }
 
     public String getFarmName() {
         return farmName;
     }
 
-    public List<Integer> getDateCreated() {
-        return dateCreated;
+    public List<Integer> getCropDate() {
+        return cropDate;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getProduct() {
+        return product;
     }
 
-    public String getUsername() {
-        return username;
+    public int getBaglotno() {
+        return baglotno;
     }
 
-    public String getCenterId() {
-        return centerId;
+    public String getCordinates() {
+        return cordinates;
     }
 
-    public String getCenterName() {
-        return centerName;
+    public String getLocation() {
+        return location;
     }
+
+    public List<Integer> getCreatedon() {
+        return createdon;
+    }
+
+    public String getCreatedby() {
+        return createdby;
+    }
+
+    public String getBlockName() {
+        return blockName;
+    }
+
+    public String getVarietyName() {
+        return varietyName;
+    }
+
 }
 

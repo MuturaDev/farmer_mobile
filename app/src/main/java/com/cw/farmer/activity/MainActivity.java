@@ -813,7 +813,7 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
                                 public void accept(Throwable throwable) {
                                     throwable.printStackTrace();
                                     Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_LONG).show();
-                                    ;
+
 
                                 }
                             });
@@ -824,7 +824,7 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
                 }
             });
         }
-
+            super.onActivityResult(requestCode,resultCode,data);
     }
     public static long getDateDiff(SimpleDateFormat format, String oldDate, String newDate) {
         try {

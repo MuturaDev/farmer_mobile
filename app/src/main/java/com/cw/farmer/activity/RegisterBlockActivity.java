@@ -57,6 +57,10 @@ public class RegisterBlockActivity extends HandleConnectionAppCompatActivity {
 
     private EditText txt_Capture_Block;
 
+    public void back(View view){
+        finish();
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -210,11 +214,11 @@ public class RegisterBlockActivity extends HandleConnectionAppCompatActivity {
 
 
         if( selectedValue == null){
-            spinner_farm.setBackground(getResources().getDrawable(R.drawable.shake_spinner_bg));
-            spinner_farm.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake));
+            (findViewById(R.id.spinner_layout)).setBackground(getResources().getDrawable(R.drawable.shake_spinner_bg));
+            (findViewById(R.id.spinner_layout)).startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake));
             valid = false;
         }else{
-            spinner_farm.setBackground(getResources().getDrawable(R.drawable.spinner_backgroung));
+            (findViewById(R.id.spinner_layout)).setBackground(getResources().getDrawable(R.drawable.spinner_backgroung));
         }
 
 

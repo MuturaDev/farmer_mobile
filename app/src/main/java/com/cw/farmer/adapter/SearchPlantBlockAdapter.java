@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,11 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.OnLoadMoreListener;
 import com.cw.farmer.R;
+import com.cw.farmer.activity.ApplyFertilizerBlockActivity;
 import com.cw.farmer.activity.HarvestBlockActivity;
+import com.cw.farmer.activity.IrrigateBlockActivity;
 import com.cw.farmer.activity.PlantBlockActivity;
+import com.cw.farmer.activity.ScoutingBlockActivity;
+import com.cw.farmer.activity.SearchPlantBlockActivity;
 import com.cw.farmer.model.PageItemPlantBlock;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchPlantBlockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     ArrayList<PageItemPlantBlock> pageItemArrayList;
@@ -123,7 +129,7 @@ public class SearchPlantBlockAdapter extends RecyclerView.Adapter<RecyclerView.V
         //ProgressBar would be displayed
 
     }
-
+    Intent intent = null;
     private void populateItemRows(SearchPlantBlockAdapter.ViewHolder viewHolder, int position) {
         final PageItemPlantBlock pageItem = pageItemArrayList.get(position);
 
@@ -137,10 +143,42 @@ public class SearchPlantBlockAdapter extends RecyclerView.Adapter<RecyclerView.V
 //            contractdate=elem+"/"+contractdate;
 //        }
 
-        viewHolder.tv_area.setText(pageItem.getBlockname());
-        viewHolder.tv_crop_date.setText("");
-        viewHolder.tv_product.setText("");
-        viewHolder.tv_farm.setText("");
+
+
+
+        viewHolder.tv_area.setText(pageItem.getBlockName());
+        //if(pageItem.getCropDate().contains(",")) {
+            List<Integer> date = pageItem.getCropDate();
+            viewHolder.tv_crop_date.setText(date.get(2) + "/"  +date.get(1) + "/" + date.get(0));
+       // }
+        viewHolder.tv_product.setText(pageItem.getProduct());
+        viewHolder.tv_farm.setText(pageItem.getFarmName());
+
+        String searchFor = ((SearchPlantBlockActivity)context).searchFor;
+
+
+        if(searchFor != null) {
+            if (!searchFor.isEmpty()) {
+
+                if (searchFor.equalsIgnoreCase("Irrigate")) {
+                     intent = new Intent(context, IrrigateBlockActivity.class);
+                    intent.putExtra("Message", pageItem);
+                    viewHolder.item_image.setImageResource(R.drawable.irrigate);
+                } else if (searchFor.equalsIgnoreCase("Scouting")) {
+                     intent = new Intent(context, ScoutingBlockActivity.class);
+                    intent.putExtra("Message", pageItem);
+                    viewHolder.item_image.setImageResource(R.drawable.monitor);
+                } else if (searchFor.equalsIgnoreCase("ApplyFertilizer")) {
+                     intent = new Intent(context, ApplyFertilizerBlockActivity.class);
+                    intent.putExtra("Message", pageItem);
+                    viewHolder.item_image.setImageResource(R.drawable.fertilizer);
+                }else if(searchFor.equalsIgnoreCase("Harvest")){
+                     intent = new Intent(context, HarvestBlockActivity.class);
+                    intent.putExtra("Message", pageItem);
+                    viewHolder.item_image.setImageResource(R.drawable.harvest_block);
+                }
+            }
+        }
 
 
 
@@ -155,19 +193,10 @@ public class SearchPlantBlockAdapter extends RecyclerView.Adapter<RecyclerView.V
 //                }
 //                String finalDate = date;
                 ////does not have crop date, but when the block was created.
-                Intent intent = new Intent(context, PlantBlockActivity.class);
-                intent.putExtra("Message", pageItem);
-//                intent.putExtra("name",pageItem.getFamerName());
-//                intent.putExtra("farmerId",pageItem.getFarmerId()+"");
-//                intent.putExtra("id",pageItem.getId()+"");
-//                intent.putExtra("farmerCode",pageItem.getFarmerCode()+"");
-//                intent.putExtra("crop_date",removeLastChar(finalDate)+"");
-//                intent.putExtra("totalUnits",pageItem.getUnits()+"");
-//                intent.putExtra("plantingId",pageItem.getCropDateId()+"");
-//                intent.putExtra("idno",pageItem.getAccountNumber()+"");
-//                intent.putExtra("centreName",pageItem.getCentrename()+"");
-//                intent.putExtra("mobileno",pageItem.getMobileno()+"");
-                context.startActivity(intent);
+                if(intent != null)
+                    context.startActivity(intent);
+
+
             }
         });
 
@@ -196,6 +225,7 @@ public class SearchPlantBlockAdapter extends RecyclerView.Adapter<RecyclerView.V
     public class ViewHolder extends RecyclerView.ViewHolder {
         protected TextView tv_area,tv_crop_date,tv_product,tv_farm;
         protected LinearLayout lin_item;
+        protected ImageView item_image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -204,6 +234,7 @@ public class SearchPlantBlockAdapter extends RecyclerView.Adapter<RecyclerView.V
             lin_item = itemView.findViewById(R.id.lin_item);
             tv_product=itemView.findViewById(R.id.tv_product);
             tv_farm=itemView.findViewById(R.id.tv_farm);
+            item_image = itemView.findViewById(R.id.item_image);
 
         }
     }

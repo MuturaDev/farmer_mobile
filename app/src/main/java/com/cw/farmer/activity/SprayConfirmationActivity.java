@@ -246,6 +246,8 @@ public class SprayConfirmationActivity extends HandleConnectionAppCompatActivity
 
 
         }else{
+            Snackbar.make(v, locationText, Snackbar.LENGTH_SHORT)
+                   .show();
             return;
         }
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<translate-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:duration="4000"-->
+    <!--android:fromXDelta="100%p"-->
+    <!--android:toXDelta="0"-->
+    <!--/>-->
+    <!--https://stackoverflow.com/questions/18147840/slide-right-to-left-android-animations/25137089-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false" >
+    <translate android:duration="1000" android:fromXDelta="-100%" android:toXDelta="0%"/>
+    <alpha android:duration="1000" android:fromAlpha="0.0" android:toAlpha="1.0" />
+</set>

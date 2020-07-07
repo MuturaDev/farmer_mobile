@@ -23,12 +23,12 @@
 
 
             <RelativeLayout
+                android:id="@+id/spinner_layout"
                 android:layout_width="match_parent"
                 android:background="@drawable/spinner_backgroung"
                 android:layout_height="60dp">
 
                 <Spinner
-
                     android:visibility="gone"
                     android:background="@null"
                     android:layout_alignParentLeft="true"

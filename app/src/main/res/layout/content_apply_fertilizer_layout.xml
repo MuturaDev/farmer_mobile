@@ -1,0 +1,175 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.ApplyFertilizerBlockActivity"
+    tools:showIn="@layout/activity_apply_fertilizer_layout">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:orientation="vertical"
+            android:padding="10sp">
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/select_block_layout"
+                android:onClick="searchBlock"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/search_bg"
+                android:layout_height="60dp">
+
+                <TextView
+                    android:layout_centerInParent="true"
+                    android:id="@+id/select_block"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:hint="Select Block"
+                    android:textStyle="bold"
+                    android:textSize="15dp"
+                    android:paddingLeft="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="60dp"/>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/spinner_layout"
+                android:layout_width="match_parent"
+                android:background="@drawable/spinner_backgroung"
+                android:layout_height="60dp">
+
+                <Spinner
+                    android:visibility="gone"
+                    android:layout_alignParentLeft="true"
+                    android:id="@+id/spinner_fertilizer"
+                    android:layout_width="match_parent"
+                    android:background="@null"
+                    android:layout_height="60dp"
+                    android:paddingLeft="10dp"
+                    android:entries="@array/fertilizer_spinner"
+                    android:drawSelectorOnTop="true"
+                    android:hint="Select Variety"/>
+
+
+
+                <ProgressBar
+                    android:id="@+id/spinner_progress"
+                    android:visibility="visible"
+                    android:layout_centerInParent="true"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+
+
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/txt_applied_rate"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/spinner_bg"
+                android:layout_width="match_parent"
+                android:hint="Applied Rate"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:inputType="number"
+                android:paddingLeft="10dp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_height="60dp"/>
+
+
+            <RelativeLayout
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+
+                android:layout_height="60dp">
+
+                <Spinner
+                    android:background="@drawable/spinner_backgroung"
+                    android:visibility="visible"
+                    android:layout_alignParentLeft="true"
+                    android:id="@+id/spinner_method"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:paddingLeft="10dp"
+                    android:entries="@array/method_spinner"
+                    android:drawSelectorOnTop="true"
+                    android:hint="Select Variety"/>
+
+
+                <ProgressBar
+                    android:id="@+id/method_progress"
+                    android:visibility="gone"
+                    android:layout_centerInParent="true"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+
+
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+
+                android:layout_height="60dp">
+
+                <Spinner
+                    android:background="@drawable/spinner_backgroung"
+                    android:visibility="visible"
+                    android:layout_alignParentLeft="true"
+                    android:id="@+id/spinner_equipment"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:paddingLeft="10dp"
+                    android:entries="@array/equipment_spinner"
+                    android:drawSelectorOnTop="true"
+                    android:hint="Equipment"/>
+
+
+                <ProgressBar
+                    android:id="@+id/equipment_progress"
+                    android:visibility="gone"
+                    android:layout_centerInParent="true"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+
+
+            </RelativeLayout>
+
+
+
+
+            <Button
+                android:id="@+id/btn_recruit"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="@dimen/dimen_30"
+                android:layout_marginBottom="20sp"
+                android:background="@drawable/shape_rectangle"
+                android:padding="10dp"
+                android:onClick="submit"
+                android:text="Submit"
+                android:textAllCaps="true"
+                android:textColor="@color/colorwhite"
+                android:typeface="normal" />
+
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

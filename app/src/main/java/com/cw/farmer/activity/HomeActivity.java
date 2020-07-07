@@ -17,10 +17,12 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,7 +92,10 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
     String user_id;
     RecyclerView rv_register;
     AdhocAdapter registerAdapter;
-    ProgressDialog progressDialog;
+   // ProgressDialog progressDialog;
+
+    private ProgressBar progressBar;
+
     ArrayList<PageItemsAdhoc> pageItemArrayListAdhoc;
     private PopupWindow POPUP_WINDOW_SCORE = null;
 
@@ -105,6 +110,9 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +126,8 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
         Appbar = (AppBarLayout)findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        progressDialog = new ProgressDialog(this);
+        progressBar = findViewById(R.id.progress);
+        //progressDialog = new ProgressDialog(this);
         // get the listview
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -133,6 +142,7 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
         }
         SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
         Set<String> permission = prefs.getStringSet("key", null);
+
 
         if(permission==null){
             startActivity(new Intent(HomeActivity.this, LoginActivity.class));
@@ -174,6 +184,18 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
             register_block_Card = findViewById(R.id.register_block_Card);
             harvest_block_Card = findViewById(R.id.harvest_block_Card);
             plant_block_Card = findViewById(R.id.plant_block_Card);
+
+            checkPermissionSetVisibility(permission.contains("READ_HARVESTBLOCK"),findViewById(R.id.harvest_block_Card));
+
+            checkPermissionSetVisibility(permission.contains("READ_IRRIGATEBLOCK"), findViewById(R.id.irrigation_block_Card));
+
+            checkPermissionSetVisibility(permission.contains("READ_APPLYFERTILIZER"), findViewById(R.id.apply_fertilizer_block_Card));
+
+            checkPermissionSetVisibility(permission.contains("READ_APPLYFERTILIZER"), findViewById(R.id.scouting_block_Card));
+
+            checkPermissionSetVisibility(permission.contains("READ_PLANTBLOCK"), findViewById(R.id.plant_block_Card));
+
+
         }
 
         user_id=prefs.getString("userid", "-1");
@@ -187,6 +209,14 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
 
         //offlinesync();
 
+    }
+
+    private void checkPermissionSetVisibility(boolean visibility, View view){
+        if(!visibility){
+            view.setVisibility(View.GONE);
+        }else{
+            view.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -286,11 +316,17 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
     }
 
     public void irrigateBlock(View view){
-
         startActivity(new Intent(HomeActivity.this, IrrigateBlockActivity.class));
         // TODO: 2020-06-06 Testing for Location using SampleActivity. 
         //startActivity(new Intent(HomeActivity.this, SampleActivity.class));
-        
+    }
+
+    public void scoutingBlock(View view){
+        startActivity(new Intent(HomeActivity.this, ScoutingBlockActivity.class));
+    }
+
+    public void applyFertilizer(View view){
+       startActivity(new Intent(HomeActivity.this, ApplyFertilizerBlockActivity.class));
     }
 
 
@@ -310,9 +346,10 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
     private void prepareListData() {
 
 
-        progressDialog.setCancelable(false);
-        // progressBar.setMessage("Please Wait...");
-        progressDialog.show();
+//        progressDialog.setCancelable(false);
+//        // progressBar.setMessage("Please Wait...");
+//        progressDialog.show();
+        progressBar.setVisibility(View.VISIBLE);
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);
         SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
@@ -321,7 +358,8 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
         call.enqueue(new Callback<TasksResponse>() {
             @Override
             public void onResponse(Call<TasksResponse> call, Response<TasksResponse> response) {
-                progressDialog.dismiss();
+              //  progressDialog.dismiss();
+                progressBar.setVisibility(View.GONE);
                 try {
                     if (response.body().getTotalFilteredRecords() > 0){
 
@@ -395,7 +433,6 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
 
 
                         listAdapter = new ExpandableListAdapter(HomeActivity.this, listDataHeader, listDataChild);
-
                         // setting list adapter
                         expListView.setAdapter(listAdapter);
                         adhoc();
@@ -413,17 +450,19 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
 
             @Override
             public void onFailure(Call<TasksResponse> call, Throwable t) {
-                progressDialog.hide();
-                Utility.showToast(HomeActivity.this, t.getMessage());
+//                progressDialog.hide();
+                progressBar.setVisibility(View.GONE);
+               Utility.showToast(HomeActivity.this, t.getMessage());
             }
         });
 
     }
 
     public void adhoc() {
-        progressDialog.setCancelable(false);
-        // progressBar.setMessage("Please Wait...");
-        progressDialog.dismiss();
+            progressBar.setVisibility(View.GONE);
+//        progressDialog.setCancelable(false);
+//        // progressBar.setMessage("Please Wait...");
+//        progressDialog.dismiss();
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
             APIService service = retrofit.create(APIService.class);
@@ -433,7 +472,8 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
             call.enqueue(new Callback<AdhocResponse>() {
                 @Override
                 public void onResponse(Call<AdhocResponse> call, Response<AdhocResponse> response) {
-                    progressDialog.hide();
+                    //progressDialog.hide();
+                    progressBar.setVisibility(View.GONE);
                     try {
                         if (response.body().getPageItemsAdhoc().size() != 0) {
                             int NOTIFICATION_ID = 23135;
@@ -478,7 +518,8 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
 
                 @Override
                 public void onFailure(Call<AdhocResponse> call, Throwable t) {
-                    progressDialog.hide();
+                   // progressDialog.hide();
+                    progressBar.setVisibility(View.GONE);
                     Utility.showToast(HomeActivity.this, t.getMessage());
                 }
             });
@@ -598,7 +639,8 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
                 call.enqueue(new Callback<AllResponse>() {
                     @Override
                     public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                        progressDialog.hide();
+                       // progressDialog.hide();
+                        progressBar.setVisibility(View.GONE);
                         try {
                             if (response.body() != null) {
                                 recruit.delete();
@@ -976,4 +1018,6 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
         }
 
     }
+
+
 }

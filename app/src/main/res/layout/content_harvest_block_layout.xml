@@ -25,6 +25,7 @@
 
 
             <RelativeLayout
+                android:id="@+id/select_block_layout"
                 android:onClick="searchBlock"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="20dp"
@@ -36,7 +37,7 @@
                     android:id="@+id/select_block"
                     android:layout_marginTop="20dp"
                     android:layout_width="match_parent"
-                    android:text="Select Block"
+                    android:hint="Select Block"
                     android:textStyle="bold"
                     android:textSize="15dp"
                     android:paddingLeft="10dp"

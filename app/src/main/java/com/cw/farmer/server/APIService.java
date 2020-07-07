@@ -16,7 +16,7 @@ import com.cw.farmer.model.FarmerDocResponse;
 import com.cw.farmer.model.FarmerErrorResponse;
 import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.FarmerModel;
-import com.cw.farmer.model.HarvestBlockResponse;
+import com.cw.farmer.model.SearchAreaResponse;
 import com.cw.farmer.model.PlantBlockResponse;
 import com.cw.farmer.model.PlantVerifyResponse;
 import com.cw.farmer.model.PlantingVerificationResponse;
@@ -204,12 +204,12 @@ public interface APIService {
     Call<List<GeneralSpinnerResponse>>  getFarmNames(@Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
-    @GET("/fineract-provider/api/v1/farmregistration")//?offset=0&limit=15
+    @GET("/fineract-provider/api/v1/plantblocks")//?offset=0&limit=15
     Call<PlantBlockResponse> getPlantBlockNames(@Query("limit") int limit, @Query("offset") int offset, @Header("Authorization") String authorization);
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
-    @GET("/fineract-provider/api/v1/plantblocks")//?offset=0&limit=15
-    Call<HarvestBlockResponse> getHarvestBlockNames(@Query("limit") int limit, @Query("offset") int offset, @Header("Authorization") String authorization);
+    @GET("/fineract-provider/api/v1/farmregistrationarea/searchAreas")//?offset=0&limit=15
+    Call<SearchAreaResponse> getSearchArea(@Query("limit") int limit, @Query("offset") int offset, @Header("Authorization") String authorization);
 
 
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
@@ -229,6 +229,39 @@ public interface APIService {
     @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
     @POST("/fineract-provider/api/v1/farmregistration")
     Call<ResponseBody> postRegisterBlock(@Header("Authorization") String authorization, @Body HashMap requestBody);
+
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @GET("/fineract-provider/api/v1/farmregistrationarea/areas/{registrationid}")
+    Call<ResponseBody> getPlantingBlockCropDate(@Query("registrationid")String registrationid,@Header("Authorization") String authorization);
+
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/irrigateblocks")
+    Call<ResponseBody> postIrrigateBlock(@Header("Authorization") String authorization, @Body HashMap requestBody);
+
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @GET("/fineract-provider/api/v1/fertilizer")
+    Call<List<GeneralSpinnerResponse>> getFertilizer(@Header("Authorization") String authorization);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/applyfertilizer")
+    Call<ResponseBody> postApplyFertilizer(@Header("Authorization") String authorization, @Body HashMap requestBody);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/scoutmonitor")
+    Call<ResponseBody> postScoutMonitor(@Header("Authorization") String authorization, @Body HashMap requestBody);
+
+
+
+
+
+
+
+
+
+
 
 }
 

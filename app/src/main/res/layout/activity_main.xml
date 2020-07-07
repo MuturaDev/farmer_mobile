@@ -198,7 +198,7 @@
                             android:background="@drawable/border_edittext"
                             android:drawSelectorOnTop="true"
                             android:entries="@array/document_type"
-                            android:hint="crop date"></Spinner>
+                            android:hint="crop date"/>
 
 
                         <Button

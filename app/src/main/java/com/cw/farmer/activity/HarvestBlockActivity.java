@@ -1,57 +1,34 @@
 package com.cw.farmer.activity;
 
-import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
-import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.model.PageItemHarvestBlocks;
-import com.cw.farmer.model.SprayPostDB;
+import com.cw.farmer.model.PageItemPlantBlock;
+import com.cw.farmer.model.PageItemSearchArea;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
-import com.yayandroid.locationmanager.configuration.DefaultProviderConfiguration;
-import com.yayandroid.locationmanager.configuration.GooglePlayServicesConfiguration;
-import com.yayandroid.locationmanager.configuration.LocationConfiguration;
-import com.yayandroid.locationmanager.configuration.PermissionConfiguration;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.ResponseBody;
@@ -60,17 +37,17 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-import static androidx.constraintlayout.widget.Constraints.TAG;
-
 public class HarvestBlockActivity extends HandleConnectionAppCompatActivity {
 
     private TextView select_block;
     private EditText txt_harvest_kilos;
-    private PageItemHarvestBlocks returnHarvestBlock;
+    private PageItemPlantBlock returnHarvestBlock;
 
 
 
-
+    public void back(View view){
+        finish();
+    }
 
 
     @Override
@@ -84,22 +61,16 @@ public class HarvestBlockActivity extends HandleConnectionAppCompatActivity {
        if(getIntent() != null){
            if(getIntent().getExtras() != null){
                Bundle bundle = getIntent().getExtras();
-             returnHarvestBlock = (PageItemHarvestBlocks)  bundle.getSerializable("Message");
+             returnHarvestBlock = (PageItemPlantBlock)  bundle.getSerializable("Message");
              select_block.setText(returnHarvestBlock.getBlockName());
            }
        }
-
-
-
-
-
-
-
     }
 
 
     public void searchBlock(View view){
-        Intent intent = new Intent(HarvestBlockActivity.this, SearchHarvestBlockActivity.class);
+        Intent intent = new Intent(HarvestBlockActivity.this, SearchPlantBlockActivity.class);
+        intent.putExtra("SearchFor","Harvest");
         startActivity(intent);
     }
 
@@ -139,11 +110,11 @@ public class HarvestBlockActivity extends HandleConnectionAppCompatActivity {
 
 
         if( select_block.getText().toString().isEmpty()){
-            select_block.setBackground(getResources().getDrawable(R.drawable.shake_search_bg));
-            select_block.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake));
+            (findViewById(R.id.select_block_layout)).setBackground(getResources().getDrawable(R.drawable.shake_search_bg));
+            (findViewById(R.id.select_block_layout)).startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake));
             valid = false;
         }else{
-            select_block.setBackground(getResources().getDrawable(R.drawable.search_bg));
+            (findViewById(R.id.select_block_layout)).setBackground(getResources().getDrawable(R.drawable.search_bg));
         }
 
 
