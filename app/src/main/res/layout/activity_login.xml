@@ -9,33 +9,43 @@
     android:padding="20dp"
     tools:context=".activity.LoginActivity">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:gravity="center_horizontal|top|center_vertical">
 
-            <ImageView
-                android:layout_width="250dp"
-                android:layout_height="150dp"
-                android:layout_marginRight="30dp"
-                android:layout_gravity="center"
-                android:src="@drawable/logo" />
-
-        </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/login_error_view"
-            android:textAlignment="center"
-            android:textColor="@color/red"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center|center_horizontal"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:gravity="center_horizontal|top|center_vertical">
+
+                <ImageView
+                    android:layout_width="250dp"
+                    android:layout_height="150dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo" />
+
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/login_error_view"
+                android:textAlignment="center"
+                android:textColor="@color/red"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center|center_horizontal"
+                android:orientation="vertical">
 
                 <EditText
                     android:layout_marginLeft="30dp"
@@ -68,20 +78,24 @@
                     android:singleLine="true" />
 
 
-            <ImageButton
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:id="@+id/btn_login"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="@dimen/dimen_30"
-                android:src="@drawable/ic_send_white"
-                android:background="@drawable/shape_rectangle"
-                android:padding="10dp"
-                android:text="@string/login"
-                android:textAllCaps="true"
-                android:textColor="@color/colorwhite" />
+                <ImageButton
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:id="@+id/btn_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="@dimen/dimen_30"
+                    android:src="@drawable/ic_send_white"
+                    android:background="@drawable/shape_rectangle"
+                    android:padding="10dp"
+                    android:text="@string/login"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorwhite" />
+            </LinearLayout>
+
         </LinearLayout>
+
+    </ScrollView>
 
     </LinearLayout>
 

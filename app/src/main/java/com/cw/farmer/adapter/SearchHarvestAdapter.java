@@ -20,7 +20,7 @@ import com.cw.farmer.model.PageItemHarvest;
 
 import java.util.ArrayList;
 
-public class SearchHarvestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SearchHarvestAdapter extends RecyclerView.Adapter<SearchHarvestAdapter.ViewHolder> {
     ArrayList<PageItemHarvest> pageItemArrayList;
     Context context;
     int length;
@@ -67,63 +67,25 @@ public class SearchHarvestAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void setLoaded() {
         isLoading = false;
     }
-//    @NonNull
-//    @Override
-//    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-//        View view = LayoutInflater.from(context).inflate(R.layout.custom_register,viewGroup,false);
-//        return new ViewHolder(view);
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-//        final PageItem pageItem =pageItemArrayList.get(i);
-//        viewHolder.tv_first_midel_last_name.setText(pageItem.getFirstname()+" "+pageItem.getMiddlename()+" "+pageItem.getLastname());
-//        viewHolder.tv_mobile.setText(pageItem.getMobileno());
-//
-//        viewHolder.lin_item.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent =new Intent(context, FarmerDetailsActivity.class);
-//                Bundle bundle1 =new Bundle();
-//                bundle1.putParcelable("item",pageItem);
-//               intent.putExtras(bundle1);
-//                context.startActivity(intent);
-//            }
-//        });
-//
-//    }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-
-        if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_searchsearcharea_item_layout, viewGroup, false);
+    public SearchHarvestAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.custom_harvesting, viewGroup, false);
             return new ViewHolder(view);
-        } else {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_loading, viewGroup, false);
-            return new LoadingViewHolder(view);
-        }
-
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        if (viewHolder instanceof ViewHolder) {
-            populateItemRows((ViewHolder) viewHolder, i);
-        } else if (viewHolder instanceof LoadingViewHolder) {
-            showLoadingView((LoadingViewHolder) viewHolder, i);
-        }
+    public void onBindViewHolder(@NonNull SearchHarvestAdapter.ViewHolder viewHolder, int i) {
 
+       if(viewHolder != null)
+           populateItemRows(viewHolder, i);
     }
 
 
-    private void showLoadingView(LoadingViewHolder viewHolder, int position) {
-        //ProgressBar would be displayed
 
-    }
 
-    private void populateItemRows(ViewHolder viewHolder, int position) {
+    private void populateItemRows(@NonNull SearchHarvestAdapter.ViewHolder viewHolder, int position) {
         final PageItemHarvest pageItem = pageItemArrayList.get(position);
         String date="";
         for(int elem : pageItem.getCropDate()){
@@ -133,14 +95,9 @@ public class SearchHarvestAdapter extends RecyclerView.Adapter<RecyclerView.View
         for(int elem : pageItem.getCropDate()){
             contractdate=elem+"/"+contractdate;
         }
-        //Name
-        //Mobile No
-        //ID No
-        //Crop Date
-        //Centre Name
+
         viewHolder.tv_first_midel_last_name.setText(pageItem.getFamerName());
-        viewHolder.tv_mobile.setText("Mobile No: "+pageItem.getMobileno());
-        viewHolder.tv_idno.setText("ID No: "+pageItem.getAccountNumber());
+       viewHolder.tv_idno.setText("ID No: "+pageItem.getAccountNumber());
         viewHolder.crop_date.setText("Crop Date: "+removeLastChar(date));
 
         viewHolder.tv_noofunits.setText("Centre Name: "+pageItem.getCentrename());
@@ -181,19 +138,10 @@ public class SearchHarvestAdapter extends RecyclerView.Adapter<RecyclerView.View
         return pageItemArrayList.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
-    private class LoadingViewHolder extends RecyclerView.ViewHolder {
-
-        ProgressBar progressBar;
-
-        public LoadingViewHolder(@NonNull View itemView) {
-            super(itemView);
-            progressBar = itemView.findViewById(R.id.progressBar);
-        }
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        protected TextView tv_first_midel_last_name, tv_mobile,tv_idno,tv_noofunits,crop_date;
-        protected LinearLayout lin_item;
+         TextView tv_first_midel_last_name, tv_mobile,tv_idno,tv_noofunits,crop_date;
+         LinearLayout lin_item;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

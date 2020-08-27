@@ -71,6 +71,8 @@ public class SearchHarvestFarmerActivity extends HandleConnectionAppCompatActivi
     }
     public void search(View v){
 
+
+
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Log.d("Search","Searching Harvest data...");
             getData();
@@ -88,14 +90,16 @@ public class SearchHarvestFarmerActivity extends HandleConnectionAppCompatActivi
         SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
         String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
         Log.d("Search","Searching Harvest data..icon.....");
+        String request = farmer_search.getText().toString();
+
         Call<FarmerHarvestResponse> call = service.getHarvestfarmer(limit, offset, farmer_search.getText().toString(), auth_key);
         call.enqueue(new Callback<FarmerHarvestResponse>() {
             @Override
             public void onResponse(Call<FarmerHarvestResponse> call, Response<FarmerHarvestResponse> response) {
                 progressDialog.hide();
                 try {
-                    Log.d("Data count...",String.valueOf(response.body().getPageItemHarvest().size()));
-                    System.out.println(response.body().getPageItemHarvest());
+                    //Log.d("Data count...",String.valueOf(response.body().getPageItemHarvest().size()));
+                    //System.out.println(response.body().getPageItemHarvest());
 
                     if (response.body().getPageItemHarvest().size()!=0){
                         pageItemArrayList = (ArrayList<PageItemHarvest>) response.body().getPageItemHarvest();
