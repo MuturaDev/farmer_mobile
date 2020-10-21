@@ -52,6 +52,16 @@
                     android:visibility="visible" />
 
                 <ImageView
+                    android:id="@+id/networktesting"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:onClick="networkTest"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_network_check" />
+
+                <ImageView
+                    android:id="@+id/img_offline_sync"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center"

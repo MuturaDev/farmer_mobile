@@ -31,6 +31,7 @@ import com.cw.farmer.R;
 import com.cw.farmer.model.PageItemPlantBlock;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.table_models.ScoutingTB;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
@@ -75,6 +76,10 @@ public class ScoutingBlockActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scouting_block_layout);
+
+//        //TODO: REMOVE THIS IN PRODUCTION
+//        String s = null;
+//        s.length();
 
         //creates space between scouting image and back button
 //        Toolbar toolbar = findViewById(R.id.toolbar);
@@ -292,6 +297,39 @@ public class ScoutingBlockActivity extends AppCompatActivity {
                             .show();
                 }
             });
+        }else{
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("blockId", String.valueOf(returnIntentPlantBlock.getId()));
+            hashMap.put("germination", germinationValue.equals("Yes") ? "Y" : "N");
+            hashMap.put("weeded",weededValue.equals("Yes") ? "Y" : "N");
+            hashMap.put("watered", wateredValue.equals("Yes") ? "Y" : "N");
+            hashMap.put("survivalRate",txt_crop_survival_rate.getText().toString());
+            hashMap.put("floweringRate", txt_flowering.getText().toString());
+            hashMap.put("averagePods",txt_average_pods.getText().toString());
+            hashMap.put("locale","en");
+            ScoutingTB scouting = new ScoutingTB(hashMap.get("blockId"),
+                    hashMap.get("germination"),
+                    hashMap.get("weeded"),
+                    hashMap.get("watered"),
+                    hashMap.get("survivalRate"),
+                    hashMap.get("floweringRate"),
+                    hashMap.get("averagePods"),
+                    hashMap.get("locale"));
+            scouting.save();
+
+            new SweetAlertDialog(ScoutingBlockActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(ScoutingBlockActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                        }
+                    })
+                    .show();
         }
     }
 

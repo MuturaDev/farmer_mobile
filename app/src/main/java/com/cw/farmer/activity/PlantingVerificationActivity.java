@@ -199,7 +199,16 @@ public class PlantingVerificationActivity extends HandleConnectionAppCompatActiv
             return;
         }
 
-        if(locationText != null && !location_str.isEmpty() && !coordinates.isEmpty()) {
+        if(locationText != null  && coordinates != null) {
+        if(locationText != null && !coordinates.isEmpty()) {
+            if(location_str == null){
+                location_str = "Offline";
+            }else{
+                if(location_str.isEmpty()){
+                    location_str = "Offline";
+                }
+            }
+
             //Toast.makeText(this, "Location: " + location_str, Toast.LENGTH_SHORT).show();
             //return;
             StringBuilder sb = new StringBuilder();
@@ -210,11 +219,9 @@ public class PlantingVerificationActivity extends HandleConnectionAppCompatActiv
             sb.append(location_str);
 
             Log.d(getPackageName().toUpperCase(), sb.toString());
-        }else{
-            return;
-        }
 
-        /*{
+
+             /*{
               “contractid”: 23,
               “cordinates”:””,
               “location”:””,
@@ -222,27 +229,27 @@ public class PlantingVerificationActivity extends HandleConnectionAppCompatActiv
               “Waterconfirmed”:”Y” or “N”,
           }
          */
-        int selectedId = Plantconfirmed_radio.getCheckedRadioButtonId();
-        plant_btn = (RadioButton) findViewById(selectedId);
-        String plant_print =plant_btn.getText().toString();
-        String plant_value="N";
+            int selectedId = Plantconfirmed_radio.getCheckedRadioButtonId();
+            plant_btn = (RadioButton) findViewById(selectedId);
+            String plant_print =plant_btn.getText().toString();
+            String plant_value="N";
 
-        if (plant_print.equals("Yes")){
-            plant_value="Y";
-        }else{
-            plant_value="N";
-        }
+            if (plant_print.equals("Yes")){
+                plant_value="Y";
+            }else{
+                plant_value="N";
+            }
 
-        int selectedId_2 = Waterconfirmed_radio.getCheckedRadioButtonId();
-        water_btn = (RadioButton) findViewById(selectedId_2);
-        String water_print =plant_btn.getText().toString();
-        String water_value="N";
+            int selectedId_2 = Waterconfirmed_radio.getCheckedRadioButtonId();
+            water_btn = (RadioButton) findViewById(selectedId_2);
+            String water_print =plant_btn.getText().toString();
+            String water_value="N";
 
-        if (water_print.equals("Yes")){
-            water_value="Y";
-        }else{
-            water_value="N";
-        }
+            if (water_print.equals("Yes")){
+                water_value="Y";
+            }else{
+                water_value="N";
+            }
 //        {
 //"contractid": 23,
 // "cordinates":"",
@@ -250,44 +257,44 @@ public class PlantingVerificationActivity extends HandleConnectionAppCompatActiv
 //"plantconfirmed":"Y",
 //"waterconfirmed":"Y"
 //}
-        SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-        pDialog.setTitleText("Submitting Planting Verification Data...");
-        pDialog.setCancelable(false);
-        pDialog.show();
-        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
-            HashMap<String, String> hashMap = new HashMap<>();
-            hashMap.put("cordinates", coordinates);
-            hashMap.put("location", location_str);
-            hashMap.put("contractid", farmer_id_string);
-            hashMap.put("plantconfirmed", plant_value);
-            hashMap.put("waterconfirmed", water_value);
-            hashMap.put("confirmedUnits", confirmedUnits.getText().toString());
+            SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+            pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+            pDialog.setTitleText("Submitting Planting Verification Data...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+            if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("cordinates", coordinates);
+                hashMap.put("location", location_str);
+                hashMap.put("contractid", farmer_id_string);
+                hashMap.put("plantconfirmed", plant_value);
+                hashMap.put("waterconfirmed", water_value);
+                hashMap.put("confirmedUnits", confirmedUnits.getText().toString());
 
 
-            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-            APIService service = retrofit.create(APIService.class);
-            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-            Call<AllResponse> call = service.postplantverify(auth_key, hashMap);
-            call.enqueue(new Callback<AllResponse>() {
-                @Override
-                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                    pDialog.dismissWithAnimation();
-                    try {
-                        if (response.body() != null) {
-                            new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                    .setTitleText("Success")
-                                    .setContentText("You have successfully submitted " + farmer.getText() + " plant verification details")
-                                    .setConfirmText("Ok")
-                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                        @Override
-                                        public void onClick(SweetAlertDialog sDialog) {
-                                            sDialog.dismissWithAnimation();
-                                            startActivity(new Intent(PlantingVerificationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<AllResponse> call = service.postplantverify(auth_key, hashMap);
+                call.enqueue(new Callback<AllResponse>() {
+                    @Override
+                    public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                        pDialog.dismissWithAnimation();
+                        try {
+                            if (response.body() != null) {
+                                new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                        .setTitleText("Success")
+                                        .setContentText("You have successfully submitted " + farmer.getText() + " plant verification details")
+                                        .setConfirmText("Ok")
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sDialog) {
+                                                sDialog.dismissWithAnimation();
+                                                startActivity(new Intent(PlantingVerificationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                        }
-                                    })
+                                            }
+                                        })
 //                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
 //                                        @Override
 //                                        public void onClick(SweetAlertDialog sDialog) {
@@ -296,53 +303,64 @@ public class PlantingVerificationActivity extends HandleConnectionAppCompatActiv
 //
 //                                        }
 //                                    })
-                                    .show();
+                                        .show();
 
-                        } else {
-                            JSONObject jObjError = new JSONObject(response.errorBody().string());
-                            new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.WARNING_TYPE)
-                                    .setTitleText("Ooops...")
-                                    .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
-                                    .show();
+                            } else {
+                                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                                new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                        .setTitleText("Ooops...")
+                                        .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                        .show();
 
+                            }
+                        } catch (Exception e) {
+                            new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Oops...")
+                                    .setContentText(e.getMessage())
+                                    .show();
                         }
-                    } catch (Exception e) {
+                        //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<AllResponse> call, Throwable t) {
+                        pDialog.cancel();
                         new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.ERROR_TYPE)
                                 .setTitleText("Oops...")
-                                .setContentText(e.getMessage())
+                                .setContentText(t.getMessage())
                                 .show();
                     }
-                    //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+                });
+            } else {
+                PlantingVerifyDB book = new PlantingVerifyDB(coordinates, location_str, farmer_id_string, plant_value, water_value);
+                book.save();
+                pDialog.hide();
+                new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("No Wrong")
+                        .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                        .setConfirmText("Ok")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.dismissWithAnimation();
+                                startActivity(new Intent(PlantingVerificationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                }
+                            }
+                        })
+                        .show();
+            }
 
-                @Override
-                public void onFailure(Call<AllResponse> call, Throwable t) {
-                    pDialog.cancel();
-                    new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.ERROR_TYPE)
-                            .setTitleText("Oops...")
-                            .setContentText(t.getMessage())
-                            .show();
-                }
-            });
         } else {
-            PlantingVerifyDB book = new PlantingVerifyDB(coordinates, location_str, farmer_id_string, plant_value, water_value);
-            book.save();
-            pDialog.hide();
-            new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText("No Wrong")
-                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
-                    .setConfirmText("Ok")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sDialog) {
-                            sDialog.dismissWithAnimation();
-                            startActivity(new Intent(PlantingVerificationActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-
-                        }
-                    })
+            Snackbar.make(v, "Couldn't get location, because network is not accessible!", Snackbar.LENGTH_SHORT)
                     .show();
         }
+        }else{
+            Snackbar.make(v, "Couldn't get location, because network is not accessible!", Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+
+
 
     }
 

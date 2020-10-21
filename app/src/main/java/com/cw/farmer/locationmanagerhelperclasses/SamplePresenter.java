@@ -3,8 +3,8 @@ package com.cw.farmer.locationmanagerhelperclasses;
 import android.location.Location;
 import android.text.TextUtils;
 
-import com.yayandroid.locationmanager.constants.FailType;
-import com.yayandroid.locationmanager.constants.ProcessType;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.constants.FailType;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.constants.ProcessType;
 
 public class SamplePresenter {
 

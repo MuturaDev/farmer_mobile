@@ -123,4 +123,16 @@
     </string-array>
 
 
+    <!--    Catcho-->
+    <string name="catcho_report_title1">Farmer App</string>
+    <string name="catcho_report_title2">\t\t\tCrash Reporter</string>
+    <string name="catcho_title">Title</string>
+    <string name="catcho_description">Description</string>
+    <string name="catcho_device_info">Instructions</string>
+    <string name="catcho_email">Email</string>
+    <string name="catcho_send_email">Send Email...</string>
+    <string name="catcho_no_email_clients">There are no email clients installed.</string>
+    <string name="catcho_err_send_msg">There\'s an error during send the msg, please try again later.</string>
+
+
 </resources>

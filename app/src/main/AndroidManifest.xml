@@ -3,30 +3,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.farmer">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <uses-feature android:name="android.hardware.location.gps" />
-    <uses-feature android:name="android.hardware.location.network" />
 
+
+<!--  android:name=".FarmerApplication" -->
+<!--    android:allowBackup="false"
+        android:fullBackupOnly="false"-->
+<!--    android:fullBackupOnly="false"-->
     <application
-        android:name="com.orm.SugarApp"
-
-        android:allowBackup="true"
+        android:name=".FarmerApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_farmer_logo_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="false"
         android:largeHeap="true"
         tools:replace="android:icon"
         tools:ignore="GoogleAppIndexingWarning">
+
+
+        <meta-data
+            android:name="DATABASE"
+            android:value="farmer.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="12" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="com.cw.farmer" />
+
+
+<!--    CRASH REPORTS-->
+        <activity android:name=".crashreporting.CatchoReportActivity"
+            android:label="Farmer App Reporter"
+            />
+
+        <provider
+            android:name=".crashreporting.filepicker.FilePickerProvider"
+            android:authorities="${applicationId}.filepicker.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/com_jaiselrahman_filepicker_provider_paths" />
+        </provider>
 
         <activity
             android:name=".activity.MajorActivity"
@@ -60,18 +96,7 @@
                 android:value="com.cw.farmer.activity.HomeActivity" />
         </activity>
 
-        <meta-data
-            android:name="DATABASE"
-            android:value="farmer.db" />
-        <meta-data
-            android:name="VERSION"
-            android:value="11" />
-        <meta-data
-            android:name="QUERY_LOG"
-            android:value="true" />
-        <meta-data
-            android:name="DOMAIN_PACKAGE_NAME"
-            android:value="com.cw.farmer" />
+
 
         <activity
             android:name=".activity.UpdateDocsActivity"
@@ -241,14 +266,30 @@
                 android:value="com.cw.farmer.activity.HomeActivity" />
         </activity>
         <activity android:name=".activity.FarmerDetailsActivity" />
+
+<!--        THE START OF THE APP-->
         <activity android:name=".activity.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
+            </intent-filter>
+
+        </activity>
+
+        <activity android:name=".internetConnectionBroadcast.InternetMainActivity">
+            <intent-filter>
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.HomeActivity">
+
+<!--        below added a few things for Notifications-->
+        <activity android:name=".activity.HomeActivity"
+
+            >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -327,7 +368,23 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".testexamples.SampleActivity" />
+        <activity android:name=".testexamples.SampleActivity"/>
+
+        <activity android:name=".activity.NetworkTestingActivity">
+
+        </activity>
+
+<!--        Reciver for internet connection broadcast-->
+        <receiver android:name=".internetConnectionBroadcast.ConnectionCheck">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".internetConnectionBroadcast.CheckNetworkJob"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
 
         <meta-data

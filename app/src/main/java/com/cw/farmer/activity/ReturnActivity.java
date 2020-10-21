@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.HandleConnectionAppCompatActivity;
+import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.RequistionAdapter;
 import com.cw.farmer.custom.Utility;
@@ -24,6 +25,7 @@ import com.cw.farmer.model.RequisitionResponse;
 import com.cw.farmer.model.RetItem;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -31,6 +33,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.ResponseBody;
@@ -102,38 +105,41 @@ public class ReturnActivity extends HandleConnectionAppCompatActivity{
 //        TextView tv_type= findViewById(R.id.tv_type);
 //        tv_type.setText(type);
 
-        progressDialog = new ProgressDialog(this);
 
-        progressDialog.setCancelable(false);
-        // progressBar.setMessage("Please Wait...");
-        progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
-        SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-        String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-        Call<PlantingVerificationResponse> call = service.getPlantingVerfication(entity_id, auth_key);
+            if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+                progressDialog = new ProgressDialog(this);
 
-        call.enqueue(new Callback<PlantingVerificationResponse>() {
-            @Override
-            public void onResponse(Call<PlantingVerificationResponse> call, Response<PlantingVerificationResponse> response) {
-                progressDialog.hide();
+                progressDialog.setCancelable(false);
+                // progressBar.setMessage("Please Wait...");
+                progressDialog.show();
 
-                if (response.body() != null){
-                    Log.d(ReturnActivity.this.getPackageName().toUpperCase(), response.body().toString());
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<PlantingVerificationResponse> call = service.getPlantingVerfication(entity_id, auth_key);
 
-                    tv_centre.setText(response.body().getCentreName());
-                    tv_crop_date.setText(response.body().getCropDate().get(2) + "/"  +response.body().getCropDate().get(1) + "/" + response.body().getCropDate().get(0));
-                    tv_farmer_name.setText(response.body().getFarmerName());
-                    tv_no_of_units.setText(response.body().getContractUnits());
+                call.enqueue(new Callback<PlantingVerificationResponse>() {
+                    @Override
+                    public void onResponse(Call<PlantingVerificationResponse> call, Response<PlantingVerificationResponse> response) {
+                        progressDialog.hide();
 
-                    //  TextView tv_centre= findViewById(R.id.tv_centre);
+                        if (response.body() != null) {
+                            Log.d(ReturnActivity.this.getPackageName().toUpperCase(), response.body().toString());
+
+                            tv_centre.setText(response.body().getCentreName());
+                            tv_crop_date.setText(response.body().getCropDate().get(2) + "/" + response.body().getCropDate().get(1) + "/" + response.body().getCropDate().get(0));
+                            tv_farmer_name.setText(response.body().getFarmerName());
+                            tv_no_of_units.setText(response.body().getContractUnits());
+
+                            //  TextView tv_centre= findViewById(R.id.tv_centre);
 //        tv_centre.setText(centrename);
 //        TextView tv_crop_date= findViewById(R.id.tv_crop_date);
 //        tv_crop_date.setText(crop_date);
 ////        TextView tv_type= findViewById(R.id.tv_type);
 ////        tv_type.setText(type);
 
-                    //What was there before
+                            //What was there before
 //                    //if(response.body().size() > 0){
 //                            pageItemArrayList = (ArrayList<RequisitionResponse>) response.body();
 //                        for (RequisitionResponse pageitem : response.body()) {
@@ -147,22 +153,31 @@ public class ReturnActivity extends HandleConnectionAppCompatActivity{
 //                        }
 //                            setData();
 
-                }else{
+                        } else {
 
-                    Utility.showToast(ReturnActivity.this, "No requisition details");
-                }
+                            Utility.showToast(ReturnActivity.this, "No requisition details");
+                        }
 
 
+                    }
+
+                    @Override
+                    public void onFailure(Call<PlantingVerificationResponse> call, Throwable t) {
+                        progressDialog.hide();
+                        Utility.showToast(ReturnActivity.this, t.getMessage());
+                        Log.e(ReturnActivity.this.getPackageName().toUpperCase(), t.getMessage());
+                    }
+                });
+            }else{
+
+                HashMap hashMap = (HashMap) OfflineFeature.getSharedPreferences("ReturnActivityOffline",getApplicationContext(),HashMap.class);
+
+                tv_centre.setText(hashMap.get("centre").toString());
+                tv_crop_date.setText(hashMap.get("cropDate").toString());
+                tv_farmer_name.setText(hashMap.get("farmerName").toString());
+                tv_no_of_units.setText(hashMap.get("noOfUnits").toString());
 
             }
-
-            @Override
-            public void onFailure(Call<PlantingVerificationResponse> call, Throwable t) {
-                progressDialog.hide();
-                Utility.showToast(ReturnActivity.this, t.getMessage());
-                Log.e(ReturnActivity.this.getPackageName().toUpperCase(),  t.getMessage());
-            }
-        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
         private void setData() {

@@ -20,10 +20,12 @@ import androidx.core.content.ContextCompat;
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
+import com.cw.farmer.model.HarvestingDB;
 import com.cw.farmer.model.PageItemPlantBlock;
 import com.cw.farmer.model.PageItemSearchArea;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.table_models.HarvestBlockTB;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
@@ -211,6 +213,34 @@ public class HarvestBlockActivity extends HandleConnectionAppCompatActivity {
 //                            .show();
                 }
             });
+        }else{
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("harvestKilos", txt_harvest_kilos.getText().toString());
+            hashMap.put("blockId", String.valueOf(returnHarvestBlock.getId()));
+            hashMap.put("locale","en");//should this be hardcoded?
+
+            HarvestBlockTB harvest = new HarvestBlockTB(
+                    hashMap.get("harvestKilos"),
+                    hashMap.get("blockId"),
+                    hashMap.get("locale")
+            );
+
+            harvest.save();
+
+            new SweetAlertDialog(HarvestBlockActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(HarvestBlockActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                        }
+                    })
+                    .show();
+
         }
 
 

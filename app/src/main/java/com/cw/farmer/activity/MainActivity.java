@@ -10,7 +10,9 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
 import android.util.Log;
@@ -123,13 +125,26 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
         if (et_firstName.getText().toString().isEmpty()) {
 
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
-            SpannableStringBuilder ssbuilder = new SpannableStringBuilder("must input First Name");
-            ssbuilder.setSpan(fgcspan, 0, "must input First Name".length(), 0);
+            SpannableStringBuilder ssbuilder = new SpannableStringBuilder("must input Full Names");
+            ssbuilder.setSpan(fgcspan, 0, "must input Full Names".length(), 0);
             et_firstName.setError(ssbuilder);
             valid = false;
         } else {
-            et_firstName.setError(null);
+            //ADD CHECK FOR TWO NAMES
+            if (et_firstName.getText().toString().split(" ").length <= 1) {
+
+                ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
+                SpannableStringBuilder ssbuilder = new SpannableStringBuilder("must input Farmer two names ");
+                ssbuilder.setSpan(fgcspan, 0, "must input Farmer two names".length(), 0);
+                et_firstName.setError(ssbuilder);
+                valid = false;
+            } else {
+                et_firstName.setError(null);
+            }
         }
+
+
+
 
         if (et_phoneno.getText().toString().isEmpty()) {
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
@@ -137,15 +152,31 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
             ssbuilder.setSpan(fgcspan, 0, "must input Phone Number".length(), 0);
             et_phoneno.setError(ssbuilder);
             valid = false;
-        }else if (et_phoneno.getText().length()!=10) {
+
+        }else if (et_phoneno.getText().length()!=10) {//also check for 07
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
             SpannableStringBuilder ssbuilder = new SpannableStringBuilder("Phone Number must be 10 digits");
             ssbuilder.setSpan(fgcspan, 0, "Phone Number must be 10 digits".length(), 0);
             et_phoneno.setError(ssbuilder);
             valid = false;
         } else {
-            et_phoneno.setError(null);
+            //CHECK FOR VALID PHONE NUMBER, 07XXXXXXXX
+            if (et_phoneno.getText().toString().substring(0, 1).contains("0") && et_phoneno.getText().toString().substring(1, 2).contains("7")) {//also check for 07
+
+                et_phoneno.setError(null);
+            } else {
+
+                ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
+                SpannableStringBuilder ssbuilder = new SpannableStringBuilder("Enter a valid Phone Number eg. 07xxxxxxxx");
+                ssbuilder.setSpan(fgcspan, 0, "Enter a valid Phone Number eg. 07xxxxxxxx".length(), 0);
+                et_phoneno.setError(ssbuilder);
+                valid = false;
+
+            }
         }
+
+
+
 
         final Calendar t = Calendar.getInstance();
         String today=convertDate(convertToMillis(t.get(Calendar.DAY_OF_MONTH),t.get(Calendar.MONTH),t.get(Calendar.YEAR)));
@@ -153,7 +184,9 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
 
         long diff =  getDateDiff(new SimpleDateFormat("dd-MM-yyyy"), et_dob.getText().toString(), today);
 
+
         if (et_dob.getText().toString().isEmpty()) {
+
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
             SpannableStringBuilder ssbuilder = new SpannableStringBuilder("must input Date of Birth");
             ssbuilder.setSpan(fgcspan, 0, "must input Date of Birth".length(), 0);
@@ -161,6 +194,7 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
             doberror.setText("must input Date of Birth");
             valid = false;
         }else if (diff<6570) {
+
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
             SpannableStringBuilder ssbuilder = new SpannableStringBuilder("DOB must be greater than 18 years");
             ssbuilder.setSpan(fgcspan, 0, "DOB must be greater than 18 years".length(), 0);
@@ -257,6 +291,7 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
         et_idno = findViewById(R.id.et_idnumber);
         doberror = findViewById(R.id.doberror);
         et_dob = findViewById(R.id.et_dob);
+
         et_accountno = findViewById(R.id.et_account_no);
         et_bankname = findViewById(R.id.et_bankname);
 
@@ -481,12 +516,15 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
                             .setAction("Action", null).show();
                     break;
                 }
-                createFarmer();
+                createFarmer(v);
                 break;
         }
     }
 
-    private void createFarmer() {
+    private void createFarmer(View view) {
+
+
+        if(bank_ids.size() > 0){
 
 
         SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
@@ -523,8 +561,9 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
         farmerModel.setCenterid(center_id_submit.get(centre_id.getSelectedItemPosition()));
         farmerModel.setDateFormat("DD-MM-YYYY");
         farmerModel.setLocale("en");
-
         accountdetails.setAccountno(et_accountno.getText().toString());
+
+        //TODO: CRASHES OCCURED HERE
         accountdetails.setBankId(Integer.parseInt(bank_ids.get(et_bankname.getSelectedItemPosition()).toString()));
         accountdetails.setImage(getBase64FromPathBank());
         accountdetails.setFiletype("image/png");
@@ -605,8 +644,8 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
             book.save();
             pDialog.cancel();
             new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText("No Wrong")
-                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setTitleText("Confirmation")
+                    .setContentText("We have saved the data offline, will submitted it when you have internet")
                     .setConfirmText("Ok")
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
@@ -620,7 +659,9 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
         }
 
 
-
+        }else{
+            Snackbar.make(view,"No data in Bank Drop Down", Snackbar.LENGTH_LONG  ).show();
+        }
 
     }
 

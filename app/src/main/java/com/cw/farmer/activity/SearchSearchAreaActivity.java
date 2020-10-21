@@ -25,6 +25,7 @@ import com.cw.farmer.model.PageItemHarvest;
 import com.cw.farmer.model.PageItemSearchArea;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -95,20 +96,21 @@ public class SearchSearchAreaActivity extends HandleConnectionAppCompatActivity 
 //        });
 
 
+
+
     }
+
+
 
     public void search(View v){
 
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
-            Log.d("Search", "Searching Harvest data...");
             getData();
-        }else{
-            // TODO: 2020-06-05 Show not internet connection
+        } else {
+//            pageItemArrayList = getArrayList("SearchSearchAreaActivity");
+            pageItemArrayList = (ArrayList<PageItemSearchArea>) OfflineFeature.getSharedPreferences("SearchSearchAreaActivity", getApplicationContext(),PageItemSearchArea.class );
+            setData();
         }
-//        } else {
-//            pageItemArrayList = getArrayList("harvestblocksearch");
-//            setData();
-//        }
     }
     private void getData() {
         progressBar.setVisibility(View.VISIBLE);
@@ -128,7 +130,7 @@ public class SearchSearchAreaActivity extends HandleConnectionAppCompatActivity 
 
                     if (response.body().getPageItemSearchAreaList().size() > 0){
                         pageItemArrayList = (ArrayList<PageItemSearchArea>) response.body().getPageItemSearchAreaList();
-                        //saveArrayList(pageItemArrayList, "harvestblocksearch");
+                        saveArrayList(pageItemArrayList, "SearchSearchAreaActivity");
                         setData();
                     }else {
                        // Toast.makeText(SearchHarvestFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
@@ -185,14 +187,15 @@ public class SearchSearchAreaActivity extends HandleConnectionAppCompatActivity 
         editor.apply();     // This line is IMPORTANT !!!
     }
 
-    public ArrayList<PageItemSearchArea> getArrayList(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Gson gson = new Gson();
-        String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<PageItemHarvest>>() {
-        }.getType();
-        return gson.fromJson(json, type);
-    }
+
+//    public ArrayList<PageItemSearchArea> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<PageItemHarvest>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
 
     @Override
     public void onBackPressed() {

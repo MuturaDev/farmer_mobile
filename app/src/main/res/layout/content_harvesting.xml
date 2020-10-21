@@ -30,7 +30,7 @@
 
                 <EditText
                     android:imeOptions="actionSearch"
-                    android:id="@+id/farmer_harvesting"
+                        android:id="@+id/farmer_harvesting"
                     android:padding="15dp"
                     android:focusable="false"
                     android:layout_width="match_parent"

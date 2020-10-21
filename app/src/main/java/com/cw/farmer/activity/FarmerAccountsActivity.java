@@ -18,10 +18,12 @@ import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.Glide;
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
+import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.FarmerAccountsResponse;
 import com.cw.farmer.model.PageItem;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.table_models.FarmerAccountTB;
 
 import java.util.List;
 
@@ -59,49 +61,69 @@ public class FarmerAccountsActivity extends HandleConnectionAppCompatActivity {
             dob = (String) b.get("dob");
             farmer_id = id + "";
             pageItem = b.getParcelable("item");
-            SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-            pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-            pDialog.setTitleText("Fetching farmer bank account details..");
-            pDialog.setCancelable(false);
-            pDialog.show();
-            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-            APIService service = retrofit.create(APIService.class);
-            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-            Call<List<FarmerAccountsResponse>> call = service.getfameraccount(id, auth_key);
-            call.enqueue(new Callback<List<FarmerAccountsResponse>>() {
-                @Override
-                public void onResponse(Call<List<FarmerAccountsResponse>> call, Response<List<FarmerAccountsResponse>> response) {
-                    for (FarmerAccountsResponse doc : response.body()) {
+            if (Utility.isNetworkAvailable(this)) {
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Fetching farmer bank account details..");
+                pDialog.setCancelable(false);
+                pDialog.show();
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<List<FarmerAccountsResponse>> call = service.getfameraccount(id, auth_key);
+                call.enqueue(new Callback<List<FarmerAccountsResponse>>() {
+                    @Override
+                    public void onResponse(Call<List<FarmerAccountsResponse>> call, Response<List<FarmerAccountsResponse>> response) {
+                        for (FarmerAccountsResponse doc : response.body()) {
 
 
-                        Log.w("myApp", response.message());
-                        pDialog.dismissWithAnimation();
+                            Log.w("myApp", response.message());
+                            pDialog.dismissWithAnimation();
 
-                        bankName.setText("Bank Name: " + doc.getBankName());
-                        accountno.setText("Account Number: " + doc.getAccountno());
-                        account_name = doc.getAccountno();
-                        bank_name = doc.getBankName();
-                        entry_id = doc.getId() + "";
+                            bankName.setText("Bank Name: " + doc.getBankName());
+                            accountno.setText("Account Number: " + doc.getAccountno());
+                            account_name = doc.getAccountno();
+                            bank_name = doc.getBankName();
+                            entry_id = doc.getId() + "";
 
-                        String imageBytes = doc.getBase64ImageData().replace("data:image/png;base64,", "");
-                        account_image = imageBytes;
-                        byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
-                        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                        imageView.setAdjustViewBounds(true);
-                        Glide.with(FarmerAccountsActivity.this).asBitmap().load(imageByteArray).into(imageView);
+                            String imageBytes = doc.getBase64ImageData().replace("data:image/png;base64,", "");
+                            account_image = imageBytes;
+                            byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
+                            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                            imageView.setAdjustViewBounds(true);
+                            Glide.with(FarmerAccountsActivity.this).asBitmap().load(imageByteArray).into(imageView);
+                        }
+
                     }
 
+                    @Override
+                    public void onFailure(Call<List<FarmerAccountsResponse>> call, Throwable t) {
+                        pDialog.dismissWithAnimation();
+                        Log.w("myApp", t.toString());
+                        Toast.makeText(FarmerAccountsActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+
+                    }
+                });
+            }else{
+
+                for(FarmerAccountTB account : FarmerAccountTB.listAll(FarmerAccountTB.class)){
+                    bankName.setText("Bank Name: " + account.getBankName());
+                    accountno.setText("Account Number: " + account.getAccountName());
+                    account_name = account.getAccountNo();
+                    bank_name = account.getBankName();
+                    entry_id = account.getId() + "";
+
+                    String imageBytes = account.getImageBytes();
+                    account_image = imageBytes;
+                    byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    imageView.setAdjustViewBounds(true);
+                    Glide.with(FarmerAccountsActivity.this).asBitmap().load(imageByteArray).into(imageView);
                 }
 
-                @Override
-                public void onFailure(Call<List<FarmerAccountsResponse>> call, Throwable t) {
-                    pDialog.dismissWithAnimation();
-                    Log.w("myApp", t.toString());
-                    Toast.makeText(FarmerAccountsActivity.this, t.toString(), Toast.LENGTH_LONG).show();
 
-                }
-            });
+            }
         }
 
     }

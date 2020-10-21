@@ -24,6 +24,7 @@ import com.cw.farmer.R;
 import com.cw.farmer.model.PageItemPlantBlock;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.table_models.IrrigateBlockTB;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
@@ -251,6 +252,34 @@ public class IrrigateBlockActivity extends HandleConnectionAppCompatActivity {
                             .show();
                 }
             });
+        }else{
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("blockId", String.valueOf(returnIntentPlantBlock.getId()));
+            hashMap.put("irrigationHours", txt_irrigation_hours.getText().toString());
+            hashMap.put("cubicLitres",txt_cubic_litres.getText().toString());
+            hashMap.put("locale","en");
+
+            IrrigateBlockTB irrigate = new IrrigateBlockTB(
+                    hashMap.get("blockId"),
+                    hashMap.get("irrigationHours"),
+                    hashMap.get("cubicLitres"),
+                    hashMap.get("locale")
+            );
+            irrigate.save();
+
+            new SweetAlertDialog(IrrigateBlockActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(IrrigateBlockActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                        }
+                    })
+                    .show();
         }
     }
 

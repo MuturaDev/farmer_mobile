@@ -89,7 +89,25 @@ public class scheme extends Fragment {
                 if (Utility.isNetworkAvailable(getActivity())) {
                     getData();
                 } else {
-                    pageItemArrayList = getArrayList("viewfarmer");
+
+
+
+                    if(search.getText().toString().isEmpty()){
+                        pageItemArrayList = getArrayList("viewfarmer");
+                    }else{
+
+                        pageItemArrayList = new ArrayList<>();
+                        pageItemArrayList.clear();
+
+                        for(PageItem item : getArrayList("viewfarmer")){
+                            if(item.getFirstname().toLowerCase().contains(search.getText().toString())
+                            || item.getIdno().toLowerCase().contains(search.getText().toString())
+                            ){
+                                pageItemArrayList.add(item);
+                            }
+                        }
+                    }
+
                     setData();
                 }
             }
@@ -166,3 +184,7 @@ public class scheme extends Fragment {
     }
 
 }
+
+
+
+

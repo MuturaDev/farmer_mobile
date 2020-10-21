@@ -25,6 +25,7 @@ import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.PageItemHarvest;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -77,7 +78,28 @@ public class SearchHarvestFarmerActivity extends HandleConnectionAppCompatActivi
             Log.d("Search","Searching Harvest data...");
             getData();
         } else {
-            pageItemArrayList = getArrayList("harvestfarmer");
+
+            String farmerSearch = farmer_search.getText().toString();
+
+            ArrayList<PageItemHarvest> list = (ArrayList<PageItemHarvest>) OfflineFeature.getSharedPreferences("harvestfarmer", getApplicationContext(), PageItemHarvest.class);
+
+            if(farmerSearch.isEmpty()){
+                pageItemArrayList = list;
+            }else{
+                pageItemArrayList = new ArrayList<>();
+                pageItemArrayList.clear();
+                for(PageItemHarvest item : list){
+                    //https://stackoverflow.com/questions/86780/how-to-check-if-a-string-contains-another-string-in-a-case-insensitive-manner-in#:~:text=Yes%2C%20contains%20is%20case%20sensitive,You%20can%20use%20java.&text=Pattern%20with%20the%20CASE_INSENSITIVE%20flag,Pattern.
+                    if(item.getFamerName().toLowerCase().contains(farmerSearch.toLowerCase())
+                   ){
+                        pageItemArrayList.add(item);
+                    }
+
+
+                }
+
+            }
+
             setData();
         }
     }
@@ -140,13 +162,13 @@ public class SearchHarvestFarmerActivity extends HandleConnectionAppCompatActivi
         editor.apply();     // This line is IMPORTANT !!!
     }
 
-    public ArrayList<PageItemHarvest> getArrayList(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Gson gson = new Gson();
-        String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<PageItemHarvest>>() {
-        }.getType();
-        return gson.fromJson(json, type);
-    }
+//    public ArrayList<PageItemHarvest> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<PageItemHarvest>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
 
 }

@@ -25,6 +25,7 @@ import com.cw.farmer.model.PageItem;
 import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -91,7 +92,34 @@ public class SearchFarmerActivity extends HandleConnectionAppCompatActivity {
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             getData();
         } else {
-            pageItemArrayList = getArrayList("viewrecruitfarmer");
+
+            String searchFarmer = farmer_search.getText().toString();
+
+            if(searchFarmer.isEmpty()){
+                pageItemArrayList = (ArrayList<PageItem>) OfflineFeature.getSharedPreferences("viewrecruitfarmer", getApplicationContext(), PageItem.class);
+            }else{
+                pageItemArrayList = new ArrayList<>();
+                pageItemArrayList.clear();
+
+                for(PageItem item :  (ArrayList<PageItem>) OfflineFeature.getSharedPreferences("viewrecruitfarmer", getApplicationContext(), PageItem.class)){
+
+                    if(item.getFirstname().toLowerCase().contains(searchFarmer.toLowerCase()) ||
+                            item.getMiddlename().toLowerCase().contains(searchFarmer.toLowerCase()) ||
+                            item.getLastname().toLowerCase().contains(searchFarmer.toLowerCase())
+
+
+                    ||
+
+                            item.getIdno().toLowerCase().contains(searchFarmer.toLowerCase())
+                            ){
+
+
+                        pageItemArrayList.add(item);
+                    }
+                }
+            }
+
+            //pageItemArrayList = getArrayList("viewrecruitfarmer");
             setData();
         }
     }
@@ -132,7 +160,7 @@ public class SearchFarmerActivity extends HandleConnectionAppCompatActivity {
                 }
             });
         } else {
-            pageItemArrayList = getArrayList("recruitfarmer");
+            pageItemArrayList = (ArrayList<PageItem>) OfflineFeature.getSharedPreferences("viewrecruitfarmer", getApplicationContext(), PageItem.class);
             setData();
             progressDialog.hide();
         }
@@ -156,13 +184,13 @@ public class SearchFarmerActivity extends HandleConnectionAppCompatActivity {
         editor.apply();     // This line is IMPORTANT !!!
     }
 
-    public ArrayList<PageItem> getArrayList(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Gson gson = new Gson();
-        String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<PageItem>>() {
-        }.getType();
-        return gson.fromJson(json, type);
-    }
+//    public ArrayList<PageItem> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<PageItem>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
 
 }

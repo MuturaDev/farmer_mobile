@@ -86,6 +86,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scrollbars="none">
+
                     <LinearLayout
                         android:id="@+id/lin_farmer_det"
                         android:layout_width="match_parent"
@@ -100,7 +101,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="20dp"
                             android:background="@drawable/border_edittext"
-                            android:hint="Enter Farmer Name"
+                            android:hint="Enter Farmer Names eg. John Doe"
                             android:textColor="@color/textColor"
                             android:padding="15dp"
                             android:inputType="text"
@@ -117,7 +118,7 @@
                             android:layout_marginBottom="20dp"
                             android:background="@drawable/border_edittext"
                             android:inputType="phone"
-                            android:hint="Enter Phone No."
+                            android:hint="Enter Phone No. eg. 07xxxxxxxx"
                             android:textColor="@color/textColor"
                             android:padding="15dp"
                             android:textColorHint="@color/textColor" />
@@ -127,25 +128,24 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
 
-                            android:editable="false"
+
                             android:clickable="true"
                             android:textColor="@color/textColor"
                             android:focusable="false"
                             android:background="@drawable/border_edittext"
                             android:hint="Enter DOB"
                             android:padding="15dp"
-                            android:layout_marginBottom="20dp"
+
                             android:textColorHint="@color/textColor" />
                         <TextView
-                            android:visibility="gone"
                             android:id="@+id/doberror"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textAlignment="center"
-                            android:text=""
+                            android:layout_marginLeft="10dp"
                             android:layout_marginBottom="20dp"
-                            android:textColor="@color/red"/>
-
+                            android:layout_width="match_parent"
+                            android:textSize="12sp"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@android:color/holo_red_dark"/>
 
 
                         <LinearLayout

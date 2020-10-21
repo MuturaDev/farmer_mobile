@@ -20,10 +20,14 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
+import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.AllCentreResponse;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.table_models.AllCentreTB;
+import com.cw.farmer.table_models.ChangeCentreTB;
+import com.cw.farmer.table_models.FarmerAccountTB;
 
 import org.json.JSONObject;
 
@@ -64,66 +68,111 @@ public class ChangeCentreActivity extends HandleConnectionAppCompatActivity {
     }
 
     public void searchcentre(View v) {
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
-        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-        Call<List<AllCentreResponse>> call = service.getcentre(auth_key);
-        call.enqueue(new Callback<List<AllCentreResponse>>() {
-            @Override
-            public void onResponse(Call<List<AllCentreResponse>> call, Response<List<AllCentreResponse>> response) {
-                Dialog dialog = new Dialog(ChangeCentreActivity.this);
-                LayoutInflater inflater = LayoutInflater.from(ChangeCentreActivity.this);
-                View view1 = inflater.inflate(R.layout.custom_centresearch, null);
-                ListView listView = view1.findViewById(R.id.listView);
-                SearchView searchView = view1.findViewById(R.id.searchView);
-                centre_id = new ArrayList<Integer>();
-                ArrayList<String> spinnerArray = new ArrayList<String>();
-                spinnerArray.clear();
-                for (AllCentreResponse doc : response.body()) {
-                    spinnerArray.add(doc.getName());
-                    centre_id.add(doc.getId());
+        if (Utility.isNetworkAvailable(this)) {
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<List<AllCentreResponse>> call = service.getcentre(auth_key);
+            call.enqueue(new Callback<List<AllCentreResponse>>() {
+                @Override
+                public void onResponse(Call<List<AllCentreResponse>> call, Response<List<AllCentreResponse>> response) {
+                    Dialog dialog = new Dialog(ChangeCentreActivity.this);
+                    LayoutInflater inflater = LayoutInflater.from(ChangeCentreActivity.this);
+                    View view1 = inflater.inflate(R.layout.custom_centresearch, null);
+                    ListView listView = view1.findViewById(R.id.listView);
+                    SearchView searchView = view1.findViewById(R.id.searchView);
+                    centre_id = new ArrayList<Integer>();
+                    ArrayList<String> spinnerArray = new ArrayList<String>();
+                    spinnerArray.clear();
+                    for (AllCentreResponse doc : response.body()) {
+                        spinnerArray.add(doc.getName());
+                        centre_id.add(doc.getId());
+
+                    }
+                    final ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<String>(ChangeCentreActivity.this, android.R.layout.simple_list_item_1, spinnerArray);
+                    listView.setAdapter(stringArrayAdapter);
+
+                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String newText) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+                            stringArrayAdapter.getFilter().filter(newText);
+                            return false;
+                        }
+                    });
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view,
+                                                int position, long id) {
+                            // TODO Auto-generated method stub
+                            //Toast.makeText(ChangeCentreActivity.this, spinnerArray.get(position), Toast.LENGTH_SHORT).show();
+                            centre = centre_id.get(position) + "";
+                            search_centre.setText(spinnerArray.get(position));
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.setContentView(view1);
+                    dialog.show();
+
 
                 }
-                final ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<String>(ChangeCentreActivity.this, android.R.layout.simple_list_item_1, spinnerArray);
-                listView.setAdapter(stringArrayAdapter);
 
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String newText) {
-                        return false;
-                    }
+                @Override
+                public void onFailure(Call<List<AllCentreResponse>> call, Throwable t) {
+                    Log.w("myApp", t.toString());
+                    Toast.makeText(ChangeCentreActivity.this, t.toString(), Toast.LENGTH_LONG).show();
 
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        stringArrayAdapter.getFilter().filter(newText);
-                        return false;
-                    }
-                });
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        // TODO Auto-generated method stub
-                        //Toast.makeText(ChangeCentreActivity.this, spinnerArray.get(position), Toast.LENGTH_SHORT).show();
-                        centre = centre_id.get(position) + "";
-                        search_centre.setText(spinnerArray.get(position));
-                        dialog.dismiss();
-                    }
-                });
-                dialog.setContentView(view1);
-                dialog.show();
-
+                }
+            });
+        }else{
+            Dialog dialog = new Dialog(ChangeCentreActivity.this);
+            LayoutInflater inflater = LayoutInflater.from(ChangeCentreActivity.this);
+            View view1 = inflater.inflate(R.layout.custom_centresearch, null);
+            ListView listView = view1.findViewById(R.id.listView);
+            SearchView searchView = view1.findViewById(R.id.searchView);
+            centre_id = new ArrayList<Integer>();
+            ArrayList<String> spinnerArray = new ArrayList<String>();
+            spinnerArray.clear();
+            for (AllCentreTB doc : AllCentreTB.listAll(AllCentreTB.class)) {
+                spinnerArray.add(doc.getName());
+                centre_id.add(doc.getID());
 
             }
+            final ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<String>(ChangeCentreActivity.this, android.R.layout.simple_list_item_1, spinnerArray);
+            listView.setAdapter(stringArrayAdapter);
 
-            @Override
-            public void onFailure(Call<List<AllCentreResponse>> call, Throwable t) {
-                Log.w("myApp", t.toString());
-                Toast.makeText(ChangeCentreActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String newText) {
+                    return false;
+                }
 
-            }
-        });
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    stringArrayAdapter.getFilter().filter(newText);
+                    return false;
+                }
+            });
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    // TODO Auto-generated method stub
+                    //Toast.makeText(ChangeCentreActivity.this, spinnerArray.get(position), Toast.LENGTH_SHORT).show();
+                    centre = centre_id.get(position) + "";
+                    search_centre.setText(spinnerArray.get(position));
+                    dialog.dismiss();
+                }
+            });
+            dialog.setContentView(view1);
+            dialog.show();
+        }
+
 
 
     }
@@ -139,66 +188,91 @@ public class ChangeCentreActivity extends HandleConnectionAppCompatActivity {
         hashMap.put("farmerid", user_id);
         hashMap.put("centerid", centre);
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
-        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-        Call<AllResponse> call = service.postchangecentre(auth_key, hashMap);
-        call.enqueue(new Callback<AllResponse>() {
-            @Override
-            public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                pDialog.dismissWithAnimation();
-                try {
-                    if (response.body() != null) {
-                        new SweetAlertDialog(ChangeCentreActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                .setTitleText("Success")
-                                .setContentText("You have successfully changed farmer centre")
-                                .setConfirmText("Ok")
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(ChangeCentreActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        if (Utility.isNetworkAvailable(this)) {
 
-                                    }
-                                })
-                                .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(ChangeCentreActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<AllResponse> call = service.postchangecentre(auth_key, hashMap);
+            call.enqueue(new Callback<AllResponse>() {
+                @Override
+                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                    pDialog.dismissWithAnimation();
+                    try {
+                        if (response.body() != null) {
+                            new SweetAlertDialog(ChangeCentreActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                    .setTitleText("Success")
+                                    .setContentText("You have successfully changed farmer centre")
+                                    .setConfirmText("Ok")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(ChangeCentreActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                    }
-                                })
+                                        }
+                                    })
+                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(ChangeCentreActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                                        }
+                                    })
+                                    .show();
+
+                        } else {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            new SweetAlertDialog(ChangeCentreActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("Ooops...")
+                                    .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                    .show();
+
+                        }
+                    } catch (Exception e) {
+                        new SweetAlertDialog(ChangeCentreActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText(e.getMessage())
                                 .show();
-
-                    } else {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        new SweetAlertDialog(ChangeCentreActivity.this, SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("Ooops...")
-                                .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
-                                .show();
-
                     }
-                } catch (Exception e) {
+                    //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onFailure(Call<AllResponse> call, Throwable t) {
+                    pDialog.cancel();
                     new SweetAlertDialog(ChangeCentreActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText(e.getMessage())
+                            .setContentText(t.getMessage())
                             .show();
                 }
-                //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+            });
+        }else{
 
-            }
+            ChangeCentreTB change = new ChangeCentreTB(
+                    hashMap.get("activate"),
+                    hashMap.get("farmerid"),
+                    hashMap.get("centerid")
+            );
+            change.save();
 
-            @Override
-            public void onFailure(Call<AllResponse> call, Throwable t) {
-                pDialog.cancel();
-                new SweetAlertDialog(ChangeCentreActivity.this, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText("Oops...")
-                        .setContentText(t.getMessage())
-                        .show();
-            }
-        });
+            new SweetAlertDialog(ChangeCentreActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(ChangeCentreActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                        }
+                    })
+                    .show();
+        }
     }
 
 }

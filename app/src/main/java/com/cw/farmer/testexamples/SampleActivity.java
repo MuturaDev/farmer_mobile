@@ -8,11 +8,11 @@ import android.widget.TextView;
 
 import com.cw.farmer.R;
 import com.cw.farmer.locationmanagerhelperclasses.SamplePresenter;
-import com.yayandroid.locationmanager.base.LocationBaseActivity;
-import com.yayandroid.locationmanager.configuration.Configurations;
-import com.yayandroid.locationmanager.configuration.LocationConfiguration;
-import com.yayandroid.locationmanager.constants.FailType;
-import com.yayandroid.locationmanager.constants.ProcessType;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.base.LocationBaseActivity;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.configuration.Configurations;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.configuration.LocationConfiguration;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.constants.FailType;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.constants.ProcessType;
 
 
 public class SampleActivity extends LocationBaseActivity implements SamplePresenter.SampleView {

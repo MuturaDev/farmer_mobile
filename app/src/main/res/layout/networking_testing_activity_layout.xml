@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:layout_height="match_parent">
+
+
+
+    <ScrollView
+        android:layout_marginBottom="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:padding="20dp"
+
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/one"
+                android:layout_width="match_parent"
+                android:text="ALL"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+
+            <Button
+                android:id="@+id/two"
+                android:layout_width="match_parent"
+                android:text="ListFarmerActivity/scheme/"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/three"
+                android:layout_width="match_parent"
+                android:text="Register Activity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/four"
+                android:layout_width="match_parent"
+                android:text="Recruit Farmer/select farmer/SearchFarmerActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/five"
+                android:layout_width="match_parent"
+                android:text="Contract Sign/ select farmer/SearchContractFarmerActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/six"
+                android:layout_width="match_parent"
+                android:text="Verify planting/select farmer/SearchPlantingVerificationActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+
+            <Button
+                android:id="@+id/seven"
+                android:layout_width="match_parent"
+                android:text="Crop Desctuction/select farmer/SearchDestructionFarmerActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/eight"
+                android:layout_width="match_parent"
+                android:text="Spray Confirmation/select farmer/SearchSprayActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+
+            <Button
+                android:id="@+id/nine"
+                android:layout_width="match_parent"
+                android:text="Harvest Collection/select farmer/SearchHarvestFarmerActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/ten"
+                android:layout_width="match_parent"
+                android:text="Register Block/select farm, spinner"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+
+            <Button
+                android:id="@+id/eleven"
+                android:layout_width="match_parent"
+                android:text="Plant Block/select block/SearchSearchAreaActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/twelve"
+                android:layout_width="match_parent"
+                android:text="Plant Block/spinner/PlantBlockActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+
+            <Button
+                android:id="@+id/thirteen"
+                android:layout_width="match_parent"
+                android:text="Irrigate Block/select block/SearchPlantBlockActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/fourteen"
+                android:layout_width="match_parent"
+                android:text="Apply Fertilizer's/select block/SearchPlantBlockActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/fiveteen"
+                android:layout_width="match_parent"
+                android:text="Apply Fertilizer's/spinner/ApplyFertilizerBlockActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/sixteen"
+                android:layout_width="match_parent"
+                android:text="Scouting/select block/SearchPlantBlockActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/seventeen"
+                android:layout_width="match_parent"
+                android:text="Harvest Block/select block/SearchPlantBlockActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+
+            <Button
+                android:id="@+id/eighteen"
+                android:layout_width="match_parent"
+                android:text="HomeActivity"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/nineteen"
+                android:layout_width="match_parent"
+                android:text="FarmerRecruiteActivity/Crop Date"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/twenty"
+                android:layout_width="match_parent"
+                android:text="SprayConfirmationActivity/Spray Number"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/twentyone"
+                android:layout_width="match_parent"
+                android:text="CropDesturctionActivity/destruction reason"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/twentytwo"
+                android:layout_width="match_parent"
+                android:text="ManAcivity, Spinner bank"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <RelativeLayout
+
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/monitor"
+            android:layout_alignParentRight="true"
+            android:backgroundTint="@color/red"
+            android:text="MONITOR APP'S DATA CONSUMPTION"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

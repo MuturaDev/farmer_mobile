@@ -16,4 +16,12 @@ public class SprayNumberDB extends SugarRecord<SprayNumberDB> {
     }
 
 
+    @Override
+    public String toString() {
+        return "SprayNumberDB{" +
+                "id_spray=" + id_spray +
+                ", spray_no='" + spray_no + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }

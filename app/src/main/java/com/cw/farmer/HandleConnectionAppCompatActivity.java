@@ -1,32 +1,45 @@
 package com.cw.farmer;
 
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import com.cw.farmer.activity.FarmerRecruitActivity;
+import com.cw.farmer.activity.HomeActivity;
+import com.cw.farmer.activity.SplashScreen;
 import com.cw.farmer.locationmanagerhelperclasses.SamplePresenter;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.base.LocationBaseActivity;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.configuration.Configurations;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.configuration.LocationConfiguration;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.constants.FailType;
+import com.cw.farmer.locationmanagerhelperclasses.customlocation.constants.ProcessType;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
-import com.yayandroid.locationmanager.base.LocationBaseActivity;
-import com.yayandroid.locationmanager.configuration.Configurations;
-import com.yayandroid.locationmanager.configuration.LocationConfiguration;
-import com.yayandroid.locationmanager.constants.FailType;
-import com.yayandroid.locationmanager.constants.ProcessType;
+
+import com.jakewharton.processphoenix.ProcessPhoenix;
+
 
 import org.imaginativeworld.oopsnointernet.ConnectionCallback;
 import org.imaginativeworld.oopsnointernet.NoInternetDialog;
@@ -35,6 +48,8 @@ import org.imaginativeworld.oopsnointernet.NoInternetSnackbar;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
@@ -107,12 +122,52 @@ public class HandleConnectionAppCompatActivity extends LocationBaseActivity impl
 
     @Override
     public void setText(String text) {
-        locationText = text;
+        if(locationText == null)
+        locationText = text.replace("\n","").replace(" ","");
         Log.d(this.getPackageName().toUpperCase(), "Location: " + locationText);
-        if(locationText != null){
+        if(locationText.contains("Couldn't get location") || locationText.contains("Couldn'tgetlocation")){
 
-            if(!locationText.contains(","))
-                return;
+
+          final  SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+            pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+            pDialog.setTitleText("");
+            pDialog.setContentText("Sorry, but will be restarting the app shortly to get your location");
+            pDialog.setCancelable(false);
+            pDialog.show();
+
+//            Snackbar.with(getApplicationContext(),null)
+//                    .type(Type.SUCCESS)
+//                    .message("Sorry, but will be restarting the app shortly to get location.")
+//                    .duration(Duration.LONG)
+//                    .fillParent(true)
+//                    .textAlign(Align.LEFT)
+//                    .show();
+
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pDialog.dismissWithAnimation();
+                }
+            }, 6000 );
+
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+
+                    Intent nextIntent = new Intent(getApplicationContext(), SplashScreen.class);
+                            ProcessPhoenix.triggerRebirth(getApplicationContext(), nextIntent);
+
+                            //this is restarting on the wrong screen
+                   // ProcessPhoenix.triggerRebirth(getApplicationContext());//getLocation();
+                }
+            }, 7500 );
+        }else
+            if(locationText != null){
+
+
 
             String[] strings = locationText.split(",");
 
@@ -191,6 +246,8 @@ public class HandleConnectionAppCompatActivity extends LocationBaseActivity impl
 //                    });
         }
 
+
+
     }
 
     @Override
@@ -208,71 +265,9 @@ public class HandleConnectionAppCompatActivity extends LocationBaseActivity impl
     }
 
 
-
-    // No Internet Dialog
-    private NoInternetDialog noInternetDialog;
-
-    // No Internet Snackbar
-    private NoInternetSnackbar noInternetSnackbar;
-
-
-
-
-
-
-
     @Override
     protected void onResume() {
         super.onResume();
-
-//        // No Internet Dialog
-//        NoInternetDialog.Builder builder1 = new NoInternetDialog.Builder(this);
-//
-//        builder1.setConnectionCallback(new ConnectionCallback() { // Optional
-//            @Override
-//            public void hasActiveConnection(boolean hasActiveConnection) {
-//                // ...
-//                //Snackbar.make()
-////
-//
-//            }
-//        });
-//        builder1.setCancelable(false); // Optional
-//        builder1.setNoInternetConnectionTitle("No Internet"); // Optional
-//        builder1.setNoInternetConnectionMessage("Check your Internet connection and try again"); // Optional
-//        builder1.setShowInternetOnButtons(true); // Optional
-//        builder1.setPleaseTurnOnText("Please turn on"); // Optional
-//        builder1.setWifiOnButtonText("Wifi"); // Optional
-//        builder1.setMobileDataOnButtonText("Mobile data"); // Optional
-//
-//        builder1.setOnAirplaneModeTitle("No Internet"); // Optional
-//        builder1.setOnAirplaneModeMessage("You have turned on the airplane mode."); // Optional
-//        builder1.setPleaseTurnOffText("Please turn off"); // Optional
-//        builder1.setAirplaneModeOffButtonText("Airplane mode"); // Optional
-//        builder1.setShowAirplaneModeOffButtons(true); // Optional
-//
-//        noInternetDialog = builder1.build();
-
-
-        // No Internet Snackbar
-        NoInternetSnackbar.Builder builder2 = new NoInternetSnackbar.Builder(this, (ViewGroup) findViewById(android.R.id.content));
-
-        builder2.setConnectionCallback(new ConnectionCallback() { // Optional
-            @Override
-            public void hasActiveConnection(boolean hasActiveConnection) {
-                // ...
-            }
-        });
-        builder2.setIndefinite(true); // Optional
-        builder2.setNoInternetConnectionMessage("No active Internet connection!"); // Optional
-        builder2.setOnAirplaneModeMessage("You have turned on the airplane mode!"); // Optional
-        builder2.setSnackbarActionText("Settings");
-        builder2.setShowActionToDismiss(true);
-        builder2.setSnackbarDismissActionText("OK");
-
-        noInternetSnackbar = builder2.build();
-
-
         // Location
         if (getLocationManager().isWaitingForLocation()
                 && !getLocationManager().isAnyDialogShowing()) {
@@ -283,18 +278,6 @@ public class HandleConnectionAppCompatActivity extends LocationBaseActivity impl
     @Override
     protected void onPause() {
         super.onPause();
-
-        // No Internet Dialog
-        if (noInternetDialog != null) {
-            noInternetDialog.destroy();
-        }
-
-        // No Internet Snackbar
-        if (noInternetSnackbar != null) {
-            noInternetSnackbar.destroy();
-        }
-
-
         // Location
         dismissProgress();
     }

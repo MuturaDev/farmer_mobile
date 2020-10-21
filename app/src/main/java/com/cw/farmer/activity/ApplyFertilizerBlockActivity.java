@@ -31,6 +31,8 @@ import com.cw.farmer.model.PageItemPlantBlock;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.cw.farmer.spinner_models.GeneralSpinner;
+import com.cw.farmer.table_models.ApplyFertilizerTB;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
@@ -243,6 +245,38 @@ public class ApplyFertilizerBlockActivity extends AppCompatActivity {
                             .show();
                 }
             });
+        }else{
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("blockId", String.valueOf(returnIntentPlantBlock.getId()));
+            hashMap.put("fertilizerId", String.valueOf(fertilizerValue.getId()));
+            hashMap.put("appliedRate",txt_appliedrate.getText().toString());
+            hashMap.put("method", methodValue);
+            hashMap.put("equipment", equipmentValue);
+            hashMap.put("locale","en");
+
+            ApplyFertilizerTB apply = new ApplyFertilizerTB(
+                    hashMap.get("blockId"),
+                    hashMap.get("fertilizerId"),
+                    hashMap.get("appliedRate"),
+                    hashMap.get("method"),
+                    hashMap.get("equipment"),
+                    hashMap.get("locale")
+            );
+            apply.save();
+
+            new SweetAlertDialog(ApplyFertilizerBlockActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(ApplyFertilizerBlockActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                        }
+                    })
+                    .show();
         }
     }
 
@@ -333,43 +367,61 @@ public class ApplyFertilizerBlockActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Object o) {
 
-                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                APIService service = retrofit.create(APIService.class);
-                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                Call<List<GeneralSpinnerResponse>> call = service.getFertilizer(auth_key);
-                call.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
-                    @Override
-                    public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
+                if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+                    Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                    APIService service = retrofit.create(APIService.class);
+                    SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                    String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                    Call<List<GeneralSpinnerResponse>> call = service.getFertilizer(auth_key);
+                    call.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
+                        @Override
+                        public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
 
-                        if(response.body() != null) {
-                            if(response.body().size() > 0) {
-                                List<GeneralSpinner> farmNames = new ArrayList<>();
-                                Log.d(ApplyFertilizerBlockActivity.this.getPackageName().toUpperCase(), response.body().toString());
-                                farmNames.clear();
+                            if (response.body() != null) {
+                                if (response.body().size() > 0) {
+                                    List<GeneralSpinner> farmNames = new ArrayList<>();
+                                    Log.d(ApplyFertilizerBlockActivity.this.getPackageName().toUpperCase(), response.body().toString());
+                                    farmNames.clear();
 
-                                GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Select Fertilizer");
-                                farmNames.add(spinnerValue);
+                                    GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Select Fertilizer");
+                                    farmNames.add(spinnerValue);
 
-                                for (GeneralSpinnerResponse names : response.body()) {
-                                    GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
-                                    farmNames.add(spinnerValue1);
+                                    for (GeneralSpinnerResponse names : response.body()) {
+                                        GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
+                                        farmNames.add(spinnerValue1);
+                                    }
+
+                                    ArrayAdapter<GeneralSpinner> farmSpinnerArrayAdapter = new ArrayAdapter<>(ApplyFertilizerBlockActivity.this, android.R.layout.simple_spinner_dropdown_item, farmNames);
+
+                                    showProgress(false);
+                                    sp_fertilizer.setAdapter(farmSpinnerArrayAdapter);
                                 }
-
-                                ArrayAdapter<GeneralSpinner> farmSpinnerArrayAdapter = new ArrayAdapter<>(ApplyFertilizerBlockActivity.this, android.R.layout.simple_spinner_dropdown_item, farmNames);
-
-                                showProgress(false);
-                                sp_fertilizer.setAdapter(farmSpinnerArrayAdapter);
                             }
+
                         }
 
+                        @Override
+                        public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {
+
+                        }
+                    });
+                }else{
+                    List<GeneralSpinner> farmNames = new ArrayList<>();
+                    farmNames.clear();
+
+                    GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Select Fertilizer");
+                    farmNames.add(spinnerValue);
+
+                    for (GeneralSpinnerResponse names :  (ArrayList<GeneralSpinnerResponse>) OfflineFeature.getSharedPreferences("ApplyFertilizerSpinner", getApplicationContext(), GeneralSpinnerResponse.class)) {
+                        GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
+                        farmNames.add(spinnerValue1);
                     }
 
-                    @Override
-                    public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {
+                    ArrayAdapter<GeneralSpinner> farmSpinnerArrayAdapter = new ArrayAdapter<>(ApplyFertilizerBlockActivity.this, android.R.layout.simple_spinner_dropdown_item, farmNames);
 
-                    }
-                });
+                    showProgress(false);
+                    sp_fertilizer.setAdapter(farmSpinnerArrayAdapter);
+                }
 
 
                 super.onPostExecute(o);

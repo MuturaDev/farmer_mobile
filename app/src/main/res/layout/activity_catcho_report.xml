@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/colorPrimary">
+
+
+        <LinearLayout
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/catcho_report_title1"
+                        android:gravity="bottom"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:textSize="25sp"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/catcho_report_title2"
+                        android:gravity="bottom"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingBottom="5dp"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="end"
+                    android:src="@mipmap/ic_farmer_logo_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp" />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+        <ScrollView
+            android:layout_marginTop="65dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+
+                <androidx.cardview.widget.CardView
+                    android:layout_marginBottom="10dp"
+                    app:cardCornerRadius="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:paddingTop="32dp"
+                        android:paddingRight="16dp"
+                        android:paddingLeft="16dp">
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:hintAnimationEnabled="true"
+                            android:textColorHint="@color/colorPrimaryDark"
+                            android:paddingBottom="32dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:backgroundTint="@color/white"
+                                android:textColor="@color/colorPrimary"
+                                android:id="@+id/catcho_bug_title"
+                                android:inputType="textCapSentences"
+                                android:textColorHint="@color/colorPrimary"
+                                android:layout_width="match_parent"
+                                android:hint="@string/catcho_title"
+                                android:text="Farmer App Crash Report"
+                                android:enabled="false"
+                                android:singleLine="true"
+                                android:maxLines="1"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/abc_text_size_body_2_material"
+                                />
+                        </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColorHint="@color/colorPrimaryDark"
+                            app:hintAnimationEnabled="true"
+                            android:paddingBottom="32dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:inputType="textMultiLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:backgroundTint="@color/white"
+                                android:textColor="@color/colorPrimary"
+                                android:textColorHint="@color/colorPrimary"
+                                android:id="@+id/catcho_bug_description"
+                                android:textSize="@dimen/abc_text_size_body_2_material"
+                                android:hint="@string/catcho_description"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColorHint="@color/colorPrimaryDark"
+                            app:hintAnimationEnabled="true"
+                            android:paddingBottom="32dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:backgroundTint="@color/white"
+                                android:textColor="@color/colorPrimary"
+                                android:id="@+id/catcho_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textEmailAddress"
+                                android:textSize="@dimen/abc_text_size_body_2_material"
+                                android:hint="@string/catcho_email"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColorHint="@color/colorPrimaryDark"
+                            app:hintAnimationEnabled="true"
+                            android:background="@null"
+                            android:paddingBottom="32dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:inputType="textMultiLine"
+
+                                android:fontFamily="serif"
+                                android:backgroundTint="@color/white"
+                                android:textColor="@color/colorPrimary"
+                                android:id="@+id/catcho_device_info"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/abc_text_size_body_2_material"
+                                android:enabled="false"
+                                android:hint="@string/catcho_device_info"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+
+        <RelativeLayout
+            android:layout_gravity="bottom|end"
+            android:padding="5dp"
+            android:layout_margin="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/restart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:background="@color/colorPrimary"
+                    android:orientation="horizontal"
+                    >
+
+                    <!--                    <ImageView-->
+                    <!--                        android:layout_width="25dp"-->
+                    <!--                        android:layout_height="25dp"-->
+                    <!--                        android:layout_gravity="center_vertical"-->
+                    <!--                        android:src="@drawable/send_crash_report" />-->
+
+                    <TextView
+                        android:textAllCaps="true"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="Restart App "
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/catcho_fab_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="0dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:background="@color/colorPrimary"
+                    android:orientation="horizontal"
+                    >
+
+
+                    <TextView
+                        android:textAllCaps="true"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text=" Send Crash Report "
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+        <!--        <android.support.design.widget.FloatingActionButton-->
+        <!--            android:id="@+id/catcho_fab_send"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            -->
+        <!--            android:src="@drawable/send_icon"-->
+        <!--            android:background="@color/colorPrimary"-->
+        <!--            android:tint="@color/catcho_text_light"/>-->
+    </FrameLayout>
+
+</RelativeLayout>

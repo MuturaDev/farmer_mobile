@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -30,13 +31,19 @@ import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.FarmerModelDB;
 import com.cw.farmer.model.GeneralSpinnerResponse;
+import com.cw.farmer.model.PageItemsDestruction;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.cw.farmer.spinner_models.GeneralSpinner;
+import com.cw.farmer.table_models.RegisterBlockTB;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,6 +119,8 @@ public class RegisterBlockActivity extends HandleConnectionAppCompatActivity {
     }
 
 
+
+
     private void populateSpinner(){
 
         AsyncTask asyncTask = new AsyncTask() {
@@ -125,46 +134,64 @@ public class RegisterBlockActivity extends HandleConnectionAppCompatActivity {
             @Override
             protected void onPostExecute(Object o) {
 
+                if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+                    Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                    APIService service = retrofit.create(APIService.class);
+                    SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                    String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                    Call<List<GeneralSpinnerResponse>> call = service.getFarmNames(auth_key);
+                    call.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
+                            @Override
+                            public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
 
-                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                APIService service = retrofit.create(APIService.class);
-                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                Call<List<GeneralSpinnerResponse>> call = service.getFarmNames(auth_key);
-                call.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
-                    @Override
-                    public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
+                                if(response.body() != null) {
+                                    if(response.body().size() > 0) {
 
-                        if(response.body() != null) {
-                            if(response.body().size() > 0) {
-                                List<GeneralSpinner> farmNames = new ArrayList<>();
-                                Log.d(RegisterBlockActivity.this.getPackageName().toUpperCase(), response.body().toString());
-                                farmNames.clear();
+                                        OfflineFeature.saveSharedPreferences(response.body(), "RegisterBlockSelectFarm", getApplicationContext());
 
-                                GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Select Farm");
-                                farmNames.add(spinnerValue);
+                                        List<GeneralSpinner> farmNames = new ArrayList<>();
+                                        farmNames.clear();
 
-                                for (GeneralSpinnerResponse names : response.body()) {
-                                    GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
-                                    farmNames.add(spinnerValue1);
+                                        GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Select Farm");
+                                        farmNames.add(spinnerValue);
+
+                                        for (GeneralSpinnerResponse names : response.body()) {
+                                            GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
+                                            farmNames.add(spinnerValue1);
+                                        }
+
+                                        ArrayAdapter<GeneralSpinner> farmSpinnerArrayAdapter = new ArrayAdapter<>(RegisterBlockActivity.this, android.R.layout.simple_spinner_dropdown_item, farmNames);
+
+                                        showProgress(false);
+                                        spinner_farm.setAdapter(farmSpinnerArrayAdapter);
+                                    }
                                 }
 
-                                ArrayAdapter<GeneralSpinner> farmSpinnerArrayAdapter = new ArrayAdapter<>(RegisterBlockActivity.this, android.R.layout.simple_spinner_dropdown_item, farmNames);
-
-                               showProgress(false);
-                                spinner_farm.setAdapter(farmSpinnerArrayAdapter);
                             }
-                        }
 
+                            @Override
+                            public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {
+
+                            }
+                    });
+                }else{
+                    List<GeneralSpinner> farmNames = new ArrayList<>();
+                   // Log.d(RegisterBlockActivity.this.getPackageName().toUpperCase(), response.body().toString());
+                    farmNames.clear();
+
+                    GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Select Farm");
+                    farmNames.add(spinnerValue);
+
+                    for (GeneralSpinnerResponse names : (ArrayList<GeneralSpinnerResponse>) OfflineFeature.getSharedPreferences("RegisterBlockSelectFarm",getApplicationContext(), GeneralSpinnerResponse.class)) {
+                        GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
+                        farmNames.add(spinnerValue1);
                     }
 
-                    @Override
-                    public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {
+                    ArrayAdapter<GeneralSpinner> farmSpinnerArrayAdapter = new ArrayAdapter<>(RegisterBlockActivity.this, android.R.layout.simple_spinner_dropdown_item, farmNames);
 
-                    }
-                });
-
-
+                    showProgress(false);
+                    spinner_farm.setAdapter(farmSpinnerArrayAdapter);
+                }
                 super.onPostExecute(o);
             }
 
@@ -178,10 +205,14 @@ public class RegisterBlockActivity extends HandleConnectionAppCompatActivity {
     }
 
 
-
-
-
-
+//    public List<GeneralSpinnerResponse> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<PageItemsDestruction>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
 
 
     public boolean validate() {
@@ -317,6 +348,32 @@ public class RegisterBlockActivity extends HandleConnectionAppCompatActivity {
 //                            .show();
                 }
             });
+        }else{
+
+            HashMap<String, String> hashMap = new HashMap<>();
+            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String centerid = prefs_auth.getString("center_ids", "1");
+            hashMap.put("centerId", centerid);//ask about this
+            hashMap.put("farmNameId", String.valueOf(selectedValue.getId()));
+            hashMap.put("blockName", txt_Capture_Block.getText().toString());
+
+            RegisterBlockTB register = new RegisterBlockTB(hashMap.get("centerId"), hashMap.get("farmNameId"), hashMap.get("blockName"));
+            register.save();
+
+            pDialog.dismissWithAnimation();
+            new SweetAlertDialog(RegisterBlockActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(RegisterBlockActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                        }
+                    })
+                    .show();
         }
 
 

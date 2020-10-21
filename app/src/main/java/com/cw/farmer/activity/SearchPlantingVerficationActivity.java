@@ -24,6 +24,7 @@ import com.cw.farmer.model.PageItemsPlantVerify;
 import com.cw.farmer.model.PlantVerifyResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -70,7 +71,21 @@ public class SearchPlantingVerficationActivity extends HandleConnectionAppCompat
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             getData();
         } else {
-            pageItemArrayList = getArrayList("verifyplantingfarmer");
+
+            String farmerSearch = farmer_search.getText().toString();
+            ArrayList<PageItemsPlantVerify>  list = (ArrayList<PageItemsPlantVerify>) OfflineFeature.getSharedPreferences("verifyplantingfarmer", getApplicationContext(), PageItemsPlantVerify.class);
+            if(farmerSearch.isEmpty()){
+                pageItemArrayList = list;
+            }else{
+                pageItemArrayList = new ArrayList<>();
+                pageItemArrayList.clear();
+                for(PageItemsPlantVerify item :  list){
+                    if(item.getFarmerName().toLowerCase().contains(farmerSearch.toLowerCase())
+                    || item.getFarmerIdNo().toLowerCase().contains(farmerSearch.toLowerCase())){
+                        pageItemArrayList.add(item);
+                    }
+                }
+            }
             setData();
         }
     }
@@ -129,13 +144,13 @@ public class SearchPlantingVerficationActivity extends HandleConnectionAppCompat
         editor.apply();     // This line is IMPORTANT !!!
     }
 
-    public ArrayList<PageItemsPlantVerify> getArrayList(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Gson gson = new Gson();
-        String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<PageItemsPlantVerify>>() {
-        }.getType();
-        return gson.fromJson(json, type);
-    }
+//    public ArrayList<PageItemsPlantVerify> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<PageItemsPlantVerify>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
 
 }

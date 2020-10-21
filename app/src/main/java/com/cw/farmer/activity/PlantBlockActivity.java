@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -29,13 +30,19 @@ import com.cw.farmer.R;
 import com.cw.farmer.model.GeneralSpinnerResponse;
 import com.cw.farmer.model.PageItemPlantBlock;
 import com.cw.farmer.model.PageItemSearchArea;
+import com.cw.farmer.model.PageItemsDestruction;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.cw.farmer.spinner_models.GeneralSpinner;
+import com.cw.farmer.table_models.PlantBlockTB;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,6 +78,8 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plant_block_layout);
+
+
         enableLocationTracking();
 
         select_block = findViewById(R.id.select_block);
@@ -226,66 +235,72 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
             return;
         }
 
-        if(locationText != null && !location_str.isEmpty() && !coordinates.isEmpty()) {
-            //Toast.makeText(this, "Location: " + location_str, Toast.LENGTH_SHORT).show();
-            //return;
-            StringBuilder sb = new StringBuilder();
-            sb.append("Location Lat-Long: ");
-            sb.append( "FusedLocationProviderClient = " +coordinates + " LocationBaseActivity = " + locationText );
-            sb.append("\n");
-            sb.append("Location Address: ");
-            sb.append(location_str);
+        if(locationText != null  && coordinates != null) {
+            if(locationText != null && !coordinates.isEmpty()) {
+                if(location_str == null){
+                    location_str = "Offline";
+                }else{
+                    if(location_str.isEmpty()){
+                        location_str = "Offline";
+                    }
+                }
 
-            Log.d(getPackageName().toUpperCase(), sb.toString());
-        }else{
-            return;
-        }
+                //Toast.makeText(this, "Location: " + location_str, Toast.LENGTH_SHORT).show();
+                //return;
+                StringBuilder sb = new StringBuilder();
+                sb.append("Location Lat-Long: ");
+                sb.append("FusedLocationProviderClient = " + coordinates + " LocationBaseActivity = " + locationText);
+                sb.append("\n");
+                sb.append("Location Address: ");
+                sb.append(location_str);
 
-        //close keyboard
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                Log.d(getPackageName().toUpperCase(), sb.toString());
+
+                //close keyboard
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
 
 
-        SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-        pDialog.setTitleText("Please wait...submitting.");
-        pDialog.setCancelable(false);
-        pDialog.show();
-        if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
-            HashMap<String, String> hashMap = new HashMap<>();
-            hashMap.put("bagsPlanted", txt_bags_planted.getText().toString());
-            hashMap.put("seedRate", seedrate_spinner_selectedValue);
-            hashMap.put("varietyId",String.valueOf(varietyValue.getId()));
-            hashMap.put("blockId", String.valueOf(returnPlantBlock.getId()));
-            hashMap.put("cordinates", coordinates);
-            hashMap.put("location",location_str);
-            hashMap.put("bagLotNo",txt_bags_lot_no.getText().toString());
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Please wait...submitting.");
+                pDialog.setCancelable(false);
+                pDialog.show();
+                if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put("bagsPlanted", txt_bags_planted.getText().toString());
+                    hashMap.put("seedRate", seedrate_spinner_selectedValue);
+                    hashMap.put("varietyId",String.valueOf(varietyValue.getId()));
+                    hashMap.put("blockId", String.valueOf(returnPlantBlock.getId()));
+                    hashMap.put("cordinates", coordinates);
+                    hashMap.put("location",location_str);
+                    hashMap.put("bagLotNo",txt_bags_lot_no.getText().toString());
 
-            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-            APIService service = retrofit.create(APIService.class);
-            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-            Call<ResponseBody> call = service.postPlantBlock(auth_key, hashMap);
-            call.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                    APIService service = retrofit.create(APIService.class);
+                    SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                    String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                    Call<ResponseBody> call = service.postPlantBlock(auth_key, hashMap);
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                    try {
-                        if (response.isSuccessful()) {
-                            pDialog.dismissWithAnimation();
-                            new SweetAlertDialog(PlantBlockActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                    .setTitleText("Success")
-                                    .setContentText("Successfully submitted.")
-                                    .setConfirmText("Ok")
-                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                        @Override
-                                        public void onClick(SweetAlertDialog sDialog) {
-                                            sDialog.dismissWithAnimation();
-                                            startActivity(new Intent(PlantBlockActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                            try {
+                                if (response.isSuccessful()) {
+                                    pDialog.dismissWithAnimation();
+                                    new SweetAlertDialog(PlantBlockActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                            .setTitleText("Success")
+                                            .setContentText("Successfully submitted.")
+                                            .setConfirmText("Ok")
+                                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sDialog) {
+                                                    sDialog.dismissWithAnimation();
+                                                    startActivity(new Intent(PlantBlockActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
-                                        }
-                                    })
+                                                }
+                                            })
 //                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
 //                                        @Override
 //                                        public void onClick(SweetAlertDialog sDialog) {
@@ -294,39 +309,85 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
 //
 //                                        }
 //                                    })
-                                    .show();
+                                            .show();
 
-                        } else {
-                            pDialog.dismissWithAnimation();
-                            JSONObject jObjError = new JSONObject(response.errorBody().string());
-                            new SweetAlertDialog(PlantBlockActivity.this, SweetAlertDialog.WARNING_TYPE)
-                                    .setTitleText("Try again")
-                                    .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
-                                    .show();
+                                } else {
+                                    pDialog.dismissWithAnimation();
+                                    JSONObject jObjError = new JSONObject(response.errorBody().string());
+                                    new SweetAlertDialog(PlantBlockActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                            .setTitleText("Try again")
+                                            .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                            .show();
 
+
+                                }
+                            } catch (Exception e) {
+                                pDialog.dismissWithAnimation();
+                                new SweetAlertDialog(PlantBlockActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Try again")
+                                        .setContentText(e.getMessage())
+                                        .show();
+                            }
+                            //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
 
                         }
-                    } catch (Exception e) {
-                        pDialog.dismissWithAnimation();
-                        new SweetAlertDialog(PlantBlockActivity.this, SweetAlertDialog.ERROR_TYPE)
-                                .setTitleText("Try again")
-                                .setContentText(e.getMessage())
-                                .show();
-                    }
-                    //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
 
-                }
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            pDialog.dismissWithAnimation();
+                            new SweetAlertDialog(PlantBlockActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Try again...")
+                                    .setContentText(t.getMessage())
+                                    .show();
+                        }
+                    });
+                }else{
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put("bagsPlanted", txt_bags_planted.getText().toString());
+                    hashMap.put("seedRate", seedrate_spinner_selectedValue);
+                    hashMap.put("varietyId",String.valueOf(varietyValue.getId()));
+                    hashMap.put("blockId", String.valueOf(returnPlantBlock.getId()));
+                    hashMap.put("cordinates", coordinates);
+                    hashMap.put("location",location_str);
+                    hashMap.put("bagLotNo",txt_bags_lot_no.getText().toString());
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    pDialog.dismissWithAnimation();
-                    new SweetAlertDialog(PlantBlockActivity.this, SweetAlertDialog.ERROR_TYPE)
-                            .setTitleText("Try again...")
-                            .setContentText(t.getMessage())
+                    PlantBlockTB plant = new PlantBlockTB(
+                            hashMap.get("bagsPlanted"),
+                            hashMap.get("seedRate"),
+                            hashMap.get("varietyId"),
+                            hashMap.get("blockId"),
+                            hashMap.get("cordinates"),
+                            hashMap.get("location"),
+                            hashMap.get("bagLotNo")
+                    );
+                    plant.save();
+
+                    new SweetAlertDialog(PlantBlockActivity.this, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("No Wrong")
+                            .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                            .setConfirmText("Ok")
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    sDialog.dismissWithAnimation();
+                                    startActivity(new Intent(PlantBlockActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                                }
+                            })
                             .show();
                 }
-            });
+
+
+
+            } else {
+                Snackbar.make(v, "Couldn't get location, because network is not accessible!", Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+        }else{
+            Snackbar.make(v, "Couldn't get location, because network is not accessible!", Snackbar.LENGTH_SHORT)
+                    .show();
         }
+
 
 
     }
@@ -343,6 +404,15 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
         }
     }
 
+//    public List<GeneralSpinnerResponse> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<PageItemsDestruction>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
+
 
     private void populateSpinner(){
 
@@ -357,44 +427,65 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
             @Override
             protected void onPostExecute(Object o) {
 
+                if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
+                    Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                    APIService service = retrofit.create(APIService.class);
+                    SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                    String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                    Call<List<GeneralSpinnerResponse>> call = service.getVariety(auth_key);
+                    call.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
+                        @Override
+                        public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
 
-                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                APIService service = retrofit.create(APIService.class);
-                SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                Call<List<GeneralSpinnerResponse>> call = service.getVariety(auth_key);
-                call.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
-                    @Override
-                    public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
+                            if(response.body() != null) {
+                                if(response.body().size() > 0) {
+                                    OfflineFeature.saveSharedPreferences(response.body(), "PlantBlockSpinner", getApplicationContext());
+                                    List<GeneralSpinner> farmNames = new ArrayList<>();
+                                    farmNames.clear();
 
-                        if(response.body() != null) {
-                            if(response.body().size() > 0) {
-                                List<GeneralSpinner> farmNames = new ArrayList<>();
-                                Log.d(PlantBlockActivity.this.getPackageName().toUpperCase(), response.body().toString());
-                                farmNames.clear();
+                                    GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Variety");
+                                    farmNames.add(spinnerValue);
 
-                                GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Variety");
-                                farmNames.add(spinnerValue);
+                                    for (GeneralSpinnerResponse names : response.body()) {
+                                        GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
+                                        farmNames.add(spinnerValue1);
+                                    }
 
-                                for (GeneralSpinnerResponse names : response.body()) {
-                                    GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
-                                    farmNames.add(spinnerValue1);
+                                    ArrayAdapter<GeneralSpinner> farmSpinnerArrayAdapter = new ArrayAdapter<>(PlantBlockActivity.this, android.R.layout.simple_spinner_dropdown_item, farmNames);
+
+                                    showProgress(false);
+                                    spinner_variety.setAdapter(farmSpinnerArrayAdapter);
                                 }
-
-                                ArrayAdapter<GeneralSpinner> farmSpinnerArrayAdapter = new ArrayAdapter<>(PlantBlockActivity.this, android.R.layout.simple_spinner_dropdown_item, farmNames);
-
-                                showProgress(false);
-                                spinner_variety.setAdapter(farmSpinnerArrayAdapter);
                             }
+
                         }
 
+                        @Override
+                        public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {
+
+                        }
+                    });
+
+                }else{
+
+
+                    List<GeneralSpinner> farmNames = new ArrayList<>();
+                    farmNames.clear();
+
+                    GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Variety");
+                    farmNames.add(spinnerValue);
+
+                    for (GeneralSpinnerResponse names : (ArrayList<GeneralSpinnerResponse>) OfflineFeature.getSharedPreferences("PlantBlockSpinner", getApplicationContext(),GeneralSpinnerResponse.class)) {
+                        GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
+                        farmNames.add(spinnerValue1);
                     }
 
-                    @Override
-                    public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {
+                    ArrayAdapter<GeneralSpinner> farmSpinnerArrayAdapter = new ArrayAdapter<>(PlantBlockActivity.this, android.R.layout.simple_spinner_dropdown_item, farmNames);
 
-                    }
-                });
+                    showProgress(false);
+                    spinner_variety.setAdapter(farmSpinnerArrayAdapter);
+                }
+
 
 
                 super.onPostExecute(o);

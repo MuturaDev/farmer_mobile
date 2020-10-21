@@ -18,10 +18,12 @@ import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.Glide;
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
+import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.FarmerDocResponse;
 import com.cw.farmer.model.PageItem;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.table_models.FarmerDocument;
 
 import java.util.List;
 
@@ -58,47 +60,64 @@ public class FarmerDocumentsActivity extends HandleConnectionAppCompatActivity {
             dob = (String) b.get("dob");
             farmer_id = id + "";
             pageItem = b.getParcelable("item");
-            SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-            pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-            pDialog.setTitleText("Fetching farmer details..");
-            pDialog.setCancelable(false);
-            pDialog.show();
-            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-            APIService service = retrofit.create(APIService.class);
-            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-            Call<List<FarmerDocResponse>> call = service.getfamerdocs(id, auth_key);
-            call.enqueue(new Callback<List<FarmerDocResponse>>() {
-                @Override
-                public void onResponse(Call<List<FarmerDocResponse>> call, Response<List<FarmerDocResponse>> response) {
-                    for(FarmerDocResponse doc: response.body()) {
+            if (Utility.isNetworkAvailable(this)) {
+                SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Fetching farmer details..");
+                pDialog.setCancelable(false);
+                pDialog.show();
+                Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                APIService service = retrofit.create(APIService.class);
+                SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                Call<List<FarmerDocResponse>> call = service.getfamerdocs(id, auth_key);
+                call.enqueue(new Callback<List<FarmerDocResponse>>() {
+                    @Override
+                    public void onResponse(Call<List<FarmerDocResponse>> call, Response<List<FarmerDocResponse>> response) {
+                        if (response.body() != null) {
+                            for (FarmerDocResponse doc : response.body()) {
 
 
-                        Log.w("myApp", response.message());
-                        pDialog.dismissWithAnimation();
+                                Log.w("myApp", response.message());
+                                pDialog.dismissWithAnimation();
 
-                        docshtdesc.setText("Document Type: "+doc.getDocshtdesc());
-                        docno.setText("Document No: "+doc.getDocno());
-                        id_no = doc.getDocno();
-                        entry_id = doc.getId() + "";
+                                docshtdesc.setText("Document Type: " + doc.getDocshtdesc());
+                                docno.setText("Document No: " + doc.getDocno());
+                                id_no = doc.getDocno();
+                                entry_id = doc.getId() + "";
 
 
-                        String imageBytes = doc.getBase64ImageDesc().replace("data:image/png;base64,","");
-                        id_image = imageBytes;
-                        byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
-                        Glide.with(FarmerDocumentsActivity.this).asBitmap().load(imageByteArray).into(imageView);
+                                String imageBytes = doc.getBase64ImageDesc().replace("data:image/png;base64,", "");
+                                id_image = imageBytes;
+                                byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
+                                Glide.with(FarmerDocumentsActivity.this).asBitmap().load(imageByteArray).into(imageView);
+                            }
+                        }
                     }
 
-                }
+                    @Override
+                    public void onFailure(Call<List<FarmerDocResponse>> call, Throwable t) {
+                        pDialog.dismissWithAnimation();
+                        Log.w("myApp", t.toString());
+                        Toast.makeText(FarmerDocumentsActivity.this, t.toString(), Toast.LENGTH_LONG).show();
 
-                @Override
-                public void onFailure(Call<List<FarmerDocResponse>> call, Throwable t) {
-                    pDialog.dismissWithAnimation();
-                    Log.w("myApp", t.toString());
-                    Toast.makeText(FarmerDocumentsActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }else{
+                List<FarmerDocument> list = FarmerDocument.listAll(FarmerDocument.class);
+                for(FarmerDocument doc : list){
+                    docshtdesc.setText("Document Type: " + doc.getDocShortDescription());
+                    docno.setText("Document No: " + doc.getDocNumber());
+                    id_no = doc.getDocNumber();
+                    entry_id = doc.getId() + "";
 
+
+                    String imageBytes = doc.getImageBytes();
+                    id_image = imageBytes;
+                    byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
+                    Glide.with(FarmerDocumentsActivity.this).asBitmap().load(imageByteArray).into(imageView);
                 }
-            });
+            }
         }
     }
     @Override

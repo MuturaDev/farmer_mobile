@@ -22,9 +22,11 @@ import com.cw.farmer.model.PageItem;
 import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,38 +75,45 @@ public class RegisterActivity extends HandleConnectionAppCompatActivity {
     }
 
     private void getData() {
+
         progressDialog.setCancelable(false);
         // progressBar.setMessage("Please Wait...");
         progressDialog.show();
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
-        SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-        String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-        Call<RegisterResponse> call = service.getRegister(limit, offset, null, auth_key);
-        call.enqueue(new Callback<RegisterResponse>() {
-            @Override
-            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                progressDialog.hide();
-                try {
-                    if (response.body().getPageItems().size()!=0){
-                        pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
-                        setData();
-                    }else {
-                        Toast.makeText(RegisterActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
+
+        if (Utility.isNetworkAvailable(this)) {
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<RegisterResponse> call = service.getRegister(limit, offset, null, auth_key);
+            call.enqueue(new Callback<RegisterResponse>() {
+                @Override
+                public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                    progressDialog.hide();
+                    try {
+                        if (response.body().getPageItems().size() != 0) {
+                            pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
+                            setData();
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
+                        }
+
+                    } catch (Exception e) {
+                        Utility.showToast(RegisterActivity.this, e.getMessage());
                     }
 
-                } catch (Exception e) {
-                    Utility.showToast(RegisterActivity.this, e.getMessage());
                 }
 
-            }
-
-            @Override
-            public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                progressDialog.hide();
-                Utility.showToast(RegisterActivity.this, t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                    progressDialog.hide();
+                    Utility.showToast(RegisterActivity.this, t.getMessage());
+                }
+            });
+        }else{
+            pageItemArrayList =  (ArrayList<PageItem>)  OfflineFeature.getSharedPreferences("RegisterActivityOffline", getApplicationContext(), PageItem.class);
+            setData();
+        }
     }
 
     private void setData() {

@@ -21,10 +21,12 @@ import androidx.core.content.ContextCompat;
 
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
+import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.PageItem;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.table_models.EditFarmerDetailsTB;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
@@ -164,6 +166,7 @@ public class EditFarmerActivity extends HandleConnectionAppCompatActivity {
         pDialog.setTitleText("Submitting farmer details to be edited.");
         pDialog.setCancelable(false);
         pDialog.show();
+
         HashMap<String,String> hashMap=new HashMap<>();
         hashMap.put("farmerId",farmer_id+"");
         hashMap.put("firstname",full_name.getText().toString().trim());
@@ -175,64 +178,95 @@ public class EditFarmerActivity extends HandleConnectionAppCompatActivity {
         hashMap.put("dateFormat","DD-MM-YYYY");
         hashMap.put("locale","en");
 
-        Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-        APIService service = retrofit.create(APIService.class);
-        SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-        Call<AllResponse> call = service.posteditfarmer(auth_key, hashMap, farmer_id);
-        call.enqueue(new Callback<AllResponse>() {
-            @Override
-            public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                pDialog.dismissWithAnimation();
-                try {
-                    if (response.body()!=null){
-                        new SweetAlertDialog(EditFarmerActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                .setTitleText("Success")
-                                .setContentText("You have successfully submitted "+full_name.getText()+" details")
-                                .setConfirmText("Ok")
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(EditFarmerActivity.this, ListFarmerActivity.class));
-                                    }
-                                })
-                                .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.dismissWithAnimation();
-                                        startActivity(new Intent(EditFarmerActivity.this, ListFarmerActivity.class));
-                                    }
-                                })
-                                .show();
 
-                    }else{
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        new SweetAlertDialog(EditFarmerActivity.this, SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("Ooops...")
-                                .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
-                                .show();
+        if (Utility.isNetworkAvailable(this)) {
+            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+            APIService service = retrofit.create(APIService.class);
+            SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+            Call<AllResponse> call = service.posteditfarmer(auth_key, hashMap, farmer_id);
+            call.enqueue(new Callback<AllResponse>() {
+                @Override
+                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
+                    pDialog.dismissWithAnimation();
+                    try {
+                        if (response.body() != null) {
+                            new SweetAlertDialog(EditFarmerActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                                    .setTitleText("Success")
+                                    .setContentText("You have successfully submitted " + full_name.getText() + " details")
+                                    .setConfirmText("Ok")
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(EditFarmerActivity.this, ListFarmerActivity.class));
+                                        }
+                                    })
+                                    .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sDialog) {
+                                            sDialog.dismissWithAnimation();
+                                            startActivity(new Intent(EditFarmerActivity.this, ListFarmerActivity.class));
+                                        }
+                                    })
+                                    .show();
 
+                        } else {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            new SweetAlertDialog(EditFarmerActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                    .setTitleText("Ooops...")
+                                    .setContentText(jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString())
+                                    .show();
+
+                        }
+                    } catch (Exception e) {
+                        new SweetAlertDialog(EditFarmerActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText("Oops...")
+                                .setContentText(e.getMessage())
+                                .show();
                     }
-                } catch (Exception e) {
+                    //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onFailure(Call<AllResponse> call, Throwable t) {
+                    pDialog.cancel();
                     new SweetAlertDialog(EditFarmerActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText(e.getMessage())
+                            .setContentText(t.getMessage())
                             .show();
                 }
-                //Toast.makeText(FarmerRecruitActivity.this,"You have successfully submitted farmer recruitment details", Toast.LENGTH_LONG).show();
+            });
+        }else{
 
-            }
+            EditFarmerDetailsTB editFarmer = new EditFarmerDetailsTB(
+                    hashMap.get("farmerId"),
+                    hashMap.get("firstname"),
+                    hashMap.get("middlename"),
+                    hashMap.get("lastname"),
+                    hashMap.get("mobileno"),
+                    hashMap.get("Gender"),
+                    hashMap.get("dateOfBirth"),
+                    hashMap.get("dateFormat"),
+                    hashMap.get("locale")
+            );
+            editFarmer.save();
 
-            @Override
-            public void onFailure(Call<AllResponse> call, Throwable t) {
-                pDialog.cancel();
-                new SweetAlertDialog(EditFarmerActivity.this, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText("Oops...")
-                        .setContentText(t.getMessage())
-                        .show();
-            }
-        });
+            new SweetAlertDialog(EditFarmerActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("No Wrong")
+                    .setContentText("We have saved the data offline, We will submitted it when you have internet")
+                    .setConfirmText("Ok")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(EditFarmerActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                        }
+                    })
+                    .show();
+        }
 
     }
     private void openDatePicker() {

@@ -24,6 +24,7 @@ import com.cw.farmer.model.PageItemsDestruction;
 import com.cw.farmer.model.SearchDestructionResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -38,6 +39,7 @@ import retrofit2.Retrofit;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
+//TODO: OFFLINE FEATURE NOT HANDLED
 public class SearchDestructionFarmerActivity extends HandleConnectionAppCompatActivity {
     RecyclerView rv_register;
     SearchDestructionAdapter registerAdapter;
@@ -70,7 +72,21 @@ public class SearchDestructionFarmerActivity extends HandleConnectionAppCompatAc
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             getData();
         } else {
-            pageItemArrayList = getArrayList("destructionfarmer");
+            //pageItemArrayList = getArrayList("destructionfarmer");
+          ArrayList<PageItemsDestruction> list =  (ArrayList<PageItemsDestruction>) OfflineFeature.getSharedPreferences("destructionfarmer", getApplicationContext(), PageItemsDestruction.class);
+           String searchFarmer =  farmer_search.getText().toString();
+           if(searchFarmer.isEmpty()){
+               pageItemArrayList = list;
+           }else{
+               pageItemArrayList = new ArrayList<>();
+               pageItemArrayList.clear();
+               for(PageItemsDestruction item : list){
+                   if(item.getFamerName().toLowerCase().contains(searchFarmer.toLowerCase())){
+                       pageItemArrayList.add(item);
+                   }
+               }
+           }
+
             setData();
         }
     }
@@ -128,13 +144,13 @@ public class SearchDestructionFarmerActivity extends HandleConnectionAppCompatAc
         editor.apply();     // This line is IMPORTANT !!!
     }
 
-    public ArrayList<PageItemsDestruction> getArrayList(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Gson gson = new Gson();
-        String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<PageItemsDestruction>>() {
-        }.getType();
-        return gson.fromJson(json, type);
-    }
+//    public ArrayList<PageItemsDestruction> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<PageItemsDestruction>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
 
 }

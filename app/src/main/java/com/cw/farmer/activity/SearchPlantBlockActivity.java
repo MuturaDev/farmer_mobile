@@ -24,6 +24,7 @@ import com.cw.farmer.model.PageItemPlantBlock;
 import com.cw.farmer.model.PlantBlockResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -143,11 +144,10 @@ public class SearchPlantBlockActivity   extends HandleConnectionAppCompatActivit
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
            // Log.d("Search","Searching Harvest data...");
             getData();
+        } else {
+            pageItemArrayList = (ArrayList<PageItemPlantBlock>) OfflineFeature.getSharedPreferences("searchPlantBlockActivity", getApplicationContext(),PageItemPlantBlock.class);
+            setData();
         }
-//        else {
-//            pageItemArrayList = getArrayList("harvestfarmer");
-//            setData();
-//        }
     }
     private void getData() {
 //        progressDialog.setCancelable(false);
@@ -158,7 +158,6 @@ public class SearchPlantBlockActivity   extends HandleConnectionAppCompatActivit
         APIService service = retrofit.create(APIService.class);
         SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
         String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-        Log.d("Search","Searching Harvest data..icon.....");
         Call<PlantBlockResponse> call = service.getPlantBlockNames(limit, offset, auth_key);
         call.enqueue(new Callback<PlantBlockResponse>() {
             @Override
@@ -167,16 +166,13 @@ public class SearchPlantBlockActivity   extends HandleConnectionAppCompatActivit
                 progressBar.setVisibility(View.GONE);
                 try {
                    // Log.d("Data count...",String.valueOf(response.body().getPageItemPlantBlocksList().size()));
-                    System.out.println(response.body().getPageItemPlantBlocksList());
+                   // System.out.println(response.body().getPageItemPlantBlocksList());
 
                     if (response.body().getPageItemPlantBlocksList().size() > 0){
 
                         pageItemArrayList = (ArrayList<PageItemPlantBlock>) response.body().getPageItemPlantBlocksList();
 
-//                        for(int i=0; i< 1000; i++){
-//                            pageItemArrayList.addAll(pageItemArrayList);
-//                        }
-                       // saveArrayList(pageItemArrayList, "plantblockresponse");
+                        saveArrayList(pageItemArrayList, "searchPlantBlockActivity");
                         setData();
                     }else {
                        // Toast.makeText(SearchHarvestFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
@@ -233,14 +229,14 @@ public class SearchPlantBlockActivity   extends HandleConnectionAppCompatActivit
         editor.apply();     // This line is IMPORTANT !!!
     }
 
-    public ArrayList<PageItemPlantBlock> getArrayList(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Gson gson = new Gson();
-        String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<PageItemHarvest>>() {
-        }.getType();
-        return gson.fromJson(json, type);
-    }
+//    public ArrayList<PageItemPlantBlock> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<PageItemHarvest>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
 
 }
 

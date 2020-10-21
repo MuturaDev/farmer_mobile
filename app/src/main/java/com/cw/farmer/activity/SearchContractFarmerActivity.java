@@ -27,6 +27,7 @@ import com.cw.farmer.model.SearchContractPageItem;
 import com.cw.farmer.model.SearchContractResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -41,6 +42,8 @@ import retrofit2.Retrofit;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
+
+//TODO: OFFLINE NOT HANDLED
 public class SearchContractFarmerActivity extends HandleConnectionAppCompatActivity {
     RecyclerView rv_register;
     SearchContractAdapter registerAdapter;
@@ -95,7 +98,24 @@ public class SearchContractFarmerActivity extends HandleConnectionAppCompatActiv
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             getData();
         } else {
-            pageItemArrayList = getArrayList("contractfarmer");
+
+            String searchWord = farmer_search.getText().toString();
+
+
+            if(searchWord.isEmpty()){
+                pageItemArrayList = (ArrayList<SearchContractPageItem>) OfflineFeature.getSharedPreferences("contractfarmer", getApplicationContext(), SearchContractPageItem.class);
+            }else {
+                pageItemArrayList = new ArrayList<>();
+                pageItemArrayList.clear();
+                for (SearchContractPageItem item : (ArrayList<SearchContractPageItem>) OfflineFeature.getSharedPreferences("contractfarmer", getApplicationContext(), SearchContractPageItem.class)) {
+
+                    if (item.getFarmerName().toLowerCase().contains(searchWord.toLowerCase())
+                            ) {
+                        pageItemArrayList.add(item);
+                    }
+                }
+            }
+
             setData();
         }
     }
@@ -152,14 +172,14 @@ public class SearchContractFarmerActivity extends HandleConnectionAppCompatActiv
         editor.apply();     // This line is IMPORTANT !!!
     }
 
-    public ArrayList<SearchContractPageItem> getArrayList(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Gson gson = new Gson();
-        String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<SearchContractPageItem>>() {
-        }.getType();
-        return gson.fromJson(json, type);
-    }
+//    public ArrayList<SearchContractPageItem> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<SearchContractPageItem>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

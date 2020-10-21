@@ -24,6 +24,7 @@ import com.cw.farmer.model.PageItemsSprayFarmer;
 import com.cw.farmer.model.SprayFarmerResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.utils.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -75,7 +76,21 @@ public class SearchSprayActivity extends HandleConnectionAppCompatActivity {
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             getData();
         } else {
-            pageItemArrayList = getArrayList("sprayfarmer");
+
+            String farmerSearch = farmer_search.getText().toString();
+
+            if(farmerSearch.isEmpty()){
+                pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferences("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class);
+            }else{
+                pageItemArrayList = new ArrayList<>();
+                pageItemArrayList.clear();
+                for(PageItemsSprayFarmer item : (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferences("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class)){
+                    if(item.getFarmerName().toLowerCase().contains(farmerSearch.toLowerCase())){
+                        pageItemArrayList.add(item);
+                    }
+                }
+            }
+
             setData();
         }
     }
@@ -116,7 +131,7 @@ public class SearchSprayActivity extends HandleConnectionAppCompatActivity {
                 }
             });
         } else {
-            pageItemArrayList = getArrayList("sprayfarmer");
+            pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferences("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class);
             setData();
             progressDialog.hide();
         }
@@ -140,14 +155,14 @@ public class SearchSprayActivity extends HandleConnectionAppCompatActivity {
         editor.apply();     // This line is IMPORTANT !!!
     }
 
-    public ArrayList<PageItemsSprayFarmer> getArrayList(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Gson gson = new Gson();
-        String json = prefs.getString(key, null);
-        Type type = new TypeToken<ArrayList<PageItemsSprayFarmer>>() {
-        }.getType();
-        return gson.fromJson(json, type);
-    }
+//    public ArrayList<PageItemsSprayFarmer> getArrayList(String key) {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        Gson gson = new Gson();
+//        String json = prefs.getString(key, null);
+//        Type type = new TypeToken<ArrayList<PageItemsSprayFarmer>>() {
+//        }.getType();
+//        return gson.fromJson(json, type);
+//    }
 
     public void search_button(View v) {
         search();
