@@ -32,7 +32,7 @@ import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.cw.farmer.spinner_models.GeneralSpinner;
 import com.cw.farmer.table_models.ApplyFertilizerTB;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;

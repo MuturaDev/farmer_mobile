@@ -47,6 +47,18 @@ public class PageItemHarvest {
     @Expose
     private String centrename;
 
+    @SerializedName("idno")
+    @Expose
+    private String idno;
+
+    public String getIdno() {
+        return idno;
+    }
+
+    public void setIdno(String idno) {
+        this.idno = idno;
+    }
+
     public int getId() {
         return id;
     }

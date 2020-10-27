@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,13 +23,12 @@ import com.cw.farmer.model.PageItemsSprayFarmer;
 import com.cw.farmer.model.SprayFarmerResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -84,8 +82,11 @@ public class SearchSprayActivity extends HandleConnectionAppCompatActivity {
             }else{
                 pageItemArrayList = new ArrayList<>();
                 pageItemArrayList.clear();
-                for(PageItemsSprayFarmer item : (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferences("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class)){
-                    if(item.getFarmerName().toLowerCase().contains(farmerSearch.toLowerCase())){
+
+                List<PageItemsSprayFarmer> list = (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferences("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class);
+                if(list != null)
+                for(PageItemsSprayFarmer item : list){
+                    if(item.getFarmerName().toLowerCase().contains(farmerSearch.toLowerCase()) || item.getIdno().toLowerCase().contains(farmerSearch.toLowerCase())){
                         pageItemArrayList.add(item);
                     }
                 }
@@ -112,7 +113,7 @@ public class SearchSprayActivity extends HandleConnectionAppCompatActivity {
                     try {
                         if (response.body().getPageItemsSprayFarmer().size() != 0) {
                             pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) response.body().getPageItemsSprayFarmer();
-                            saveArrayList(pageItemArrayList, "sprayfarmer");
+                           // saveArrayList(pageItemArrayList, "sprayfarmer");
                             setData();
                         } else {
                             Toast.makeText(SearchSprayActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();

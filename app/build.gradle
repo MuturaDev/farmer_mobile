@@ -11,8 +11,8 @@ android {
         applicationId "com.cw.farmer"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 16
-        versionName "13.0.2.0"
+        versionCode 20
+        versionName "13.0.6.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

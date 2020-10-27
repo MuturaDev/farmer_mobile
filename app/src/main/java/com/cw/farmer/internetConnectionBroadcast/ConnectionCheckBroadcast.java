@@ -13,7 +13,7 @@ import android.net.NetworkInfo;
 import androidx.core.app.NotificationCompat;
 
 import com.cw.farmer.R;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 
 
 public class ConnectionCheckBroadcast extends BroadcastReceiver {

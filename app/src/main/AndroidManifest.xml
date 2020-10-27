@@ -371,8 +371,9 @@
         <activity android:name=".testexamples.SampleActivity"/>
 
         <activity android:name=".activity.NetworkTestingActivity">
-
         </activity>
+
+        <activity android:name=".offlinefunctions.OfflineDataSyncActivity"/>
 
 <!--        Reciver for internet connection broadcast-->
         <receiver android:name=".internetConnectionBroadcast.ConnectionCheck">

@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,12 +26,10 @@ import com.cw.farmer.model.SearchContractPageItem;
 import com.cw.farmer.model.SearchContractResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -110,7 +107,7 @@ public class SearchContractFarmerActivity extends HandleConnectionAppCompatActiv
                 for (SearchContractPageItem item : (ArrayList<SearchContractPageItem>) OfflineFeature.getSharedPreferences("contractfarmer", getApplicationContext(), SearchContractPageItem.class)) {
 
                     if (item.getFarmerName().toLowerCase().contains(searchWord.toLowerCase())
-                            ) {
+                          || item.getIdno().toLowerCase().contains(searchWord.toLowerCase())  ) {
                         pageItemArrayList.add(item);
                     }
                 }
@@ -135,7 +132,7 @@ public class SearchContractFarmerActivity extends HandleConnectionAppCompatActiv
                 try {
                     if (response.body().getPageItems().size()!=0){
                         pageItemArrayList = (ArrayList<SearchContractPageItem>) response.body().getPageItems();
-                        saveArrayList(pageItemArrayList, "contractfarmer");
+                        //saveArrayList(pageItemArrayList, "contractfarmer");
                         setData();
                     }else {
                         Toast.makeText(SearchContractFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();

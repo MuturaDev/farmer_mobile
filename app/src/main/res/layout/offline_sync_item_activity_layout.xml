@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+       <RelativeLayout
+           android:orientation="horizontal"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+           <TextView
+               android:layout_alignParentStart="true"
+               android:layout_width="wrap_content"
+               android:text="Register Farmer"
+               android:id="@+id/progressTitle"
+               android:textColor="@color/black"
+               android:textSize="15sp"
+               android:layout_height="wrap_content"/>
+
+           <Button
+               android:id="@+id/btn_checkData"
+               android:layout_alignParentEnd="true"
+               android:visibility="gone"
+               android:layout_width="wrap_content"
+               android:text="Check Data"
+               android:layout_height="wrap_content"/>
+
+       </RelativeLayout>
+
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/progress_indicator"
+                android:layout_alignParentStart="true"
+                android:layout_width="wrap_content"
+                android:text="0%"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:layout_height="wrap_content"/>
+
+            <ProgressBar
+                android:layout_marginLeft="35dp"
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/OfflineSyncProgressBarGreen"
+                android:theme="@style/OfflineSyncProgressBarGreen"
+                android:progress="0"
+                android:secondaryProgress="0"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/complete_status"
+                android:visibility="gone"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:text="Unsuccessful"
+                android:textColor="@color/red"
+                android:textSize="12sp"
+                android:layout_height="wrap_content"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/error_message"
+            android:visibility="gone"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:text=""
+            android:textColor="@color/red"
+            android:textSize="13sp"
+            android:layout_height="wrap_content"/>
+
+
+
+
+
+
+
+
+
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

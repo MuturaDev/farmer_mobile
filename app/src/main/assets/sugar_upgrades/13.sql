@@ -1,0 +1,1 @@
+--alter table PageItemsDestruction add idno TEXT;

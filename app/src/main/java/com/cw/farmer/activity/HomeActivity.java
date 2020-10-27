@@ -2,32 +2,26 @@ package com.cw.farmer.activity;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.ClipDrawable;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -37,8 +31,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
@@ -46,14 +38,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.AdhocAdapter;
 import com.cw.farmer.adapter.DashboardAdapter;
 import com.cw.farmer.adapter.ExpandableListAdapter;
-import com.cw.farmer.adapter.RegisterAdapter;
 import com.cw.farmer.crashreporting.Catcho;
 import com.cw.farmer.custom.Utility;
 import com.cw.farmer.internetConnectionBroadcast.CheckNetworkJob;
@@ -63,61 +53,39 @@ import com.cw.farmer.model.AdhocResponse;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.ContractSignDB;
 import com.cw.farmer.model.CropDestructionPostDB;
-import com.cw.farmer.model.FarmerDocResponse;
 import com.cw.farmer.model.FarmerErrorResponse;
-import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.FarmerModel;
 import com.cw.farmer.model.FarmerModelDB;
-import com.cw.farmer.model.GeneralSpinnerResponse;
 import com.cw.farmer.model.HarvestingDB;
 import com.cw.farmer.model.Identitydetails;
-import com.cw.farmer.model.PageItem;
-import com.cw.farmer.model.PageItemHarvest;
-import com.cw.farmer.model.PageItemPlantBlock;
-import com.cw.farmer.model.PageItemSearchArea;
 import com.cw.farmer.model.PageItemsAdhoc;
-import com.cw.farmer.model.PageItemsDestruction;
-import com.cw.farmer.model.PageItemsPlantVerify;
-import com.cw.farmer.model.PageItemsSprayFarmer;
 import com.cw.farmer.model.PageItemstask;
-import com.cw.farmer.model.PlantBlockResponse;
-import com.cw.farmer.model.PlantVerifyResponse;
 import com.cw.farmer.model.PlantingVerifyDB;
 import com.cw.farmer.model.RecruitFarmerDB;
-import com.cw.farmer.model.RegisterResponse;
-import com.cw.farmer.model.SearchAreaResponse;
-import com.cw.farmer.model.SearchContractPageItem;
-import com.cw.farmer.model.SearchContractResponse;
-import com.cw.farmer.model.SearchDestructionResponse;
-import com.cw.farmer.model.SprayFarmerResponse;
 import com.cw.farmer.model.SprayPostDB;
 import com.cw.farmer.model.TasksResponse;
 import com.cw.farmer.model.dashboard;
+import com.cw.farmer.offlinefunctions.OfflineDataSyncActivity;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.spinner_models.GeneralSpinner;
 import com.cw.farmer.table_models.ApplyFertilizerTB;
 import com.cw.farmer.table_models.ChangeCentreTB;
 import com.cw.farmer.table_models.EditFarmerDetailsTB;
-import com.cw.farmer.table_models.FarmerDocument;
 import com.cw.farmer.table_models.HarvestBlockTB;
 import com.cw.farmer.table_models.IrrigateBlockTB;
 import com.cw.farmer.table_models.PlantBlockTB;
 import com.cw.farmer.table_models.RegisterBlockTB;
 import com.cw.farmer.table_models.ScoutingTB;
-import com.cw.farmer.testexamples.SampleActivity;
 import com.cw.farmer.utils.Constants;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.github.florent37.tutoshowcase.TutoShowcase;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 
 import org.imaginativeworld.oopsnointernet.ConnectionCallback;
 import org.imaginativeworld.oopsnointernet.NoInternetDialog;
 import org.imaginativeworld.oopsnointernet.NoInternetSnackbar;
-import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -256,8 +224,25 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
 
 
     public void networkTest(View view){
-        Intent intent = new Intent(getApplicationContext(), NetworkTestingActivity.class);
-        startActivity(intent);
+        //Alvin's request to only have the monitor button, that redirects you to the app's data consumption settings
+//        Intent intent = new Intent(getApplicationContext(), NetworkTestingActivity.class);
+//        startActivity(intent);
+        String  packageName = getApplicationContext().getPackageName().toLowerCase();
+
+        try {
+            //Open the specific App Info page:
+            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(Uri.parse("package:" + packageName));
+            startActivity(intent);
+
+        } catch ( ActivityNotFoundException e ) {
+            //e.printStackTrace();
+
+            //Open the generic Apps page:
+            Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
+            startActivity(intent);
+
+        }
     }
 
 
@@ -748,558 +733,14 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
 
     SweetAlertDialog pDialog;
 
+
+    //In here we have to convert all request to be  Synchronous, to atleast have a progress dialog.
+    //then we can point out the data that was not sent successfully to be reviewed and  detailed report of why the data was not sent.
     public void  offlinesync(View v) {
 
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
-            final Context context = this;
-            //PUSH
-            AsyncTask asyncTask = new AsyncTask() {
-                @Override
-                protected void onPreExecute() {
-                    pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
-                    pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-                    pDialog.setTitleText("Data Sync Process in progress...");
-                    pDialog.setCancelable(false);
-                    pDialog.show();
-                    //Toast.makeText(HomeActivity.this, "Synchronisation process has started", Toast.LENGTH_SHORT).show();
-                    super.onPreExecute();
-                }
-
-                @Override
-                protected Object doInBackground(Object[] objects) {
-
-
-
-                    if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
-
-                        SharedPreferences prefs = getSharedPreferences("location", MODE_PRIVATE);
-
-
-                        List<FarmerModelDB> farmers = FarmerModelDB.listAll(FarmerModelDB.class);
-                        for (FarmerModelDB farmer : farmers) {
-
-                            FarmerModel farmerModel = new FarmerModel();
-                            Accountdetails accountdetails = new Accountdetails();
-                            Identitydetails identitydetails = new Identitydetails();
-
-                            farmerModel.setFirstname(farmer.firstname);
-                            farmerModel.setMobileno(farmer.mobileno);
-                            farmerModel.setEmail(farmer.email);
-                            farmerModel.setGender(farmer.gender);
-                            farmerModel.getIdno(farmer.idno);
-                            farmerModel.setDateOfBirth(farmer.dateOfBirth);
-                            farmerModel.setActivated(farmer.activated);
-                            farmerModel.setCenterid(farmer.centerid);
-                            farmerModel.setDateFormat(farmer.dateFormat);
-                            farmerModel.setLocale(farmer.locale);
-
-                            accountdetails.setAccountno(farmer.accountno);
-                            accountdetails.setBankId(farmer.bankId);
-                            accountdetails.setImage(farmer.image_bank);
-                            accountdetails.setFiletype(farmer.filetype_bank);
-
-                            identitydetails.setDocId(farmer.docId);
-                            identitydetails.setImage(farmer.image_id);
-                            identitydetails.setFiletype(farmer.filetype_id);
-                            identitydetails.setDocno(farmer.docno_id);
-
-                            farmerModel.setAccountdetails(accountdetails);
-                            farmerModel.setIdentitydetails(identitydetails);
-
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<FarmerErrorResponse> call = service.createFarmer(auth_key, farmerModel);
-                            call.enqueue(new Callback<FarmerErrorResponse>() {
-                                @Override
-                                public void onResponse(Call<FarmerErrorResponse> call, Response<FarmerErrorResponse> response) {
-                                    if (response.isSuccessful()) farmer.delete();
-
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<FarmerErrorResponse> call, Throwable t) {
-
-                                }
-                            });
-                        }
-//
-//
-                        List<RecruitFarmerDB> recruits = RecruitFarmerDB.listAll(RecruitFarmerDB.class);
-                        for (RecruitFarmerDB recruit : recruits) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("farmerid", recruit.farmerid);
-                            hashMap.put("dateid", recruit.dateid);
-                            hashMap.put("landownership", recruit.landownership);
-                            hashMap.put("cordinates", recruit.cordinates);
-                            hashMap.put("location", "Offline");
-                            hashMap.put("noofunits", recruit.noofunits);
-                            hashMap.put("section", recruit.section);
-
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<AllResponse> call = service.recruit(auth_key, hashMap);
-                            call.enqueue(new Callback<AllResponse>() {
-                                @Override
-                                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                                    if (response.isSuccessful()) recruit.delete();
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<AllResponse> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-
-                        List<ContractSignDB> signs = ContractSignDB.listAll(ContractSignDB.class);
-                        for (ContractSignDB sign : signs) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("referenceNo", sign.referenceNo);
-                            hashMap.put("cropDateId", sign.cropDateId);
-                            hashMap.put("units", sign.units);
-                            hashMap.put("farmerId", sign.farmerId);
-                            hashMap.put("file", sign.file);
-                            hashMap.put("dateFormat", sign.dateFormat);
-                            hashMap.put("locale", sign.locale);
-                            hashMap.put("recruitId", sign.recruitId);
-
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<AllResponse> call = service.postcontract(auth_key, hashMap);
-                            call.enqueue(new Callback<AllResponse>() {
-                                @Override
-                                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                                    if (response.isSuccessful()) sign.delete();
-                                }
-
-                                @Override
-                                public void onFailure(Call<AllResponse> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-//
-                        List<PlantingVerifyDB> plants = PlantingVerifyDB.listAll(PlantingVerifyDB.class);
-                        for (PlantingVerifyDB plant : plants) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("cordinates", plant.cordinates);
-                            hashMap.put("location", "Offline");
-                            hashMap.put("contractid", plant.contractid);
-                            hashMap.put("plantconfirmed", plant.plant_value);
-                            hashMap.put("waterconfirmed", plant.water_value);
-
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<AllResponse> call = service.postplantverify(auth_key, hashMap);
-                            call.enqueue(new Callback<AllResponse>() {
-                                @Override
-                                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                                    if (response.isSuccessful()) plant.delete();
-                                }
-
-                                @Override
-                                public void onFailure(Call<AllResponse> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-                        List<CropDestructionPostDB> destroys = CropDestructionPostDB.listAll(CropDestructionPostDB.class);
-                        for (CropDestructionPostDB destroy : destroys) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("cropDatesId", destroy.cropDatesId);
-                            hashMap.put("accountNumber", destroy.accountNumber);
-                            hashMap.put("unit", destroy.unit);
-                            hashMap.put("farmers_id", destroy.farmers_id);
-                            hashMap.put("file", destroy.file);
-                            hashMap.put("locale", destroy.locale);
-                            hashMap.put("cropDestructionType", destroy.cropDestructionType);
-                            hashMap.put("cropDestructionReasonsId", destroy.cropDestructionReasonsId);
-
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<AllResponse> call = service.postcropdestruction(auth_key, hashMap);
-                            call.enqueue(new Callback<AllResponse>() {
-                                @Override
-                                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                                    if (response.isSuccessful()) destroy.delete();
-                                }
-
-                                @Override
-                                public void onFailure(Call<AllResponse> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-
-//                   SweetAlertDialog pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
-//                   pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-//                   pDialog.setTitleText("Data Sync Process in progress...");
-//                   pDialog.setCancelable(false);
-//                   pDialog.show();
-                        List<HarvestingDB> harvests = HarvestingDB.listAll(HarvestingDB.class);
-                        for (HarvestingDB harvest : harvests) {
-
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("dateid", harvest.dateid);
-                            hashMap.put("noofunits", harvest.noofunits);
-                            hashMap.put("contractId", harvest.contractId);
-                            hashMap.put("farmerid", harvest.farmerid);
-                            hashMap.put("harvestkilos", harvest.harvestkilos);
-                            hashMap.put("locale", harvest.locale);
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<AllResponse> call = service.postharvesting(auth_key, hashMap);
-                            call.enqueue(new Callback<AllResponse>() {
-                                @Override
-                                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                                    if (response.isSuccessful()) harvest.delete();
-                                }
-
-                                @Override
-                                public void onFailure(Call<AllResponse> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-
-//                   SweetAlertDialog pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
-//                   pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-//                   pDialog.setTitleText("Data Sync Process in progress...");
-//                   pDialog.setCancelable(false);
-//                   pDialog.show();
-
-                        List<SprayPostDB> sprays = SprayPostDB.listAll(SprayPostDB.class);
-                        for (SprayPostDB spray : sprays) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("verificationid", spray.verificationid);
-                            hashMap.put("cordinates", spray.cordinates);
-                            hashMap.put("location", "Offline");
-                            hashMap.put("sprayconfirmed", spray.sprayconfirmed);
-                            hashMap.put("programid", spray.programid);
-
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<AllResponse> call = service.spraypost(auth_key, hashMap);
-                            call.enqueue(new Callback<AllResponse>() {
-                                @Override
-                                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                                    if (response.isSuccessful()) spray.delete();
-                                }
-
-                                @Override
-                                public void onFailure(Call<AllResponse> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-
-                        //new features
-                        List<ApplyFertilizerTB> applyList = ApplyFertilizerTB.listAll(ApplyFertilizerTB.class);
-                        for (ApplyFertilizerTB apply : applyList) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("blockId", apply.getBlockId());
-                            hashMap.put("fertilizerId", apply.getFertilizerId());
-                            hashMap.put("appliedRate", apply.getAppliedRate());
-                            hashMap.put("method", apply.getMethod());
-                            hashMap.put("equipment", apply.getEquipment());
-                            hashMap.put("locale", "en");
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<ResponseBody> call = service.postApplyFertilizer(auth_key, hashMap);
-                            call.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    try {
-
-                                        if (response.isSuccessful()) {
-                                            apply.delete();
-                                        }
-
-                                    } catch (Exception e) {
-                                        pDialog.dismissWithAnimation();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-
-                                }
-                            });
-
-                        }
-
-                        List<HarvestBlockTB> harvestList = HarvestBlockTB.listAll(HarvestBlockTB.class);
-                        for (HarvestBlockTB harvest : harvestList) {
-
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("harvestKilos", harvest.getHarvestKilos());
-                            hashMap.put("blockId", harvest.getBlockId());
-                            hashMap.put("locale", "en");//should this be hardcoded?
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<ResponseBody> call = service.postHarvestBlocks(auth_key, hashMap);
-                            call.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    if (response.isSuccessful()) {
-                                        harvest.delete();
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-//
-                                }
-                            });
-                        }
-
-
-                        List<IrrigateBlockTB> irrigateList = IrrigateBlockTB.listAll(IrrigateBlockTB.class);
-                        for (IrrigateBlockTB irrigate : irrigateList) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("blockId", irrigate.getBlockId());
-                            hashMap.put("irrigationHours", irrigate.getIrrigationHours());
-                            hashMap.put("cubicLitres", irrigate.getCubicLitres());
-                            hashMap.put("locale", "en");
-
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<ResponseBody> call = service.postIrrigateBlock(auth_key, hashMap);
-                            call.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                    if (response.isSuccessful()) {
-                                        irrigate.delete();
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-
-                        List<PlantBlockTB> plantBlockList = PlantBlockTB.listAll(PlantBlockTB.class);
-                        for (PlantBlockTB plant : plantBlockList) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("bagsPlanted", plant.getBagsPlanted());
-                            hashMap.put("seedRate", plant.getSeedRate());
-                            hashMap.put("varietyId", plant.getVarietyId());
-                            hashMap.put("blockId", plant.getBlockId());
-                            hashMap.put("cordinates", plant.getCordinates());
-                            hashMap.put("location", plant.getLocation());
-                            hashMap.put("bagLotNo", plant.getBagLotNo());
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<ResponseBody> call = service.postPlantBlock(auth_key, hashMap);
-                            call.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                    if (response.isSuccessful()) {
-
-                                        plant.delete();
-
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-
-                        List<RegisterBlockTB> registerBlockList = RegisterBlockTB.listAll(RegisterBlockTB.class);
-                        for (RegisterBlockTB register : registerBlockList) {
-
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("centerId", register.getCenterID());//ask about this
-                            hashMap.put("farmNameId", register.getFarmNameId());
-                            hashMap.put("blockName", register.getBlockName());
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<ResponseBody> call = service.postRegisterBlock(auth_key, hashMap);
-                            call.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                    if (response.isSuccessful()) {
-                                        register.delete();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-//
-                                }
-                            });
-                        }
-
-                        List<ScoutingTB> scoutingList = ScoutingTB.listAll(ScoutingTB.class);
-                        for (ScoutingTB scouting : scoutingList) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("blockId", scouting.getBlockId());
-                            hashMap.put("germination", scouting.getGermination());
-                            hashMap.put("weeded", scouting.getWeeded());
-                            hashMap.put("watered", scouting.getWatered());
-                            hashMap.put("survivalRate", scouting.getSurvivalRate());
-                            hashMap.put("floweringRate", scouting.getFloweringRate());
-                            hashMap.put("averagePods", scouting.getAveragePods());
-                            hashMap.put("locale", "en");
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<ResponseBody> call = service.postScoutMonitor(auth_key, hashMap);
-                            call.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    if (response.isSuccessful()) {
-                                        scouting.delete();
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-                        List<ChangeCentreTB> centreList = ChangeCentreTB.listAll(ChangeCentreTB.class);
-                        for (ChangeCentreTB centre : centreList) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("activate", "N");
-                            hashMap.put("farmerid", centre.getFarmerId());
-                            hashMap.put("centerid", centre.getCenterId());
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences preffs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = preffs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<AllResponse> call = service.postchangecentre(auth_key, hashMap);
-                            call.enqueue(new Callback<AllResponse>() {
-                                @Override
-                                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-                                    if (response.isSuccessful()) centre.delete();
-                                }
-
-                                @Override
-                                public void onFailure(Call<AllResponse> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-
-                        List<EditFarmerDetailsTB> editFarmer = EditFarmerDetailsTB.listAll(EditFarmerDetailsTB.class);
-                        for (EditFarmerDetailsTB details : editFarmer) {
-                            HashMap<String, String> hashMap = new HashMap<>();
-                            hashMap.put("farmerId", details.getFarmerId());
-                            hashMap.put("firstname", details.getFirstName());
-                            hashMap.put("middlename", details.getMiddleName());
-                            hashMap.put("lastname", details.getLastName());
-                            hashMap.put("mobileno", details.getMobileNo());
-                            hashMap.put("Gender", details.getGender());
-                            hashMap.put("dateOfBirth", details.getDateOfBirth());
-                            hashMap.put("dateFormat", details.getDateFormat());
-                            hashMap.put("locale", details.getLocale());
-
-                            Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
-                            APIService service = retrofit.create(APIService.class);
-                            SharedPreferences prefss = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                            String auth_key = prefss.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
-                            Call<AllResponse> call = service.posteditfarmer(auth_key, hashMap, Integer.valueOf(details.getFarmerId()));
-                            call.enqueue(new Callback<AllResponse>() {
-                                @Override
-                                public void onResponse(Call<AllResponse> call, Response<AllResponse> response) {
-
-                                    if (response.isSuccessful()) {
-                                        details.delete();
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<AllResponse> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-                    }
-                    return null;
-                }
-
-
-                @Override
-                protected void onPostExecute(Object o) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            new OfflineFeature(0, false).silentDataDump(context);
-                        }
-                    }, 4000);
-
-                    pDialog.dismissWithAnimation();
-                    Toast.makeText(HomeActivity.this, "Synchronisation process has ended", Toast.LENGTH_SHORT).show();
-                    super.onPostExecute(o);
-                }
-            };
-            asyncTask.execute();
+            Intent intent = new Intent(HomeActivity.this, OfflineDataSyncActivity.class);
+            startActivity(intent);
         }else{
 
             new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
@@ -1356,6 +797,7 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
             @Override
             public void onClick(View v) {
                 POPUP_WINDOW_SCORE.dismiss();
+                //TODO: LOG OUT WILL HAVE ISSUES SINCE THE DATABASE IS NOT BEING CLEARED
                 SharedPreferences settings = getSharedPreferences("PERMISSIONS", Context.MODE_PRIVATE);
                 settings.edit().clear().commit();
                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));

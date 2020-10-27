@@ -36,4 +36,31 @@
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="MyProgressBarCircular" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateTint">#b71c1c</item>
+    </style>
+
+    <style name="MyProgressBar" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressBackgroundTint">#69f0ae</item>
+        <item name="android:progressTint">#b71c1c</item>
+        <item name="android:minWidth">200dp</item>
+    </style>
+
+    <style name="OfflineSyncProgressBarRed" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="colorButtonNormal">#f50057</item>
+        <item name="colorControlActivated">#f50057</item>
+        <item name="colorControlHighlight">#ff6d00</item>
+        <item name="android:progressDrawable">@drawable/custom_progressbar_horizontal</item>
+        <item name="android:minWidth">100dp</item>
+    </style>
+
+    <style name="OfflineSyncProgressBarGreen" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="colorButtonNormal">#f50057</item>
+        <item name="colorControlActivated">#33691e</item>
+        <item name="colorControlHighlight">#ff6d00</item>
+        <item name="android:progressDrawable">@drawable/custom_progressbar_horizontal</item>
+        <item name="android:minWidth">100dp</item>
+    </style>
+
 </resources>

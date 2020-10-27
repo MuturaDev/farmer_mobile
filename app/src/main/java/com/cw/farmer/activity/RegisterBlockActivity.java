@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -19,31 +18,23 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
-import com.cw.farmer.model.FarmerModelDB;
 import com.cw.farmer.model.GeneralSpinnerResponse;
-import com.cw.farmer.model.PageItemsDestruction;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.cw.farmer.spinner_models.GeneralSpinner;
 import com.cw.farmer.table_models.RegisterBlockTB;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

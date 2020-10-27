@@ -21,16 +21,13 @@ import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.SearchSearchAreaBlockAdapter;
 import com.cw.farmer.model.SearchAreaResponse;
-import com.cw.farmer.model.PageItemHarvest;
 import com.cw.farmer.model.PageItemSearchArea;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -130,7 +127,7 @@ public class SearchSearchAreaActivity extends HandleConnectionAppCompatActivity 
 
                     if (response.body().getPageItemSearchAreaList().size() > 0){
                         pageItemArrayList = (ArrayList<PageItemSearchArea>) response.body().getPageItemSearchAreaList();
-                        saveArrayList(pageItemArrayList, "SearchSearchAreaActivity");
+                       // saveArrayList(pageItemArrayList, "SearchSearchAreaActivity");
                         setData();
                     }else {
                        // Toast.makeText(SearchHarvestFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();

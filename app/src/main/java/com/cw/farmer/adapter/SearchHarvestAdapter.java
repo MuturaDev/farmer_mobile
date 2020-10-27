@@ -97,8 +97,9 @@ public class SearchHarvestAdapter extends RecyclerView.Adapter<SearchHarvestAdap
         }
 
         viewHolder.tv_first_midel_last_name.setText(pageItem.getFamerName());
-       viewHolder.tv_idno.setText("ID No: "+pageItem.getAccountNumber());
+       viewHolder.tv_idno.setText("ID No: "+pageItem.getIdno());
         viewHolder.crop_date.setText("Crop Date: "+removeLastChar(date));
+        viewHolder.tv_mobile.setText("Phone: " + pageItem.getMobileno());
 
         viewHolder.tv_noofunits.setText("Centre Name: "+pageItem.getCentrename());
 

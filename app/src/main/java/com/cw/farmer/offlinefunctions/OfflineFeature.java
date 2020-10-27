@@ -1,40 +1,13 @@
-package com.cw.farmer.utils;
+package com.cw.farmer.offlinefunctions;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.cw.farmer.R;
-import com.cw.farmer.activity.ApplyFertilizerBlockActivity;
-import com.cw.farmer.activity.ChangeCentreActivity;
-import com.cw.farmer.activity.CropDestructionActivity;
-import com.cw.farmer.activity.FarmerAccountsActivity;
-import com.cw.farmer.activity.FarmerDocumentsActivity;
-import com.cw.farmer.activity.FarmerRecruitActivity;
-import com.cw.farmer.activity.HomeActivity;
-import com.cw.farmer.activity.MainActivity;
-import com.cw.farmer.activity.PlantBlockActivity;
-import com.cw.farmer.activity.RegisterActivity;
-import com.cw.farmer.activity.ReturnActivity;
-import com.cw.farmer.activity.SprayConfirmationActivity;
-import com.cw.farmer.adapter.ExpandableListAdapter;
-import com.cw.farmer.custom.Utility;
 import com.cw.farmer.internetConnectionBroadcast.NotificationNotify;
-import com.cw.farmer.model.AllCentreResponse;
 import com.cw.farmer.model.BankNameDB;
 import com.cw.farmer.model.BankNameResponse;
 import com.cw.farmer.model.ContractSignDB;
@@ -43,8 +16,6 @@ import com.cw.farmer.model.CropDateResponse;
 import com.cw.farmer.model.CropDestructionDB;
 import com.cw.farmer.model.CropDestructionPostDB;
 import com.cw.farmer.model.DestructionReasonResponse;
-import com.cw.farmer.model.FarmerAccountsResponse;
-import com.cw.farmer.model.FarmerDocResponse;
 import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.FarmerModelDB;
 import com.cw.farmer.model.GeneralSpinnerResponse;
@@ -75,13 +46,9 @@ import com.cw.farmer.model.SprayPostDB;
 import com.cw.farmer.model.TasksResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.spinner_models.GeneralSpinner;
-import com.cw.farmer.table_models.AllCentreTB;
 import com.cw.farmer.table_models.ApplyFertilizerTB;
 import com.cw.farmer.table_models.ChangeCentreTB;
 import com.cw.farmer.table_models.EditFarmerDetailsTB;
-import com.cw.farmer.table_models.FarmerAccountTB;
-import com.cw.farmer.table_models.FarmerDocument;
 import com.cw.farmer.table_models.HarvestBlockTB;
 import com.cw.farmer.table_models.IrrigateBlockTB;
 import com.cw.farmer.table_models.PlantBlockTB;
@@ -94,7 +61,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -103,7 +69,7 @@ import retrofit2.Retrofit;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class OfflineFeature {
+ public class OfflineFeature {
 
     private int offline;
     //flag for showing popups
@@ -117,7 +83,6 @@ public class OfflineFeature {
 
     public static boolean hasAnyData(){
         boolean hasData = false;
-
         //New features
         List<ApplyFertilizerTB> applyList = ApplyFertilizerTB.listAll(ApplyFertilizerTB.class);
         if(applyList.size() > 0) hasData = true;
@@ -128,7 +93,6 @@ public class OfflineFeature {
         List<IrrigateBlockTB> irrigateList = IrrigateBlockTB.listAll(IrrigateBlockTB.class);
         if(irrigateList.size() > 0) hasData = true;
 
-
         List<PlantBlockTB> plantBlockList = PlantBlockTB.listAll(PlantBlockTB.class);
         if(plantBlockList.size() > 0) hasData = true;
 
@@ -138,7 +102,6 @@ public class OfflineFeature {
         List<ScoutingTB> scoutingList = ScoutingTB.listAll(ScoutingTB.class);
         if(scoutingList.size() > 0) hasData = true;
 
-        
         //Old Feature
         List<FarmerModelDB> farmerList = FarmerModelDB.listAll(FarmerModelDB.class);
         if(farmerList.size() > 0) hasData = true;
@@ -171,11 +134,70 @@ public class OfflineFeature {
         return hasData;
     }
 
+    public static int dataCountProgress(){
+
+        int hasData = 0;
+        //New features
+        List<ApplyFertilizerTB> applyList = ApplyFertilizerTB.listAll(ApplyFertilizerTB.class);
+        if(applyList.size() > 0) hasData++;
+
+        List<HarvestBlockTB> harvestList = HarvestBlockTB.listAll(HarvestBlockTB.class);
+        if(harvestList.size() > 0) hasData++;
+
+        List<IrrigateBlockTB> irrigateList = IrrigateBlockTB.listAll(IrrigateBlockTB.class);
+        if(irrigateList.size() > 0) hasData++;
+
+        List<PlantBlockTB> plantBlockList = PlantBlockTB.listAll(PlantBlockTB.class);
+        if(plantBlockList.size() > 0) hasData++;
+
+        List<RegisterBlockTB> registerBlockList = RegisterBlockTB.listAll(RegisterBlockTB.class);
+        if(registerBlockList.size() > 0) hasData++;
+
+        List<ScoutingTB> scoutingList = ScoutingTB.listAll(ScoutingTB.class);
+        if(scoutingList.size() > 0) hasData++;
+
+        //Old Feature
+        List<FarmerModelDB> farmerList = FarmerModelDB.listAll(FarmerModelDB.class);
+        if(farmerList.size() > 0) hasData++;
+
+        List<RecruitFarmerDB> recruitFarmerList = RecruitFarmerDB.listAll(RecruitFarmerDB.class);
+        if(recruitFarmerList.size() > 0) hasData++;
+
+        List<ContractSignDB> contractSignList = ContractSignDB.listAll(ContractSignDB.class);
+        if(contractSignList.size() > 0) hasData++;
+
+        List<PlantingVerifyDB> plantVerifyList = PlantingVerifyDB.listAll(PlantingVerifyDB.class);
+        if(plantVerifyList.size() > 0) hasData++;
+
+        List<CropDestructionPostDB> destroyList = CropDestructionPostDB.listAll(CropDestructionPostDB.class);
+        if(destroyList.size() > 0) hasData++;
+
+        List<HarvestingDB> harvestingList = HarvestingDB.listAll(HarvestingDB.class);
+        if(harvestingList.size() > 0) hasData++;
+
+        List<SprayPostDB> sprayList = SprayPostDB.listAll(SprayPostDB.class);
+        if(sprayList.size() > 0) hasData++;
+
+        List<ChangeCentreTB> changeCentre = ChangeCentreTB.listAll(ChangeCentreTB.class);
+        if(changeCentre.size() > 0) hasData++;
+
+        List<EditFarmerDetailsTB> editFarmer = EditFarmerDetailsTB.listAll(EditFarmerDetailsTB.class);
+        if(editFarmer.size() > 0) hasData++;
+
+
+        return hasData;
+
+
+    }
+
 
 
 
     private void reportDataFetched(String title, String message, Context context){
-        if(showPopup) new NotificationNotify(context).displayNotification(title, message,"");
+        if(!showPopup) {
+           // new NotificationNotify(context).displayNotification(title, message, "");
+
+        }
     }
     
     
@@ -640,8 +662,6 @@ public class OfflineFeature {
                     });
                 }
 
-
-
                 //Plant Block/select block/SearchSearchAreaActivity
                 if(offline == 11 || offline == 0) {
                     Call<SearchAreaResponse> call10 = service.getSearchArea(/*15, 0*/limit, offset, auth_key);
@@ -703,8 +723,6 @@ public class OfflineFeature {
                         }
                     });
                 }
-
-
 
                 //Irrigate Block/select block/SearchPlantBlockActivity
                 if(offline == 13 || offline == 0) {
@@ -805,8 +823,6 @@ public class OfflineFeature {
                     });
                 }
 
-
-
                 //Scouting/select block/SearchPlantBlockActivity
                 if(offline == 16 || offline == 0) {
                     Call<PlantBlockResponse> call13 = service.getPlantBlockNames(/*15, 0*/limit, offset, auth_key);
@@ -880,7 +896,6 @@ public class OfflineFeature {
                         }
                     });
                 }
-
 
                 //HomeActivity
                 if(offline == 18 || offline == 0) {
@@ -1049,7 +1064,6 @@ public class OfflineFeature {
                         }
                     });
                 }
-
 
                 //ManAcivity, Spinner bank
                 if(offline == 22 || offline == 0) {

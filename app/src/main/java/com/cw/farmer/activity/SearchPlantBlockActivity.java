@@ -3,7 +3,6 @@ package com.cw.farmer.activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,17 +18,14 @@ import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.adapter.SearchPlantBlockAdapter;
-import com.cw.farmer.model.PageItemHarvest;
 import com.cw.farmer.model.PageItemPlantBlock;
 import com.cw.farmer.model.PlantBlockResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -172,7 +168,7 @@ public class SearchPlantBlockActivity   extends HandleConnectionAppCompatActivit
 
                         pageItemArrayList = (ArrayList<PageItemPlantBlock>) response.body().getPageItemPlantBlocksList();
 
-                        saveArrayList(pageItemArrayList, "searchPlantBlockActivity");
+                        //saveArrayList(pageItemArrayList, "searchPlantBlockActivity");
                         setData();
                     }else {
                        // Toast.makeText(SearchHarvestFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();

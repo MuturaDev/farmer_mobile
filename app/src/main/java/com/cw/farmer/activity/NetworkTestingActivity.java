@@ -8,17 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.R;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
+
 
 import org.imaginativeworld.oopsnointernet.ConnectionCallback;
 import org.imaginativeworld.oopsnointernet.NoInternetDialog;
 import org.imaginativeworld.oopsnointernet.NoInternetSnackbar;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class NetworkTestingActivity extends HandleConnectionAppCompatActivity {
 
@@ -135,6 +133,7 @@ public class NetworkTestingActivity extends HandleConnectionAppCompatActivity {
             @Override
             public void onClick(View view) {
                 disableButtonAfterClick(R.id.one);
+
                new OfflineFeature(0,true).silentDataDump(getApplicationContext());
 //                new SweetAlertDialog(NetworkTestingActivity.this, SweetAlertDialog.WARNING_TYPE)
 //                        .setTitleText("No network connection")

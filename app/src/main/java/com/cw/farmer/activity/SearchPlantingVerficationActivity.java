@@ -5,11 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,12 +22,10 @@ import com.cw.farmer.model.PageItemsPlantVerify;
 import com.cw.farmer.model.PlantVerifyResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -107,7 +103,7 @@ public class SearchPlantingVerficationActivity extends HandleConnectionAppCompat
 
                     if (response.body().getPageItemsPlantVerify().size()!=0){
                         pageItemArrayList = (ArrayList<PageItemsPlantVerify>) response.body().getPageItemsPlantVerify();
-                        saveArrayList(pageItemArrayList, "verifyplantingfarmer");
+                        //saveArrayList(pageItemArrayList, "verifyplantingfarmer");
                         setData();
                     }else {
                         Toast.makeText(SearchPlantingVerficationActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();

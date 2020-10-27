@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,12 +24,10 @@ import com.cw.farmer.model.PageItem;
 import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -140,7 +137,7 @@ public class SearchFarmerActivity extends HandleConnectionAppCompatActivity {
                     try {
                         if (String.valueOf(response.body().getPageItems().size()) != "0") {
                             pageItemArrayList = (ArrayList<PageItem>) response.body().getPageItems();
-                            saveArrayList(pageItemArrayList, "viewrecruitfarmer");
+                            //saveArrayList(pageItemArrayList, "viewrecruitfarmer");
                             setData();
                         } else {
 

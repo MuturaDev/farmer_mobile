@@ -22,12 +22,9 @@ import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.CentreRequiste;
 import com.cw.farmer.model.PlantingVerificationResponse;
 import com.cw.farmer.model.RequisitionResponse;
-import com.cw.farmer.model.RetItem;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.utils.OfflineFeature;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 
 import org.json.JSONObject;
 

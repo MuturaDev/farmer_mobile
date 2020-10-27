@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,12 +23,10 @@ import com.cw.farmer.model.PageItemsDestruction;
 import com.cw.farmer.model.SearchDestructionResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -80,8 +77,9 @@ public class SearchDestructionFarmerActivity extends HandleConnectionAppCompatAc
            }else{
                pageItemArrayList = new ArrayList<>();
                pageItemArrayList.clear();
+               if(list != null)
                for(PageItemsDestruction item : list){
-                   if(item.getFamerName().toLowerCase().contains(searchFarmer.toLowerCase())){
+                   if(item.getFamerName().toLowerCase().contains(searchFarmer.toLowerCase()) || item.getIdno().toLowerCase().contains(searchFarmer.toLowerCase())){
                        pageItemArrayList.add(item);
                    }
                }
@@ -107,7 +105,7 @@ public class SearchDestructionFarmerActivity extends HandleConnectionAppCompatAc
 
                     if (response.body().getPageItemsDestruction().size()!=0){
                         pageItemArrayList = (ArrayList<PageItemsDestruction>) response.body().getPageItemsDestruction();
-                        saveArrayList(pageItemArrayList, "destructionfarmer");
+                        //saveArrayList(pageItemArrayList, "destructionfarmer");
                         setData();
                     }else {
                         Toast.makeText(SearchDestructionFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();

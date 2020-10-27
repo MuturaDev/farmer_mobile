@@ -27,6 +27,7 @@ import com.cw.farmer.R;
 import com.cw.farmer.custom.Utility;
 import com.cw.farmer.model.CentreId;
 import com.cw.farmer.model.Result;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -160,6 +161,8 @@ public class LoginActivity extends HandleConnectionAppCompatActivity implements 
                         set.addAll(response.body().getPermissions());
                         scoreEditor.putStringSet("key", set);
                         scoreEditor.commit();
+
+                        new OfflineFeature(0,false).silentDataDump(getApplicationContext());
 
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 

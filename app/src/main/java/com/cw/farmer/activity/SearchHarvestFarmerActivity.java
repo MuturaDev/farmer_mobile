@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,12 +24,10 @@ import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.PageItemHarvest;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.utils.OfflineFeature;
+import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -72,8 +69,6 @@ public class SearchHarvestFarmerActivity extends HandleConnectionAppCompatActivi
     }
     public void search(View v){
 
-
-
         if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
             Log.d("Search","Searching Harvest data...");
             getData();
@@ -88,9 +83,10 @@ public class SearchHarvestFarmerActivity extends HandleConnectionAppCompatActivi
             }else{
                 pageItemArrayList = new ArrayList<>();
                 pageItemArrayList.clear();
+                if(list != null)
                 for(PageItemHarvest item : list){
                     //https://stackoverflow.com/questions/86780/how-to-check-if-a-string-contains-another-string-in-a-case-insensitive-manner-in#:~:text=Yes%2C%20contains%20is%20case%20sensitive,You%20can%20use%20java.&text=Pattern%20with%20the%20CASE_INSENSITIVE%20flag,Pattern.
-                    if(item.getFamerName().toLowerCase().contains(farmerSearch.toLowerCase())
+                    if(item.getFamerName().toLowerCase().contains(farmerSearch.toLowerCase()) || item.getIdno().toLowerCase().contains(farmerSearch.toLowerCase())
                    ){
                         pageItemArrayList.add(item);
                     }
@@ -125,7 +121,7 @@ public class SearchHarvestFarmerActivity extends HandleConnectionAppCompatActivi
 
                     if (response.body().getPageItemHarvest().size()!=0){
                         pageItemArrayList = (ArrayList<PageItemHarvest>) response.body().getPageItemHarvest();
-                        saveArrayList(pageItemArrayList, "harvestfarmer");
+                        //saveArrayList(pageItemArrayList, "harvestfarmer");
                         setData();
                     }else {
                         Toast.makeText(SearchHarvestFarmerActivity.this, "Data Not Found", Toast.LENGTH_LONG).show();
