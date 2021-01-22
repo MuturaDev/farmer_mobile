@@ -278,6 +278,12 @@ public class FarmerRecruitActivity extends HandleConnectionAppCompatActivity {
     public void submit(View v){
 
 
+        if(crop_id.size() == 0){
+            Snackbar.make(v, "Select farmer to get Crop Dates", Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
         if (!validate()) {
             Snackbar.make(v, "Correct the above errors first", Snackbar.LENGTH_LONG)
                     .show();

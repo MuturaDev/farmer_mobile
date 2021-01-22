@@ -1193,6 +1193,11 @@ import static android.content.Context.MODE_PRIVATE;
             }.getType();
         }
 
+        if(cClass.equals(HashMap.class)){
+            type = new TypeToken<HashMap>(){
+            }.getType();
+        }
+
 
 
 

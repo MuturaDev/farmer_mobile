@@ -1,1 +1,1 @@
---alter table PageItemsDestruction add idno TEXT;
+alter table PLANTING_VERIFY_DB add confirmedUnits TEXT;

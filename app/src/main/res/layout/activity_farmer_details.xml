@@ -32,6 +32,15 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:id="@+id/txt_check_internection"
+        android:textColor="@color/red"
+        android:visibility="gone"
+        android:text="Oops, no internet connection! You will need internet for some services to work"
+        android:layout_height="wrap_content"/>
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

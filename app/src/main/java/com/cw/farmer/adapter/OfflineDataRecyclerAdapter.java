@@ -1,10 +1,11 @@
 package com.cw.farmer.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.R;
+import com.cw.farmer.activity.HarvestingActivity;
+import com.cw.farmer.activity.MainActivity;
 import com.cw.farmer.model.BankNameDB;
 import com.cw.farmer.model.BankNameResponse;
 import com.cw.farmer.model.ContractSignDB;
@@ -77,6 +80,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineDataRecyclerAdapter.MyViewHolder> {
     private List<OfflineDataItem> offlineDataItemList;
+
     private Context context;
     private TextView progressTitle,progress_indicator,complete_status,error_message;
     private ProgressBar progress;
@@ -129,6 +133,12 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
 
                     if(offlineDataItem.getDataItemObject().equals(FarmerModelDB.class)){
 
+                            Intent intent = new Intent((context), MainActivity.class);
+                            Bundle b = new Bundle();
+                            b.putSerializable("CHECKDATA", OfflineDataSyncActivity.registerfarmer);
+                            intent.putExtras(b);
+                            (context).startActivity(intent);
+                            ((OfflineDataSyncActivity) context).finish();
 
                     }else if(offlineDataItem.getDataItemObject().equals(RecruitFarmerDB.class)){
 
@@ -139,6 +149,13 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
                     }else if(offlineDataItem.getDataItemObject().equals(CropDestructionPostDB.class)){
 
                     }else if(offlineDataItem.getDataItemObject().equals(HarvestingDB.class)){
+
+                        Intent intent = new Intent(context, HarvestingActivity.class);
+                        Bundle b = new Bundle();
+                        b.putSerializable("CHECKDATA", OfflineDataSyncActivity.harvestCollection);
+                        intent.putExtras(b);
+                        context.startActivity(intent);
+                        ((OfflineDataSyncActivity)context).finish();
 
                     }else if(offlineDataItem.getDataItemObject().equals(SprayPostDB.class)){
 
@@ -233,7 +250,18 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
 
 
         int progress1 = (((progress.getProgress()) * maxFetchData ) / 100);
-         progress1 = progress1 + 1;
+
+
+
+//        if(dataItemErrorText != null)
+//            if(!dataItemErrorText.isEmpty()){
+//
+//               /// progress.setScrollBarStyle(R.style.OfflineSyncProgressBarGreen);
+//            }
+//            else
+//                progress1 = progress1 + 1;
+//        else
+            progress1 = progress1 + 1;
 
         count++;
 
@@ -257,7 +285,9 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
                 error_message.setText("Error Message: \n" + dataItemErrorText);
                 error_message.setVisibility(View.VISIBLE);
                 btn_checkData.setVisibility(View.VISIBLE);
+                progress.getProgressDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
                 btn_checkData.setText("Try Again");
+                btn_checkData.setBackgroundColor(Color.RED);
                 btn_checkData.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -267,14 +297,20 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
                     }
                 });
 
-                complete_status.setText(isDataItemCompleteStatus ? "Successfully completed" : "Unsuccessful");
-                complete_status.setVisibility(View.VISIBLE);
+//                complete_status.setText(isDataItemCompleteStatus ? "Successfully completed" : "Unsuccessful");
+//                complete_status.setVisibility(View.VISIBLE);
             }
         }
 
         if(progress1 == maxFetchData) {
-            complete_status.setText(isDataItemCompleteStatus ? "Successfully completed" : "Unsuccessful");
-            complete_status.setVisibility(View.VISIBLE);
+            if(error_message.getText().toString().isEmpty()){
+                complete_status.setText(isDataItemCompleteStatus ? "Successfully completed" : "Unsuccessful");
+                complete_status.setVisibility(View.VISIBLE);
+            }else{
+                complete_status.setText("Unsuccessful");
+                complete_status.setVisibility(View.VISIBLE);
+            }
+
         }
 
 
@@ -299,61 +335,61 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
 //            @Override
 //            protected Object doInBackground(Object[] objects) {
 
-                int limit = 0;
-                int offset = 0;
+        int limit = 0;
+        int offset = 0;
 
-                //ListFarmerActivity/scheme/
-                Retrofit retrofit = ApiClient.getClient("/authentication/", context);
-                APIService service = retrofit.create(APIService.class);
-                SharedPreferences prefs = context.getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+        //ListFarmerActivity/scheme/
+        Retrofit retrofit = ApiClient.getClient("/authentication/", context);
+        APIService service = retrofit.create(APIService.class);
+        SharedPreferences prefs = context.getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+        String auth_key = prefs.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
 
-                String search = "";
-                if(offline == 2 || offline == 0){
-                    Call<RegisterResponse> call = service.getRegister(/*10, 0*/limit,offset, search, auth_key);
-                    call.enqueue(new Callback<RegisterResponse>() {
-                        @Override
-                        public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+        String search = "";
+        if(offline == 2 || offline == 0){
+            Call<RegisterResponse> call = service.getRegister(/*10, 0*/limit,offset, search, auth_key);
+            call.enqueue(new Callback<RegisterResponse>() {
+                @Override
+                public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
 
-                            try {
-                                if(response.body().getPageItems() != null)
-                                    if (String.valueOf(response.body().getPageItems().size()) != "0") {
+                    try {
+                        if(response.body().getPageItems() != null)
+                            if (String.valueOf(response.body().getPageItems().size()) != "0") {
 
-                                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                        SharedPreferences.Editor editor = prefs.edit();
-                                        Gson gson = new Gson();
-                                        String json = gson.toJson(response.body().getPageItems());
-                                        //reportDataFetched("ListFarmerActivity/scheme/", json,context);
+                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                                SharedPreferences.Editor editor = prefs.edit();
+                                Gson gson = new Gson();
+                                String json = gson.toJson(response.body().getPageItems());
+                                //reportDataFetched("ListFarmerActivity/scheme/", json,context);
 
-                                        Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "1");
+                                Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "1");
 
-                                        editor.putString("viewfarmer", json);
-                                        editor.apply();     // This
-                                    }// line is IMPORTANT !!!
+                                editor.putString("viewfarmer", json);
+                                editor.apply();     // This
+                            }// line is IMPORTANT !!!
 
-                                if(response.code() == 200){
-                                   offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
 
-                        @Override
-                        public void onFailure(Call<RegisterResponse> call, Throwable t) {offlineFetch(t.getMessage());
-                            offlineFetch(t.getMessage());
-                        }
-                    });
                 }
 
+                @Override
+                public void onFailure(Call<RegisterResponse> call, Throwable t) {offlineFetch(t.getMessage());
+                    offlineFetch(t.getMessage());
+                }
+            });
+        }
 
-                //Register Activity
-                //TODO: THIS SHOULD BE REMOVED
+
+        //Register Activity
+        //TODO: THIS SHOULD BE REMOVED
 //                if(offline == 3 || offline == 0) {
 //                    Call<RegisterResponse> call16 = service.getRegister(/*10, 0*/limit, offset, null, auth_key);
 //                    call16.enqueue(new Callback<RegisterResponse>() {
@@ -497,9 +533,9 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
 
 
 
-                //ListFarmerActivity/scheme/Clicked Item/View ID
-                //get id, which is the pageItem.getId() from previous activity, FarmerDetailsActivity
-                //id specified in Intent for opendoc method
+        //ListFarmerActivity/scheme/Clicked Item/View ID
+        //get id, which is the pageItem.getId() from previous activity, FarmerDetailsActivity
+        //id specified in Intent for opendoc method
 //               Call<List<FarmerDocResponse>> call2 = service.getfamerdocs(id, auth_key);
 //               call2.enqueue(new Callback<List<FarmerDocResponse>>() {
 //                   @Override
@@ -526,637 +562,638 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
 //               });
 
 
-                //Recruit Farmer/select farmer/SearchFarmerActivity
-                if(offline == 4 || offline == 0) {
-                    Call<RegisterResponse> call3 = service.getRegister(0, 0, "", auth_key);
-                    call3.enqueue(new Callback<RegisterResponse>() {
-                        @Override
-                        public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "2");
-                            try {
-                                if(response.body().getPageItems() != null)
-                                    if (String.valueOf(response.body().getPageItems().size()) != "0") {
-                                        // saveArrayList(pageItemArrayList, "viewrecruitfarmer");
-                                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                        SharedPreferences.Editor editor = prefs.edit();
-                                        Gson gson = new Gson();
-                                        String json = gson.toJson(response.body().getPageItems());
-                                        //reportDataFetched("Recruit Farmer/select farmer/SearchFarmerActivity", json,context);
-                                        editor.putString("viewrecruitfarmer", json);
-                                        editor.apply();     // Th
-                                    } else {
-                                    }
-
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
+        //Recruit Farmer/select farmer/SearchFarmerActivity
+        if(offline == 4 || offline == 0) {
+            Call<RegisterResponse> call3 = service.getRegister(0, 0, "", auth_key);
+            call3.enqueue(new Callback<RegisterResponse>() {
+                @Override
+                public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "2");
+                    try {
+                        if(response.body().getPageItems() != null)
+                            if (String.valueOf(response.body().getPageItems().size()) != "0") {
+                                // saveArrayList(pageItemArrayList, "viewrecruitfarmer");
+                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                                SharedPreferences.Editor editor = prefs.edit();
+                                Gson gson = new Gson();
+                                String json = gson.toJson(response.body().getPageItems());
+                                //reportDataFetched("Recruit Farmer/select farmer/SearchFarmerActivity", json,context);
+                                editor.putString("viewrecruitfarmer", json);
+                                editor.apply();     // Th
+                            } else {
                             }
 
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
 
-                        @Override
-                        public void onFailure(Call<RegisterResponse> call, Throwable t) {offlineFetch(t.getMessage());
-                            offlineFetch(t.getMessage());
-                        }
-                    });
                 }
 
+                @Override
+                public void onFailure(Call<RegisterResponse> call, Throwable t) {offlineFetch(t.getMessage());
+                    offlineFetch(t.getMessage());
+                }
+            });
+        }
 
-                //Contract Sign/ select farmer/SearchContractFarmerActivity
-                if(offline == 5 || offline == 0) {
-                    Call<SearchContractResponse> call4 = service.getContractfarmer(0, 0, "", auth_key);
-                    call4.enqueue(new Callback<SearchContractResponse>() {
-                        @Override
-                        public void onResponse(Call<SearchContractResponse> call, Response<SearchContractResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "3");
-                            try {
-                                if(response.body().getPageItems() != null)
-                                    if (response.body().getPageItems().size() != 0) {
-                                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                        SharedPreferences.Editor editor = prefs.edit();
-                                        Gson gson = new Gson();
-                                        String json = gson.toJson(response.body().getPageItems());
-                                        //reportDataFetched("Contract Sign/ select farmer/SearchContractFarmerActivity", json,context);
-                                        editor.putString("contractfarmer", json);
-                                        editor.apply();
 
-                                    }
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
+        //Contract Sign/ select farmer/SearchContractFarmerActivity
+        if(offline == 5 || offline == 0) {
+            Call<SearchContractResponse> call4 = service.getContractfarmer(0, 0, "", auth_key);
+            call4.enqueue(new Callback<SearchContractResponse>() {
+                @Override
+                public void onResponse(Call<SearchContractResponse> call, Response<SearchContractResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "3");
+                    try {
+                        if(response.body().getPageItems() != null)
+                            if (response.body().getPageItems().size() != 0) {
+                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                                SharedPreferences.Editor editor = prefs.edit();
+                                Gson gson = new Gson();
+                                String json = gson.toJson(response.body().getPageItems());
+                                //reportDataFetched("Contract Sign/ select farmer/SearchContractFarmerActivity", json,context);
+                                editor.putString("contractfarmer", json);
+                                editor.apply();
+
                             }
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-
-                        @Override
-                        public void onFailure(Call<SearchContractResponse> call, Throwable t) {offlineFetch(t.getMessage());
-                            offlineFetch(t.getMessage());
-                        }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
                 }
 
-                //Verify planting/select farmer/SearchPlantingVerificationActivity
-                if(offline == 6 || offline == 0) {
-                    Call<PlantVerifyResponse> call5 = service.getplantingfarmer(0, 0, "", auth_key);
-                    call5.enqueue(new Callback<PlantVerifyResponse>() {
-                        @Override
-                        public void onResponse(Call<PlantVerifyResponse> call, Response<PlantVerifyResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "4");
-                            try {
-                                System.out.println(response.body().getPageItemsPlantVerify());
+                @Override
+                public void onFailure(Call<SearchContractResponse> call, Throwable t) {offlineFetch(t.getMessage());
+                    offlineFetch(t.getMessage());
+                }
+            });
+        }
 
-                                if (response.body().getPageItemsPlantVerify().size() != 0) {
+        //Verify planting/select farmer/SearchPlantingVerificationActivity
+        if(offline == 6 || offline == 0) {
+            Call<PlantVerifyResponse> call5 = service.getplantingfarmer(0, 0, "", auth_key);
+            call5.enqueue(new Callback<PlantVerifyResponse>() {
+                @Override
+                public void onResponse(Call<PlantVerifyResponse> call, Response<PlantVerifyResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "4");
+                    try {
+                        System.out.println(response.body().getPageItemsPlantVerify());
+
+                        if (response.body().getPageItemsPlantVerify().size() != 0) {
 //                               pageItemArrayList = (ArrayList<PageItemsPlantVerify>) response.body().getPageItemsPlantVerify();
 //                               saveArrayList(pageItemArrayList, "verifyplantingfarmer");
 
-                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                    SharedPreferences.Editor editor = prefs.edit();
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(response.body().getPageItemsPlantVerify());
-                                    //reportDataFetched("Verify planting/select farmer/SearchPlantingVerificationActivity", json,context);
-                                    editor.putString("verifyplantingfarmer", json);
-                                    editor.apply();     // This line is IMPORTANT !!!
-
-                                }
-
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body().getPageItemsPlantVerify());
+                            //reportDataFetched("Verify planting/select farmer/SearchPlantingVerificationActivity", json,context);
+                            editor.putString("verifyplantingfarmer", json);
+                            editor.apply();     // This line is IMPORTANT !!!
 
                         }
 
-                        @Override
-                        public void onFailure(Call<PlantVerifyResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
                 }
 
-                //Crop Desctuction/select farmer/SearchDestructionFarmerActivity
-                if(offline == 7 || offline == 0) {
-                    Call<SearchDestructionResponse> call6 = service.getDestructionfarmer(0, 0, "", auth_key);
-                    call6.enqueue(new Callback<SearchDestructionResponse>() {
-                        @Override
-                        public void onResponse(Call<SearchDestructionResponse> call, Response<SearchDestructionResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "5");
-                            try {
+                @Override
+                public void onFailure(Call<PlantVerifyResponse> call, Throwable t) {offlineFetch(t.getMessage());
 
-                                if (response.body().getPageItemsDestruction().size() != 0) {
+                }
+            });
+        }
+
+        //Crop Desctuction/select farmer/SearchDestructionFarmerActivity
+        if(offline == 7 || offline == 0) {
+            Call<SearchDestructionResponse> call6 = service.getDestructionfarmer(0, 0, "", auth_key);
+            call6.enqueue(new Callback<SearchDestructionResponse>() {
+                @Override
+                public void onResponse(Call<SearchDestructionResponse> call, Response<SearchDestructionResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "5");
+                    try {
+
+                        if (response.body().getPageItemsDestruction().size() != 0) {
 //                               pageItemArrayList = (ArrayList<PageItemsDestruction>) response.body().getPageItemsDestruction();
 //                               saveArrayList(pageItemArrayList, "destructionfarmer");
-                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                    SharedPreferences.Editor editor = prefs.edit();
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(response.body().getPageItemsDestruction());
-                                    //reportDataFetched("Crop Desctuction/select farmer/SearchDestructionFarmerActivity", json,context);
-                                    editor.putString("destructionfarmer", json);
-                                    editor.apply();
-                                }
-
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body().getPageItemsDestruction());
+                            //reportDataFetched("Crop Desctuction/select farmer/SearchDestructionFarmerActivity", json,context);
+                            editor.putString("destructionfarmer", json);
+                            editor.apply();
                         }
 
-                        @Override
-                        public void onFailure(Call<SearchDestructionResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
                 }
 
-                //Spray Confirmation/select farmer/SearchSprayActivity
-                if(offline == 8 || offline == 0) {
-                    Call<SprayFarmerResponse> call7 = service.getSprayfarmer(0, 0, "", auth_key);
-                    call7.enqueue(new Callback<SprayFarmerResponse>() {
-                        @Override
-                        public void onResponse(Call<SprayFarmerResponse> call, Response<SprayFarmerResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "6");
-                            try {
-                                if (response.body().getPageItemsSprayFarmer().size() != 0) {
+                @Override
+                public void onFailure(Call<SearchDestructionResponse> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+        //Spray Confirmation/select farmer/SearchSprayActivity
+        if(offline == 8 || offline == 0) {
+            Call<SprayFarmerResponse> call7 = service.getSprayfarmer(0, 0, "", auth_key);
+            call7.enqueue(new Callback<SprayFarmerResponse>() {
+                @Override
+                public void onResponse(Call<SprayFarmerResponse> call, Response<SprayFarmerResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "6");
+                    try {
+                        if (response.body().getPageItemsSprayFarmer().size() != 0) {
 //                               pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) response.body().getPageItemsSprayFarmer();
 //                               saveArrayList(pageItemArrayList, "sprayfarmer");
-                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                    SharedPreferences.Editor editor = prefs.edit();
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(response.body().getPageItemsSprayFarmer());
-                                    //reportDataFetched("Spray Confirmation/select farmer/SearchSprayActivity", json,context);
-                                    editor.putString("sprayfarmer", json);
-                                    editor.apply();     // This line is IMPORTANT !!!
-                                }
-
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body().getPageItemsSprayFarmer());
+                            //reportDataFetched("Spray Confirmation/select farmer/SearchSprayActivity", json,context);
+                            editor.putString("sprayfarmer", json);
+                            editor.apply();     // This line is IMPORTANT !!!
                         }
 
-                        @Override
-                        public void onFailure(Call<SprayFarmerResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
                 }
 
-                //Harvest Collection/select farmer/SearchHarvestFarmerActivity
-                if(offline == 9 || offline == 0) {
-                    Call<FarmerHarvestResponse> call8 = service.getHarvestfarmer(0, 0, "", auth_key);
-                    call8.enqueue(new Callback<FarmerHarvestResponse>() {
-                        @Override
-                        public void onResponse(Call<FarmerHarvestResponse> call, Response<FarmerHarvestResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "7");
-                            try {
+                @Override
+                public void onFailure(Call<SprayFarmerResponse> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+        //Harvest Collection/select farmer/SearchHarvestFarmerActivity
+        if(offline == 9 || offline == 0) {
+            Call<FarmerHarvestResponse> call8 = service.getHarvestfarmer(0, 0, "", auth_key);
+            call8.enqueue(new Callback<FarmerHarvestResponse>() {
+                @Override
+                public void onResponse(Call<FarmerHarvestResponse> call, Response<FarmerHarvestResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "7");
+                    try {
 
 
-                                if (response.body().getPageItemHarvest().size() != 0) {
+                        if (response.body().getPageItemHarvest().size() != 0) {
 //                               pageItemArrayList = (ArrayList<PageItemHarvest>) response.body().getPageItemHarvest();
 //                               saveArrayList(pageItemArrayList, "harvestfarmer");
 
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body().getPageItemHarvest());
+
+                            //reportDataFetched("Harvest Collection/select farmer/SearchHarvestFarmerActivity", json,context);
+                            editor.putString("harvestfarmer", json);
+                            editor.apply();     // This line is IMPORTANT !!!
+                        }
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
+                        }
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<FarmerHarvestResponse> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+        //Register Block/select farm, spinner
+        if(offline == 10 || offline == 0) {
+            Call<List<GeneralSpinnerResponse>> call9 = service.getFarmNames(auth_key);
+            call9.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
+                @Override
+                public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "8");
+                    try{
+                        if (response.body() != null) {
+                            if (response.body() != null)
+                                if (response.body().size() > 0) {
                                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                                     SharedPreferences.Editor editor = prefs.edit();
                                     Gson gson = new Gson();
-                                    String json = gson.toJson(response.body().getPageItemHarvest());
-
-                                    //reportDataFetched("Harvest Collection/select farmer/SearchHarvestFarmerActivity", json,context);
-                                    editor.putString("harvestfarmer", json);
-                                    editor.apply();     // This line is IMPORTANT !!!
+                                    String json = gson.toJson(response.body());
+                                    // reportDataFetched("Register Block/select farm, spinner", json,context);
+                                    editor.putString("RegisterBlockSelectFarm", json);
+                                    editor.apply();
                                 }
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
                         }
 
-                        @Override
-                        public void onFailure(Call<FarmerHarvestResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
                 }
 
-                //Register Block/select farm, spinner
-                if(offline == 10 || offline == 0) {
-                    Call<List<GeneralSpinnerResponse>> call9 = service.getFarmNames(auth_key);
-                    call9.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
-                        @Override
-                        public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "8");
-                            try{
-                                if (response.body() != null) {
-                                    if (response.body() != null)
-                                        if (response.body().size() > 0) {
-                                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                            SharedPreferences.Editor editor = prefs.edit();
-                                            Gson gson = new Gson();
-                                            String json = gson.toJson(response.body());
-                                            // reportDataFetched("Register Block/select farm, spinner", json,context);
-                                            editor.putString("RegisterBlockSelectFarm", json);
-                                            editor.apply();
-                                        }
-                                }
+                @Override
+                public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {offlineFetch(t.getMessage());
 
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
+                }
+            });
+        }
+
+
+
+        //Plant Block/select block/SearchSearchAreaActivity
+        if(offline == 11 || offline == 0) {
+            Call<SearchAreaResponse> call10 = service.getSearchArea(/*15, 0*/limit, offset, auth_key);
+            call10.enqueue(new Callback<SearchAreaResponse>() {
+                @Override
+                public void onResponse(Call<SearchAreaResponse> call, Response<SearchAreaResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "9");
+                    try {
+                        if (response.body().getPageItemSearchAreaList().size() > 0) {
+                            //pageItemArrayList = (ArrayList<PageItemSearchArea>) response.body().getPageItemSearchAreaList();
+                            //saveArrayList(pageItemArrayList, "harvestblocksearch");
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body().getPageItemSearchAreaList());
+                            //reportDataFetched("Plant Block/select block/SearchSearchAreaActivity", json,context);
+                            editor.putString("SearchSearchAreaActivity", json);
+                            editor.apply();     // This line is IMPORTANT !!!
+                        } else {
 
                         }
-
-                        @Override
-                        public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {offlineFetch(t.getMessage());
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
                 }
 
+                @Override
+                public void onFailure(Call<SearchAreaResponse> call, Throwable t) {offlineFetch(t.getMessage());
 
+                }
+            });
+        }
 
-                //Plant Block/select block/SearchSearchAreaActivity
-                if(offline == 11 || offline == 0) {
-                    Call<SearchAreaResponse> call10 = service.getSearchArea(/*15, 0*/limit, offset, auth_key);
-                    call10.enqueue(new Callback<SearchAreaResponse>() {
-                        @Override
-                        public void onResponse(Call<SearchAreaResponse> call, Response<SearchAreaResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "9");
-                            try {
-                                if (response.body().getPageItemSearchAreaList().size() > 0) {
-                                    //pageItemArrayList = (ArrayList<PageItemSearchArea>) response.body().getPageItemSearchAreaList();
-                                    //saveArrayList(pageItemArrayList, "harvestblocksearch");
+        //Plant Block/spinner/PlantBlockActivity
+        if(offline == 12 || offline == 0) {
+            Call<List<GeneralSpinnerResponse>> call101 = service.getVariety(auth_key);
+            call101.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
+                @Override
+                public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "10");
+                    try{
+                        if (response.body() != null) {
+                            if (response.body() != null)
+                                if (response.body().size() > 0) {
                                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                                     SharedPreferences.Editor editor = prefs.edit();
                                     Gson gson = new Gson();
-                                    String json = gson.toJson(response.body().getPageItemSearchAreaList());
-                                    //reportDataFetched("Plant Block/select block/SearchSearchAreaActivity", json,context);
-                                    editor.putString("SearchSearchAreaActivity", json);
-                                    editor.apply();     // This line is IMPORTANT !!!
-                                } else {
+                                    String json = gson.toJson(response.body());
+                                    //reportDataFetched("Plant Block/spinner/PlantBlockActivity", json,context);
+                                    editor.putString("PlantBlockSpinner", json);
+                                    editor.apply();
+                                }
 
-                                }
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
+
+
 
                         }
 
-                        @Override
-                        public void onFailure(Call<SearchAreaResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
+
+
                 }
 
-                //Plant Block/spinner/PlantBlockActivity
-                if(offline == 12 || offline == 0) {
-                    Call<List<GeneralSpinnerResponse>> call101 = service.getVariety(auth_key);
-                    call101.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
-                        @Override
-                        public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "10");
-                            try{
-                                if (response.body() != null) {
-                                    if (response.body() != null)
-                                        if (response.body().size() > 0) {
-                                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                            SharedPreferences.Editor editor = prefs.edit();
-                                            Gson gson = new Gson();
-                                            String json = gson.toJson(response.body());
-                                            //reportDataFetched("Plant Block/spinner/PlantBlockActivity", json,context);
-                                            editor.putString("PlantBlockSpinner", json);
-                                            editor.apply();
-                                        }
+                @Override
+                public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
 
 
 
+        //Irrigate Block/select block/SearchPlantBlockActivity
+        if(offline == 13 || offline == 0) {
+            Call<PlantBlockResponse> call11 = service.getPlantBlockNames(/*15, 0*/limit, offset, auth_key);
+            call11.enqueue(new Callback<PlantBlockResponse>() {
+                @Override
+                public void onResponse(Call<PlantBlockResponse> call, Response<PlantBlockResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "11");
+                    try {
 
-                                }
+                        if (response.body().getPageItemPlantBlocksList().size() > 0) {
 
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-
-
-
+                            // pageItemArrayList = (ArrayList<PageItemPlantBlock>) response.body().getPageItemPlantBlocksList();
+                            // saveArrayList(pageItemArrayList, "plantblockresponse");
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body().getPageItemPlantBlocksList());
+                            // reportDataFetched("Irrigate Block/select block/SearchPlantBlockActivity", json,context);
+                            editor.putString("searchPlantBlockActivity", json);
+                            editor.apply();     // This line is IMPORTANT !!!
                         }
-
-                        @Override
-                        public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {offlineFetch(t.getMessage());
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
                 }
 
+                @Override
+                public void onFailure(Call<PlantBlockResponse> call, Throwable t) {offlineFetch(t.getMessage());
 
-
-                //Irrigate Block/select block/SearchPlantBlockActivity
-                if(offline == 13 || offline == 0) {
-                    Call<PlantBlockResponse> call11 = service.getPlantBlockNames(/*15, 0*/limit, offset, auth_key);
-                    call11.enqueue(new Callback<PlantBlockResponse>() {
-                        @Override
-                        public void onResponse(Call<PlantBlockResponse> call, Response<PlantBlockResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "11");
-                            try {
-
-                                if (response.body().getPageItemPlantBlocksList().size() > 0) {
-
-                                    // pageItemArrayList = (ArrayList<PageItemPlantBlock>) response.body().getPageItemPlantBlocksList();
-                                    // saveArrayList(pageItemArrayList, "plantblockresponse");
-                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                    SharedPreferences.Editor editor = prefs.edit();
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(response.body().getPageItemPlantBlocksList());
-                                    // reportDataFetched("Irrigate Block/select block/SearchPlantBlockActivity", json,context);
-                                    editor.putString("searchPlantBlockActivity", json);
-                                    editor.apply();     // This line is IMPORTANT !!!
-                                }
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<PlantBlockResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
-                        }
-                    });
                 }
+            });
+        }
 
 
-                //Apply Fertilizer's/select block/SearchPlantBlockActivity
-                if(offline == 14 || offline == 0) {
-                    Call<PlantBlockResponse> call12 = service.getPlantBlockNames(/*15, 0*/limit, offset, auth_key);
-                    call12.enqueue(new Callback<PlantBlockResponse>() {
-                        @Override
-                        public void onResponse(Call<PlantBlockResponse> call, Response<PlantBlockResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "12");
-                            try {
+        //Apply Fertilizer's/select block/SearchPlantBlockActivity
+        if(offline == 14 || offline == 0) {
+            Call<PlantBlockResponse> call12 = service.getPlantBlockNames(/*15, 0*/limit, offset, auth_key);
+            call12.enqueue(new Callback<PlantBlockResponse>() {
+                @Override
+                public void onResponse(Call<PlantBlockResponse> call, Response<PlantBlockResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "12");
+                    try {
 
-                                if (response.body().getPageItemPlantBlocksList().size() > 0) {
+                        if (response.body().getPageItemPlantBlocksList().size() > 0) {
 
 //                               pageItemArrayList = (ArrayList<PageItemPlantBlock>) response.body().getPageItemPlantBlocksList();
 //                               saveArrayList(pageItemArrayList, "searchPlantBlockActivity");
 
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body().getPageItemPlantBlocksList());
+                            // reportDataFetched("Apply Fertilizer's/select block/SearchPlantBlockActivity", json,context);
+                            editor.putString("searchPlantBlockActivity", json);
+                            editor.apply();
+
+                        }
+
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
+                        }
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<PlantBlockResponse> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+        //Apply Fertilizer's/spinner/ApplyFertilizerBlockActivity
+        if(offline == 15 || offline == 0) {
+            Call<List<GeneralSpinnerResponse>> call121 = service.getFertilizer(auth_key);
+            call121.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
+                @Override
+                public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "13");
+                    try{
+                        if (response.body() != null) {
+                            if (response.body() != null)
+                                if (response.body().size() > 0) {
                                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                                     SharedPreferences.Editor editor = prefs.edit();
                                     Gson gson = new Gson();
-                                    String json = gson.toJson(response.body().getPageItemPlantBlocksList());
-                                    // reportDataFetched("Apply Fertilizer's/select block/SearchPlantBlockActivity", json,context);
-                                    editor.putString("searchPlantBlockActivity", json);
+                                    String json = gson.toJson(response.body());
+                                    // reportDataFetched("Apply Fertilizer's/spinner/ApplyFertilizerBlockActivity", json,context);
+                                    editor.putString("ApplyFertilizerSpinner", json);
                                     editor.apply();
-
                                 }
-
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-
                         }
-
-                        @Override
-                        public void onFailure(Call<PlantBlockResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
                 }
 
-                //Apply Fertilizer's/spinner/ApplyFertilizerBlockActivity
-                if(offline == 15 || offline == 0) {
-                    Call<List<GeneralSpinnerResponse>> call121 = service.getFertilizer(auth_key);
-                    call121.enqueue(new Callback<List<GeneralSpinnerResponse>>() {
-                        @Override
-                        public void onResponse(Call<List<GeneralSpinnerResponse>> call, Response<List<GeneralSpinnerResponse>> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "13");
-                            try{
-                                if (response.body() != null) {
-                                    if (response.body() != null)
-                                        if (response.body().size() > 0) {
-                                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                            SharedPreferences.Editor editor = prefs.edit();
-                                            Gson gson = new Gson();
-                                            String json = gson.toJson(response.body());
-                                            // reportDataFetched("Apply Fertilizer's/spinner/ApplyFertilizerBlockActivity", json,context);
-                                            editor.putString("ApplyFertilizerSpinner", json);
-                                            editor.apply();
+                @Override
+                public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+
+
+        //Scouting/select block/SearchPlantBlockActivity
+        if(offline == 16 || offline == 0) {
+            Call<PlantBlockResponse> call13 = service.getPlantBlockNames(/*15, 0*/limit, offset, auth_key);
+            call13.enqueue(new Callback<PlantBlockResponse>() {
+                @Override
+                public void onResponse(Call<PlantBlockResponse> call, Response<PlantBlockResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "14");
+                    try {
+
+                        if (response.body().getPageItemPlantBlocksList().size() > 0) {
+
+//                               pageItemArrayList = (ArrayList<PageItemPlantBlock>) response.body().getPageItemPlantBlocksList();
+//                               saveArrayList(pageItemArrayList, "searchPlantBlockActivity");
+
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body().getPageItemPlantBlocksList());
+                            //reportDataFetched("Scouting/select block/SearchPlantBlockActivity", json,context);
+                            editor.putString("searchPlantBlockActivity", json);
+                            editor.apply();
+
+                        }
+
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
+                        }
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<PlantBlockResponse> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+        //Harvest Block/select block/SearchPlantBlockActivity
+        if(offline == 17 || offline == 0) {
+            Call<PlantBlockResponse> call14 = service.getPlantBlockNames(/*15, 0*/limit, offset, auth_key);
+            call14.enqueue(new Callback<PlantBlockResponse>() {
+                @Override
+                public void onResponse(Call<PlantBlockResponse> call, Response<PlantBlockResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "15");
+                    try {
+
+                        if (response.body().getPageItemPlantBlocksList().size() > 0) {
+
+//                               pageItemArrayList = (ArrayList<PageItemPlantBlock>) response.body().getPageItemPlantBlocksList();
+//                               saveArrayList(pageItemArrayList, "searchPlantBlockActivity");
+
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body().getPageItemPlantBlocksList());
+                            // reportDataFetched("Harvest Block/select block/SearchPlantBlockActivity", json,context);
+                            editor.putString("searchPlantBlockActivity", json);
+                            editor.apply();
+
+                        }
+
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
+                        }
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<PlantBlockResponse> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+
+        //HomeActivity
+        if(offline == 18 || offline == 0) {
+            SharedPreferences preffss = context.getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+            String user_id = preffss.getString("userid", "-1");
+            Call<TasksResponse> callhomeactivity = service.gettask(auth_key, user_id + "");
+            callhomeactivity.enqueue(new Callback<TasksResponse>() {
+                @Override
+                public void onResponse(Call<TasksResponse> call, Response<TasksResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "16");
+                    try {
+                        if (response.body() != null)
+                            if (response.body().getTotalFilteredRecords() > 0) {
+
+                                OfflineFeature.saveSharedPreferences(response.body().getPageItemstasks(), "PageItemsTasks", context);
+
+                                int count = 0;
+                                List<HashMap> hasMapList = new ArrayList<>();
+
+                                for (PageItemstask taks : response.body().getPageItemstasks()) {
+
+                                    // if (taks.getEntityName().equals("VERIFY_PLANTING_MOBILE")) {
+                                    if(taks.getEntityName().equals("RETURN_STOCK_MOBILE")){
+                                        String date = "";
+                                        //for (int elem : taks.getCropDate()) {
+                                        for(int elem : taks.getCreatedOn()){
+                                            date = elem + "/" + date;
                                         }
-                                }
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
+                                        int entityID = taks.getEntityId();/*3*/
 
-                        }
+                                        Call<PlantingVerificationResponse> callplantVerification = service.getPlantingVerfication(String.valueOf(entityID), auth_key);
 
-                        @Override
-                        public void onFailure(Call<List<GeneralSpinnerResponse>> call, Throwable t) {offlineFetch(t.getMessage());
+                                        callplantVerification.enqueue(new Callback<PlantingVerificationResponse>() {
+                                            @Override
+                                            public void onResponse(Call<PlantingVerificationResponse> call, Response<PlantingVerificationResponse> response) {
 
-                        }
-                    });
-                }
-
-
-
-                //Scouting/select block/SearchPlantBlockActivity
-                if(offline == 16 || offline == 0) {
-                    Call<PlantBlockResponse> call13 = service.getPlantBlockNames(/*15, 0*/limit, offset, auth_key);
-                    call13.enqueue(new Callback<PlantBlockResponse>() {
-                        @Override
-                        public void onResponse(Call<PlantBlockResponse> call, Response<PlantBlockResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "14");
-                            try {
-
-                                if (response.body().getPageItemPlantBlocksList().size() > 0) {
-
-//                               pageItemArrayList = (ArrayList<PageItemPlantBlock>) response.body().getPageItemPlantBlocksList();
-//                               saveArrayList(pageItemArrayList, "searchPlantBlockActivity");
-
-                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                    SharedPreferences.Editor editor = prefs.edit();
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(response.body().getPageItemPlantBlocksList());
-                                    //reportDataFetched("Scouting/select block/SearchPlantBlockActivity", json,context);
-                                    editor.putString("searchPlantBlockActivity", json);
-                                    editor.apply();
-
-                                }
-
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<PlantBlockResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
-                        }
-                    });
-                }
-
-                //Harvest Block/select block/SearchPlantBlockActivity
-                if(offline == 17 || offline == 0) {
-                    Call<PlantBlockResponse> call14 = service.getPlantBlockNames(/*15, 0*/limit, offset, auth_key);
-                    call14.enqueue(new Callback<PlantBlockResponse>() {
-                        @Override
-                        public void onResponse(Call<PlantBlockResponse> call, Response<PlantBlockResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "15");
-                            try {
-
-                                if (response.body().getPageItemPlantBlocksList().size() > 0) {
-
-//                               pageItemArrayList = (ArrayList<PageItemPlantBlock>) response.body().getPageItemPlantBlocksList();
-//                               saveArrayList(pageItemArrayList, "searchPlantBlockActivity");
-
-                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                                    SharedPreferences.Editor editor = prefs.edit();
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(response.body().getPageItemPlantBlocksList());
-                                    // reportDataFetched("Harvest Block/select block/SearchPlantBlockActivity", json,context);
-                                    editor.putString("searchPlantBlockActivity", json);
-                                    editor.apply();
-
-                                }
-
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<PlantBlockResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
-                        }
-                    });
-                }
-
-
-                //HomeActivity
-                if(offline == 18 || offline == 0) {
-                    SharedPreferences preffss = context.getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
-                    String user_id = preffss.getString("userid", "-1");
-                    Call<TasksResponse> callhomeactivity = service.gettask(auth_key, user_id + "");
-                    callhomeactivity.enqueue(new Callback<TasksResponse>() {
-                        @Override
-                        public void onResponse(Call<TasksResponse> call, Response<TasksResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "16");
-                            try {
-                                if (response.body() != null)
-                                    if (response.body().getTotalFilteredRecords() > 0) {
-
-                                        OfflineFeature.saveSharedPreferences(response.body().getPageItemstasks(), "PageItemsTasks", context);
-
-                                        int count = 0;
-                                        List<HashMap> hasMapList = new ArrayList<>();
-
-
-                                        for (PageItemstask taks : response.body().getPageItemstasks()) {
-
-                                            if (taks.getEntityName().equals("VERIFY_PLANTING_MOBILE")) {
-                                                String date = "";
-                                                for (int elem : taks.getCropDate()) {
-                                                    date = elem + "/" + date;
-                                                }
-                                                int entityID = taks.getEntityId();/*3*/
-
-                                                Call<PlantingVerificationResponse> callplantVerification = service.getPlantingVerfication(String.valueOf(entityID), auth_key);
-
-                                                callplantVerification.enqueue(new Callback<PlantingVerificationResponse>() {
-                                                    @Override
-                                                    public void onResponse(Call<PlantingVerificationResponse> call, Response<PlantingVerificationResponse> response) {
-
-                                                        try {
-                                                            if (response.body() != null) {
+                                                try {
+                                                    if (response.body() != null) {
 
 
 //                                                    tv_centre.setText(response.body().getCentreName());
@@ -1164,228 +1201,226 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
 //                                                    tv_farmer_name.setText(response.body().getFarmerName());
 //                                                    tv_no_of_units.setText(response.body().getContractUnits());
 
-                                                                HashMap hashMap = new HashMap();
-                                                                hashMap.put("entityID", entityID);
-                                                                hashMap.put("centre", response.body().getCentreName());
-                                                                hashMap.put("cropDate", response.body().getCropDate().get(2) + "/" + response.body().getCropDate().get(1) + "/" + response.body().getCropDate().get(0));
-                                                                hashMap.put("farmerName", response.body().getFarmerName());
-                                                                hashMap.put("noOfUnits", response.body().getContractUnits());
+                                                        HashMap hashMap = new HashMap();
+                                                        hashMap.put("entityID", entityID);
+                                                        hashMap.put("centre", response.body().getCentreName());
+                                                        hashMap.put("cropDate", response.body().getCropDate().get(2) + "/" + response.body().getCropDate().get(1) + "/" + response.body().getCropDate().get(0));
+                                                        hashMap.put("farmerName", response.body().getFarmerName());
+                                                        hashMap.put("noOfUnits", response.body().getContractUnits());
 
-                                                                //reportDataFetched("HomeActivity", hashMap.toString(),context);
+                                                        //reportDataFetched("HomeActivity", hashMap.toString(),context);
 
-                                                                OfflineFeature.saveSharedPreferences(hashMap, "ReturnActivityOffline", context);
-
-
-                                                            }
-
-
-                                                        } catch (Exception e) {
-                                                            // offlineFetch(e.getMessage());
-                                                        }
+                                                        OfflineFeature.saveSharedPreferences(hashMap, "ReturnActivityOffline", context);
 
 
                                                     }
 
-                                                    @Override
-                                                    public void onFailure(Call<PlantingVerificationResponse> call, Throwable t) {
-                                                        offlineFetch(t.getMessage());
 
-                                                    }
-                                                });
+                                                } catch (Exception e) {
+                                                    // offlineFetch(e.getMessage());
+                                                }
+
+
                                             }
 
-                                            count++;
-                                        }
-                                    }
+                                            @Override
+                                            public void onFailure(Call<PlantingVerificationResponse> call, Throwable t) {
+                                                offlineFetch(t.getMessage());
 
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-
-                            }catch (Exception e){
-
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<TasksResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
-                        }
-                    });
-                }
-
-                //FarmerRecruiteActivity/Crop Date
-                if(offline == 19 || offline == 0) {
-                    Call<List<CropDateResponse>> callCropDate = service.getRecruitCropDates(auth_key);
-                    callCropDate.enqueue(new Callback<List<CropDateResponse>>() {
-                        @Override
-                        public void onResponse(Call<List<CropDateResponse>> call, Response<List<CropDateResponse>> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "17");
-                            try {
-                                if (response.body() != null) {
-                                    if (response.body().size() > 0) {
-                                        // reportDataFetched("FarmerRecruiteActivity/Crop Date", response.body().toString(),context);
-                                        CropDateDB.deleteAll(CropDateDB.class);
-                                        for (CropDateResponse blacklist : response.body()) {
-                                            String date = "";
-                                            for (int elem : blacklist.getPlantingDate()) {
-                                                date = elem + "-" + date;
                                             }
-                                            CropDateDB book = new CropDateDB(blacklist.getId(), blacklist.getProdId(), blacklist.getProdname(), date);
-                                            book.save();
-
-                                        }
+                                        });
                                     }
+
+                                    count++;
                                 }
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
+                            }
+
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
+                        }
+
+                    }catch (Exception e){
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<TasksResponse> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+        //FarmerRecruiteActivity/Crop Date
+        if(offline == 19 || offline == 0) {
+            Call<List<CropDateResponse>> callCropDate = service.getRecruitCropDates(auth_key);
+            callCropDate.enqueue(new Callback<List<CropDateResponse>>() {
+                @Override
+                public void onResponse(Call<List<CropDateResponse>> call, Response<List<CropDateResponse>> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "17");
+                    try {
+                        if (response.body() != null) {
+                            if (response.body().size() > 0) {
+                                // reportDataFetched("FarmerRecruiteActivity/Crop Date", response.body().toString(),context);
+                                CropDateDB.deleteAll(CropDateDB.class);
+                                for (CropDateResponse blacklist : response.body()) {
+                                    String date = "";
+                                    for (int elem : blacklist.getPlantingDate()) {
+                                        date = elem + "-" + date;
+                                    }
+                                    CropDateDB book = new CropDateDB(blacklist.getId(), blacklist.getProdId(), blacklist.getProdname(), date);
+                                    book.save();
+
                                 }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
+                            }
+                        }
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
+                        }
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<List<CropDateResponse>> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+        //SprayConfirmationActivity/Spray Number
+        if(offline == 20 || offline == 0) {
+            Call<SprayNumbersResponse> callSprayNumber = service.getspraynumber(auth_key);
+            callSprayNumber.enqueue(new Callback<SprayNumbersResponse>() {
+                @Override
+                public void onResponse(Call<SprayNumbersResponse> call, Response<SprayNumbersResponse> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "18");
+                    try {
+                        if (response.body().getPageItemsSprayNumbers().size() != 0) {
+
+                            SprayNumberDB.deleteAll(SprayNumberDB.class);
+                            for (PageItemsSprayNumber blacklist : response.body().getPageItemsSprayNumbers()) {
+
+                                SprayNumberDB book = new SprayNumberDB(blacklist.getId(), blacklist.getSprayno());
+                                book.save();
+                            }
+
+                            //reportDataFetched("SprayConfirmationActivity/Spray Number", response.body().toString(),context);
+
+                        } else {
+
+                        }
+
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
+                        }
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<SprayNumbersResponse> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+        //CropDesturctionActivity/destruction reason
+        if(offline == 21 || offline == 0) {
+            Call<List<DestructionReasonResponse>> callDestructionReason = service.getdestructionreasons(auth_key);
+            callDestructionReason.enqueue(new Callback<List<DestructionReasonResponse>>() {
+                @Override
+                public void onResponse(Call<List<DestructionReasonResponse>> call, Response<List<DestructionReasonResponse>> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "19");
+                    try{
+                        if (response.body() != null) {
+                            if (response.body().size() > 0) {
+                                CropDestructionDB.deleteAll(CropDestructionDB.class);
+                                for (DestructionReasonResponse reason : response.body()) {
+                                    CropDestructionDB book = new CropDestructionDB(reason.getId(), reason.getDestructionShtDesc(), reason.getDestructionReason(), reason.getDestructionType());
+                                    book.save();
+                                }
+
+                                // reportDataFetched("CropDesturctionActivity/destruction reason", response.body().toString(),context);
+                            }
+                        }
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
+                        }
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<List<DestructionReasonResponse>> call, Throwable t) {offlineFetch(t.getMessage());
+
+                }
+            });
+        }
+
+        //ManAcivity, Spinner bank
+        if(offline == 22 || offline == 0) {
+            Call<List<BankNameResponse>> callSpinnerBank = service.getbankname(auth_key);
+            callSpinnerBank.enqueue(new Callback<List<BankNameResponse>>() {
+                @Override
+                public void onResponse(Call<List<BankNameResponse>> call, Response<List<BankNameResponse>> response) {
+                    Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "20");
+
+                    try{
+                        if (response.body() != null) {
+                            if (response.body().size() > 0) {
+                                BankNameDB.deleteAll(BankNameDB.class);
+                                for (BankNameResponse bank : response.body()) {
+                                    BankNameDB book = new BankNameDB(bank.getId(), bank.getBankname(), bank.getAccountformat());
+                                    book.save();
+                                }
+
+
+                                //reportDataFetched("ManAcivity, Spinner bank", response.body().toString(),context);
                             }
 
                         }
-
-                        @Override
-                        public void onFailure(Call<List<CropDateResponse>> call, Throwable t) {offlineFetch(t.getMessage());
-
+                        if(response.code() == 200){
+                            offlineFetch("");
+                        }else{
+                            offlineFetch(response.errorBody() != null ?
+                                    new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                    : response.message());
                         }
-                    });
+                    } catch (Exception e) {
+                        offlineFetch(e.getMessage());
+                    }
+
                 }
 
-                //SprayConfirmationActivity/Spray Number
-                if(offline == 20 || offline == 0) {
-                    Call<SprayNumbersResponse> callSprayNumber = service.getspraynumber(auth_key);
-                    callSprayNumber.enqueue(new Callback<SprayNumbersResponse>() {
-                        @Override
-                        public void onResponse(Call<SprayNumbersResponse> call, Response<SprayNumbersResponse> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "18");
-                            try {
-                                if (response.body().getPageItemsSprayNumbers().size() != 0) {
+                @Override
+                public void onFailure(Call<List<BankNameResponse>> call, Throwable t) {offlineFetch(t.getMessage());
 
-                                    SprayNumberDB.deleteAll(SprayNumberDB.class);
-                                    for (PageItemsSprayNumber blacklist : response.body().getPageItemsSprayNumbers()) {
-
-                                        SprayNumberDB book = new SprayNumberDB(blacklist.getId(), blacklist.getSprayno());
-                                        book.save();
-                                    }
-
-                                    //reportDataFetched("SprayConfirmationActivity/Spray Number", response.body().toString(),context);
-
-                                } else {
-
-                                }
-
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<SprayNumbersResponse> call, Throwable t) {offlineFetch(t.getMessage());
-
-                        }
-                    });
                 }
-
-                //CropDesturctionActivity/destruction reason
-                if(offline == 21 || offline == 0) {
-                    Call<List<DestructionReasonResponse>> callDestructionReason = service.getdestructionreasons(auth_key);
-                    callDestructionReason.enqueue(new Callback<List<DestructionReasonResponse>>() {
-                        @Override
-                        public void onResponse(Call<List<DestructionReasonResponse>> call, Response<List<DestructionReasonResponse>> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "19");
-                            try{
-                                if (response.body() != null) {
-                                    if (response.body().size() > 0) {
-                                        CropDestructionDB.deleteAll(CropDestructionDB.class);
-                                        for (DestructionReasonResponse reason : response.body()) {
-                                            CropDestructionDB book = new CropDestructionDB(reason.getId(), reason.getDestructionShtDesc(), reason.getDestructionReason(), reason.getDestructionType());
-                                            book.save();
-                                        }
-
-                                        // reportDataFetched("CropDesturctionActivity/destruction reason", response.body().toString(),context);
-                                    }
-                                }
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<DestructionReasonResponse>> call, Throwable t) {offlineFetch(t.getMessage());
-
-                        }
-                    });
-                }
-                
-                //ManAcivity, Spinner bank
-                if(offline == 22 || offline == 0) {
-                    Call<List<BankNameResponse>> callSpinnerBank = service.getbankname(auth_key);
-                    callSpinnerBank.enqueue(new Callback<List<BankNameResponse>>() {
-                        @Override
-                        public void onResponse(Call<List<BankNameResponse>> call, Response<List<BankNameResponse>> response) {
-                            Log.d(context.getPackageName().toUpperCase(),"Checking whats not called: " + "20");
-
-                            try{
-                                if (response.body() != null) {
-                                    if (response.body().size() > 0) {
-                                        BankNameDB.deleteAll(BankNameDB.class);
-                                        for (BankNameResponse bank : response.body()) {
-                                            BankNameDB book = new BankNameDB(bank.getId(), bank.getBankname(), bank.getAccountformat());
-                                            book.save();
-                                        }
-
-
-                                        //reportDataFetched("ManAcivity, Spinner bank", response.body().toString(),context);
-                                    }
-
-                                }
-                                if(response.code() == 200){
-                                    offlineFetch("");
-                                }else{
-                                    offlineFetch(response.errorBody() != null ?
-                                            new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                            : response.message());
-                                }
-                            } catch (Exception e) {
-                                offlineFetch(e.getMessage());
-                            }
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<BankNameResponse>> call, Throwable t) {offlineFetch(t.getMessage());
-
-                        }
-                    });
-                }
-
-
+            });
+        }
 
 //                return null;
 //            }

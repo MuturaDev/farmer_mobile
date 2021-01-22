@@ -11,8 +11,8 @@ android {
         applicationId "com.cw.farmer"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 20
-        versionName "13.0.6.0"
+        versionCode 25
+        versionName "13.2.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -89,6 +89,7 @@ dependencies {
 
     //CrashReporting
     //implementation 'com.devs:acr:1.0.1'
+
 
 
 

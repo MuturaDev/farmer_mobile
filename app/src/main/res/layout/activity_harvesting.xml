@@ -20,7 +20,17 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_harvesting" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp">
+
+        <include layout="@layout/content_harvesting" />
+
+        <include layout="@layout/edit_content_layout"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 

@@ -5,7 +5,16 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class UtilityFunctions {
 
@@ -46,6 +55,20 @@ public class UtilityFunctions {
             }
         } catch (Exception ex) {
             Log.e(TAG, "Was not able to restart application");
+        }
+    }
+
+
+    //YOU WILL NEED TO RUN THIS AT THE BACKGROUND, INCASE ASYNC IS NOT USED.
+    public static boolean isConnected(Context context) {
+        try{
+            String command = "ping -c 1 google.com";
+            return Runtime.getRuntime().exec(command).waitFor() == 0;
+
+        }catch (InterruptedException ex){
+            return false;
+        }catch (IOException ex){
+            return false;
         }
     }
 }

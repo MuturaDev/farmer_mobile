@@ -9,16 +9,19 @@ public class PlantingVerifyDB extends SugarRecord<PlantingVerifyDB> {
     public String contractid;
     public String plant_value;
     public String water_value;
+    public String confirmedUnits;
+
 
     public PlantingVerifyDB() {
     }
 
-    public PlantingVerifyDB(String cordinates, String location, String contractid, String plant_value, String water_value) {
+    public PlantingVerifyDB(String cordinates, String location, String contractid, String plant_value, String water_value,String confirmedUnits) {
         this.cordinates = cordinates;
         this.location = location;
         this.contractid = contractid;
         this.plant_value = plant_value;
         this.water_value = water_value;
+        this.confirmedUnits = confirmedUnits;
     }
 
 

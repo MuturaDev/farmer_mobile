@@ -1,16 +1,8 @@
 package com.cw.farmer.offlinefunctions;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,41 +14,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
-import com.cw.farmer.adapter.DashboardAdapter;
 import com.cw.farmer.adapter.OfflineDataRecyclerAdapter;
 import com.cw.farmer.model.Accountdetails;
 import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.model.BankNameDB;
-import com.cw.farmer.model.BankNameResponse;
 import com.cw.farmer.model.ContractSignDB;
-import com.cw.farmer.model.CropDateDB;
-import com.cw.farmer.model.CropDateResponse;
-import com.cw.farmer.model.CropDestructionDB;
 import com.cw.farmer.model.CropDestructionPostDB;
-import com.cw.farmer.model.DestructionReasonResponse;
+import com.cw.farmer.model.EditContentModel;
 import com.cw.farmer.model.FarmerErrorResponse;
-import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.FarmerModel;
 import com.cw.farmer.model.FarmerModelDB;
-import com.cw.farmer.model.GeneralSpinnerResponse;
 import com.cw.farmer.model.HarvestingDB;
 import com.cw.farmer.model.Identitydetails;
-import com.cw.farmer.model.PageItemsSprayNumber;
-import com.cw.farmer.model.PageItemstask;
-import com.cw.farmer.model.PlantBlockResponse;
-import com.cw.farmer.model.PlantVerifyResponse;
-import com.cw.farmer.model.PlantingVerificationResponse;
 import com.cw.farmer.model.PlantingVerifyDB;
 import com.cw.farmer.model.RecruitFarmerDB;
-import com.cw.farmer.model.RegisterResponse;
-import com.cw.farmer.model.SearchAreaResponse;
-import com.cw.farmer.model.SearchContractResponse;
-import com.cw.farmer.model.SearchDestructionResponse;
-import com.cw.farmer.model.SprayFarmerResponse;
-import com.cw.farmer.model.SprayNumberDB;
-import com.cw.farmer.model.SprayNumbersResponse;
 import com.cw.farmer.model.SprayPostDB;
-import com.cw.farmer.model.TasksResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.cw.farmer.table_models.ApplyFertilizerTB;
@@ -67,7 +38,6 @@ import com.cw.farmer.table_models.IrrigateBlockTB;
 import com.cw.farmer.table_models.PlantBlockTB;
 import com.cw.farmer.table_models.RegisterBlockTB;
 import com.cw.farmer.table_models.ScoutingTB;
-import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -75,7 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -89,6 +58,8 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
     private OfflineDataRecyclerAdapter mAdapter;
     static List<OfflineDataItem> offlineDataItemList;
     static List<OfflineDataItem> offlineUploadDataItemList;
+    public static ArrayList<EditContentModel> registerfarmer = new ArrayList<>();
+    public static ArrayList<EditContentModel> harvestCollection = new ArrayList<>();
 
 
     private void populateUploadData(){
@@ -293,15 +264,18 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
     private ProgressBar progress;
     private Button btn_checkData;
 
-    
 
-
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.offline_sync_activity_layout);
-
+        registerfarmer.clear();
+        harvestCollection.clear();
         progress = findViewById(R.id.progress);
         progressTitle = findViewById(R.id.progressTitle);
         progressTitle.setVisibility(View.GONE);
@@ -354,7 +328,7 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                         farmerModel.setMobileno(farmer.mobileno);
                         farmerModel.setEmail(farmer.email);
                         farmerModel.setGender(farmer.gender);
-                        farmerModel.getIdno(farmer.idno);
+                        farmerModel.setIdno(farmer.idno);
                         farmerModel.setDateOfBirth(farmer.dateOfBirth);
                         farmerModel.setActivated(farmer.activated);
                         farmerModel.setCenterid(farmer.centerid);
@@ -374,27 +348,19 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                         farmerModel.setAccountdetails(accountdetails);
                         farmerModel.setIdentitydetails(identitydetails);
 
+
                         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
                         APIService service = retrofit.create(APIService.class);
                         SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
                         String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
                         Call<FarmerErrorResponse> call = service.createFarmer(auth_key, farmerModel);
-//                            try{
-//                                Response<FarmerErrorResponse> response = call.execute();
-//                                FarmerErrorResponse farmerErrorResponse = response.body();
-//                                if(response.code() == 200){
-//
-//                                }
-//
-//
-//                            }catch(IOException ex){
-//
-//                            }
-
-
                         call.enqueue(new Callback<FarmerErrorResponse>() {
                             @Override
                             public void onResponse(Call<FarmerErrorResponse> call, Response<FarmerErrorResponse> response) {
+
+//123456789464664648464546846
+//123456789464664648464546846
+                                //ID Number  does not conform the standard...
 
                                 if (response.code() == 200) {
                                     upateProgress(FarmerModelDB.class, false,"");
@@ -402,9 +368,18 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                                 }else {
 
                                     try {
-                                        upateProgress(FarmerModelDB.class, true, response.errorBody() != null ?
+
+                                        String error = response.errorBody() != null ?
                                                 new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
-                                                : response.message());
+                                                : response.message();
+                                        EditContentModel model = new EditContentModel(farmer.firstname,
+                                                farmer,
+                                                error,
+                                                farmer.getId(),
+                                                false);
+                                        registerfarmer.add(model);
+
+                                        upateProgress(FarmerModelDB.class, true, error);
 
                                     } catch (Exception e) {
                                         upateProgress(FarmerModelDB.class, true, e.getMessage());
@@ -519,6 +494,7 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                         hashMap.put("contractid", plant.contractid);
                         hashMap.put("plantconfirmed", plant.plant_value);
                         hashMap.put("waterconfirmed", plant.water_value);
+                        hashMap.put("confirmedUnits", plant.confirmedUnits);
 
 
                         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
@@ -627,6 +603,16 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                                     harvest.delete();
                                 }else{
                                     try {
+
+                                        String error = response.errorBody() != null ?
+                                                new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
+                                                : response.message();
+                                        EditContentModel model = new EditContentModel(harvest.farmerName + ", harvested " + harvest.harvestkilos + " kgs",
+                                                harvest,
+                                                error,
+                                                harvest.getId(),
+                                                false);
+                                        harvestCollection.add(model);
                                         upateProgress(HarvestingDB.class, true, response.errorBody() != null ?
                                                 new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
                                                 : response.message());

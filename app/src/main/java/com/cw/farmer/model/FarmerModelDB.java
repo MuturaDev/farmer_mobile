@@ -2,7 +2,9 @@ package com.cw.farmer.model;
 
 import com.orm.SugarRecord;
 
-public class FarmerModelDB extends SugarRecord<FarmerModelDB> {
+import java.io.Serializable;
+
+public class FarmerModelDB extends SugarRecord<FarmerModelDB> implements Serializable {
 
 
     public String firstname;

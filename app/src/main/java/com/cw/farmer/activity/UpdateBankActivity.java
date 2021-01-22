@@ -94,24 +94,35 @@ public class UpdateBankActivity extends HandleConnectionAppCompatActivity {
         Intent iin = getIntent();
         Bundle b = iin.getExtras();
 
-        if (b != null) {
-            et_accountno.setText((String) b.get("account_name"));
-            //account_name,bank_name,account_image
-            farmer_id = (String) b.get("id");
-            bank_name = (String) b.get("bank_name");
-            account_image = (String) b.get("account_image");
-            entry_id = (String) b.get("entry_id");
-            account_name = (String) b.get("account_name");
-            status_farmer = (String) b.get("status_farmer");
-            dob = (String) b.get("dob");
 
-            pageItem = b.getParcelable("item");
+//        if (b != null) {
+//            et_accountno.setText((String) b.get("account_name"));
+//            //account_name,bank_name,account_image
+//            farmer_id = (String) b.get("id");
+//            bank_name = (String) b.get("bank_name");
+//            account_image = (String) b.get("account_image");
+//            entry_id = (String) b.get("entry_id");
+//            account_name = (String) b.get("account_name");
+//            status_farmer = (String) b.get("status_farmer");
+//            dob = (String) b.get("dob");
+//
+//            pageItem = b.getParcelable("item");
+//
+//            if(account_image != null) {
+//                byte[] imageByteArray = Base64.decode(account_image, Base64.DEFAULT);
+//                iv_bank_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                iv_bank_image.setAdjustViewBounds(true);
+//                Glide.with(UpdateBankActivity.this).asBitmap().load(imageByteArray).into(iv_bank_image);
+//            }
+//        }
 
-            byte[] imageByteArray = Base64.decode(account_image, Base64.DEFAULT);
-            iv_bank_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            iv_bank_image.setAdjustViewBounds(true);
-            Glide.with(UpdateBankActivity.this).asBitmap().load(imageByteArray).into(iv_bank_image);
-        }
+
+
+
+
+
+
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
         APIService service = retrofit.create(APIService.class);

@@ -136,6 +136,7 @@ public class FarmerDocumentsActivity extends HandleConnectionAppCompatActivity {
     }
 
     public void opendoc(View v) {
+
         Intent intent = new Intent(FarmerDocumentsActivity.this, UpdateDocsActivity.class);
         intent.putExtra("id", pageItem.getId() + "");
         intent.putExtra("entry_id", entry_id + "");

@@ -50,10 +50,7 @@ public class ReturnActivity extends HandleConnectionAppCompatActivity{
         ArrayList<RequisitionResponse> pageItemArrayList;
         CentreRequiste centremain;
 
-
         private TextView tv_centre,tv_crop_date,tv_farmer_name,tv_no_of_units;
-
-
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +63,6 @@ public class ReturnActivity extends HandleConnectionAppCompatActivity{
         rv_register = findViewById(R.id.requistion_list);
         rv_register.setLayoutManager(new LinearLayoutManager(this));
         centremain = new CentreRequiste();
-
-
 
 
 
@@ -105,7 +100,6 @@ public class ReturnActivity extends HandleConnectionAppCompatActivity{
 
             if (NetworkUtil.getConnectivityStatusString(getApplicationContext()).equals("yes")) {
                 progressDialog = new ProgressDialog(this);
-
                 progressDialog.setCancelable(false);
                 // progressBar.setMessage("Please Wait...");
                 progressDialog.show();
@@ -119,7 +113,8 @@ public class ReturnActivity extends HandleConnectionAppCompatActivity{
                 call.enqueue(new Callback<PlantingVerificationResponse>() {
                     @Override
                     public void onResponse(Call<PlantingVerificationResponse> call, Response<PlantingVerificationResponse> response) {
-                        progressDialog.hide();
+                       if(progressDialog != null)
+                            progressDialog.hide();
 
                         if (response.body() != null) {
                             Log.d(ReturnActivity.this.getPackageName().toUpperCase(), response.body().toString());
@@ -169,10 +164,12 @@ public class ReturnActivity extends HandleConnectionAppCompatActivity{
 
                 HashMap hashMap = (HashMap) OfflineFeature.getSharedPreferences("ReturnActivityOffline",getApplicationContext(),HashMap.class);
 
-                tv_centre.setText(hashMap.get("centre").toString());
-                tv_crop_date.setText(hashMap.get("cropDate").toString());
-                tv_farmer_name.setText(hashMap.get("farmerName").toString());
-                tv_no_of_units.setText(hashMap.get("noOfUnits").toString());
+                if(hashMap != null) {
+                    tv_centre.setText(hashMap.get("centre").toString());
+                    tv_crop_date.setText(hashMap.get("cropDate").toString());
+                    tv_farmer_name.setText(hashMap.get("farmerName").toString());
+                    tv_no_of_units.setText(hashMap.get("noOfUnits").toString());
+                }
 
             }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -214,7 +211,7 @@ public class ReturnActivity extends HandleConnectionAppCompatActivity{
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                progressDialog.hide();
+                pDialog.hide();
                 try {
                     if (response.isSuccessful()) {
                         new SweetAlertDialog(ReturnActivity.this, SweetAlertDialog.SUCCESS_TYPE)

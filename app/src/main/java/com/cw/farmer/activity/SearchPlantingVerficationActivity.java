@@ -75,6 +75,8 @@ public class SearchPlantingVerficationActivity extends HandleConnectionAppCompat
             }else{
                 pageItemArrayList = new ArrayList<>();
                 pageItemArrayList.clear();
+
+                if(list != null)
                 for(PageItemsPlantVerify item :  list){
                     if(item.getFarmerName().toLowerCase().contains(farmerSearch.toLowerCase())
                     || item.getFarmerIdNo().toLowerCase().contains(farmerSearch.toLowerCase())){

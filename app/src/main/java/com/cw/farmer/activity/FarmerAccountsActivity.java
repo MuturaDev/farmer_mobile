@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,10 @@ import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.cw.farmer.table_models.FarmerAccountTB;
 
+import org.imaginativeworld.oopsnointernet.ConnectionCallback;
+import org.imaginativeworld.oopsnointernet.NoInternetDialog;
+import org.imaginativeworld.oopsnointernet.NoInternetSnackbar;
+
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -39,6 +44,7 @@ public class FarmerAccountsActivity extends HandleConnectionAppCompatActivity {
     PageItem pageItem;
     Integer id;
     String farmer_id, account_name, bank_name, account_image, entry_id, status_farmer, dob;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,18 +149,19 @@ public class FarmerAccountsActivity extends HandleConnectionAppCompatActivity {
     }
 
     public void opendoc(View v) {
-        Intent intent = new Intent(FarmerAccountsActivity.this, UpdateBankActivity.class);
-        intent.putExtra("id", pageItem.getId() + "");
-        intent.putExtra("entry_id", entry_id + "");
-        intent.putExtra("account_name", account_name);
-        intent.putExtra("bank_name", bank_name);
-        intent.putExtra("account_image", account_image);
-        intent.putExtra("status_farmer", status_farmer);
-        intent.putExtra("dob", dob);
-        Bundle bundle1 = new Bundle();
-        bundle1.putParcelable("item", pageItem);
-        intent.putExtras(bundle1);
-        startActivity(intent);
+//        Intent intent = new Intent(FarmerAccountsActivity.this, UpdateBankActivity.class);
+//        intent.putExtra("id", pageItem.getId() + "");
+//        intent.putExtra("entry_id", entry_id + "");
+//        intent.putExtra("account_name", account_name);
+//        intent.putExtra("bank_name", bank_name);
+        //TODO:ERROR: HERE IS THE ISSUE
+//        intent.putExtra("account_image", account_image);
+//        intent.putExtra("status_farmer", status_farmer);
+//        //intent.putExtra("dob", dob);
+//       // Bundle bundle1 = new Bundle();
+//       // bundle1.putParcelable("item", pageItem);
+//       // intent.putExtras(bundle1);
+//        startActivity(intent);
     }
 
 }

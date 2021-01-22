@@ -333,7 +333,7 @@ public class PlantingVerificationActivity extends HandleConnectionAppCompatActiv
                     }
                 });
             } else {
-                PlantingVerifyDB book = new PlantingVerifyDB(coordinates, location_str, farmer_id_string, plant_value, water_value);
+                PlantingVerifyDB book = new PlantingVerifyDB(coordinates, location_str, farmer_id_string, plant_value, water_value,confirmedUnits.getText().toString());
                 book.save();
                 pDialog.hide();
                 new SweetAlertDialog(PlantingVerificationActivity.this, SweetAlertDialog.WARNING_TYPE)
