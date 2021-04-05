@@ -6,7 +6,12 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+import com.cw.farmer.activity.CropWalkActivity;
+import com.cw.farmer.activity.SearchCropWalkActivity;
+import com.cw.farmer.custom.Utility;
 import com.cw.farmer.internetConnectionBroadcast.NotificationNotify;
 import com.cw.farmer.model.BankNameDB;
 import com.cw.farmer.model.BankNameResponse;
@@ -15,6 +20,7 @@ import com.cw.farmer.model.CropDateDB;
 import com.cw.farmer.model.CropDateResponse;
 import com.cw.farmer.model.CropDestructionDB;
 import com.cw.farmer.model.CropDestructionPostDB;
+import com.cw.farmer.model.CropWalkPageItemResponse;
 import com.cw.farmer.model.DestructionReasonResponse;
 import com.cw.farmer.model.FarmerHarvestResponse;
 import com.cw.farmer.model.FarmerModelDB;
@@ -38,6 +44,7 @@ import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.model.SearchAreaResponse;
 import com.cw.farmer.model.SearchContractPageItem;
 import com.cw.farmer.model.SearchContractResponse;
+import com.cw.farmer.model.SearchCropWalkResponse;
 import com.cw.farmer.model.SearchDestructionResponse;
 import com.cw.farmer.model.SprayFarmerResponse;
 import com.cw.farmer.model.SprayNumberDB;
@@ -46,6 +53,8 @@ import com.cw.farmer.model.SprayPostDB;
 import com.cw.farmer.model.TasksResponse;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.spinner_models.CropStageResponse;
+import com.cw.farmer.spinner_models.GrowthParameterResponse;
 import com.cw.farmer.table_models.ApplyFertilizerTB;
 import com.cw.farmer.table_models.ChangeCentreTB;
 import com.cw.farmer.table_models.EditFarmerDetailsTB;
@@ -57,8 +66,11 @@ import com.cw.farmer.table_models.ScoutingTB;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -1095,6 +1107,71 @@ import static android.content.Context.MODE_PRIVATE;
                     });
                 }
 
+//                if(offline == 23 || offline == 0){
+//                    //FIXME: HOW WILL THIS WORK OFFLINE, IF IT NEEDS A VALUE TO BE SELECTED BEFORE
+//                    Call<List<GrowthParameterResponse>> call = service.getGrowthParameters(auth_key, Long.valueOf(0));
+//                    call.enqueue(new Callback<List<GrowthParameterResponse>>() {
+//                        @Override
+//                        public void onResponse(Call<List<GrowthParameterResponse>> call, Response<List<GrowthParameterResponse>> response) {
+//
+//                            if(response.code() == 200 || response.code() == 201)
+//                                if (response.body() != null) {
+//                                    if (response.body().size() > 0) {
+//                                        OfflineFeature.saveSharedPreferences(response.body(), "GrowthParameterSpinner", context);
+//                                    }
+//                                }
+//
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Call<List<GrowthParameterResponse>> call, Throwable t) {
+//
+//                           // Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//                }
+
+                if(offline == 24 || offline == 0){
+                    Call<List<CropStageResponse>> call = service.getCropStages(auth_key);
+                    call.enqueue(new Callback<List<CropStageResponse>>() {
+                        @Override
+                        public void onResponse(Call<List<CropStageResponse>> call, Response<List<CropStageResponse>> response) {
+
+                            if(response.code() == 200 || response.code() == 201)
+                                if (response.body() != null) {
+                                    if (response.body().size() > 0) {
+                                        OfflineFeature.saveSharedPreferences(response.body(), "CropStageSpinner", context);
+                                    }
+                                }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<CropStageResponse>> call, Throwable t) {
+                           // Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                if(offline == 25 || offline == 0){
+                    Call<SearchCropWalkResponse> call = service.getCropWalkSearch(auth_key,offset,limit, "");
+                    call.enqueue(new Callback<SearchCropWalkResponse>() {
+                        @Override
+                        public void onResponse(Call<SearchCropWalkResponse> call, Response<SearchCropWalkResponse> response) {
+
+                           if(response.code() == 200 || response.code() == 201)
+                                if (response.body().getTotalFilteredRecords() > 0) {
+                                    OfflineFeature.saveSharedPreferences(response.body().getPageItems(), "CropWalkSearch", context);
+                                }
+                        }
+
+                        @Override
+                        public void onFailure(Call<SearchCropWalkResponse> call, Throwable t) {
+
+                        }
+                    });
+                }
+
 
 
                 return null;
@@ -1121,8 +1198,22 @@ import static android.content.Context.MODE_PRIVATE;
     }
 
 
+     public static List<CropStageResponse> getSharedPreferencesArray(String key, Context context, Object cClass){
+         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+         Gson gson = new Gson();
+         String json = prefs.getString(key, null);
 
-    public static Object getSharedPreferences(String key, Context context,Object cClass){
+         Type type = null;
+
+         if(cClass.equals(CropStageResponse.class)){
+             type = new TypeToken<List<CropStageResponse>>(){
+             }.getType();
+         }
+
+         return gson.fromJson(json, type);
+     }
+
+    public static Object getSharedPreferencesObject(String key, Context context, Object cClass){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Gson gson = new Gson();
         String json = prefs.getString(key, null);
@@ -1196,6 +1287,21 @@ import static android.content.Context.MODE_PRIVATE;
         if(cClass.equals(HashMap.class)){
             type = new TypeToken<HashMap>(){
             }.getType();
+        }
+
+        //use the one above
+//        if(cClass.equals(CropStageResponse.class)){
+//            type = new TypeToken<CropStageResponse>(){
+//            }.getType();
+//        }
+
+//        if(cClass.equals(GrowthParameterResponse.class)){
+//            type = new TypeToken<GrowthParameterResponse>(){
+//            }.getType();
+//        }
+
+        if(cClass.equals(CropWalkPageItemResponse.class)){
+            type = new TypeToken<ArrayList<CropWalkPageItemResponse>>(){}.getType();
         }
 
 

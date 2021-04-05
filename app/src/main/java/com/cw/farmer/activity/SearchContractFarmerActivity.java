@@ -100,11 +100,11 @@ public class SearchContractFarmerActivity extends HandleConnectionAppCompatActiv
 
 
             if(searchWord.isEmpty()){
-                pageItemArrayList = (ArrayList<SearchContractPageItem>) OfflineFeature.getSharedPreferences("contractfarmer", getApplicationContext(), SearchContractPageItem.class);
+                pageItemArrayList = (ArrayList<SearchContractPageItem>) OfflineFeature.getSharedPreferencesObject("contractfarmer", getApplicationContext(), SearchContractPageItem.class);
             }else {
                 pageItemArrayList = new ArrayList<>();
                 pageItemArrayList.clear();
-                for (SearchContractPageItem item : (ArrayList<SearchContractPageItem>) OfflineFeature.getSharedPreferences("contractfarmer", getApplicationContext(), SearchContractPageItem.class)) {
+                for (SearchContractPageItem item : (ArrayList<SearchContractPageItem>) OfflineFeature.getSharedPreferencesObject("contractfarmer", getApplicationContext(), SearchContractPageItem.class)) {
 
                     if (item.getFarmerName().toLowerCase().contains(searchWord.toLowerCase())
                           || item.getIdno().toLowerCase().contains(searchWord.toLowerCase())  ) {

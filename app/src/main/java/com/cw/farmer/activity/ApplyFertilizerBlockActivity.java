@@ -412,7 +412,7 @@ public class ApplyFertilizerBlockActivity extends AppCompatActivity {
                     GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Select Fertilizer");
                     farmNames.add(spinnerValue);
 
-                    for (GeneralSpinnerResponse names :  (ArrayList<GeneralSpinnerResponse>) OfflineFeature.getSharedPreferences("ApplyFertilizerSpinner", getApplicationContext(), GeneralSpinnerResponse.class)) {
+                    for (GeneralSpinnerResponse names :  (ArrayList<GeneralSpinnerResponse>) OfflineFeature.getSharedPreferencesObject("ApplyFertilizerSpinner", getApplicationContext(), GeneralSpinnerResponse.class)) {
                         GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
                         farmNames.add(spinnerValue1);
                     }

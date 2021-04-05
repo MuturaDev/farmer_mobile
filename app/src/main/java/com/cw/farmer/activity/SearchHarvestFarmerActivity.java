@@ -76,7 +76,7 @@ public class SearchHarvestFarmerActivity extends HandleConnectionAppCompatActivi
 
             String farmerSearch = farmer_search.getText().toString();
 
-            ArrayList<PageItemHarvest> list = (ArrayList<PageItemHarvest>) OfflineFeature.getSharedPreferences("harvestfarmer", getApplicationContext(), PageItemHarvest.class);
+            ArrayList<PageItemHarvest> list = (ArrayList<PageItemHarvest>) OfflineFeature.getSharedPreferencesObject("harvestfarmer", getApplicationContext(), PageItemHarvest.class);
 
             if(farmerSearch.isEmpty()){
                 pageItemArrayList = list;

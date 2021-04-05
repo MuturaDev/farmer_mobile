@@ -70,7 +70,7 @@ public class SearchDestructionFarmerActivity extends HandleConnectionAppCompatAc
             getData();
         } else {
             //pageItemArrayList = getArrayList("destructionfarmer");
-          ArrayList<PageItemsDestruction> list =  (ArrayList<PageItemsDestruction>) OfflineFeature.getSharedPreferences("destructionfarmer", getApplicationContext(), PageItemsDestruction.class);
+          ArrayList<PageItemsDestruction> list =  (ArrayList<PageItemsDestruction>) OfflineFeature.getSharedPreferencesObject("destructionfarmer", getApplicationContext(), PageItemsDestruction.class);
            String searchFarmer =  farmer_search.getText().toString();
            if(searchFarmer.isEmpty()){
                pageItemArrayList = list;

@@ -162,7 +162,7 @@ public class ReturnActivity extends HandleConnectionAppCompatActivity{
                 });
             }else{
 
-                HashMap hashMap = (HashMap) OfflineFeature.getSharedPreferences("ReturnActivityOffline",getApplicationContext(),HashMap.class);
+                HashMap hashMap = (HashMap) OfflineFeature.getSharedPreferencesObject("ReturnActivityOffline",getApplicationContext(),HashMap.class);
 
                 if(hashMap != null) {
                     tv_centre.setText(hashMap.get("centre").toString());

@@ -127,12 +127,37 @@
     <string name="catcho_report_title1">Farmer App</string>
     <string name="catcho_report_title2">\t\t\tCrash Reporter</string>
     <string name="catcho_title">Title</string>
-    <string name="catcho_description">Description</string>
+    <string name="catcho_description">Describe the issue kindly</string>
     <string name="catcho_device_info">Instructions</string>
     <string name="catcho_email">Email</string>
     <string name="catcho_send_email">Send Email...</string>
     <string name="catcho_no_email_clients">There are no email clients installed.</string>
     <string name="catcho_err_send_msg">There\'s an error during send the msg, please try again later.</string>
 
+
+<!--    CROP WALK-->
+   <string name="et_select_farmer">Select Farmer</string>
+    <string name="et_crop_date">Crop Date</string>
+    <string name="et_crop_stage">Crop Stage</string>
+    <string name="et_growth_parameter">Growth Parameter</string>
+    <string name="et_comment">Comment</string>
+    <string name="et_additional_feedback">Additional Feedback</string>
+    <string name="lbl_btn_take_photo">Take Photo</string>
+    <string name="lbl_submit">Submit</string>
+    
+    
+    <string-array name="sp_crop_stage">
+        <item>Crop Stage</item>
+    </string-array>
+    
+    <string-array name="sp_growth_parameter">
+        <item>Growth Parameter</item>
+    </string-array>
+
+    <string-array name="sp_comment">
+        <item></item>
+        <item>Dry</item>
+        <item>Wet</item>
+    </string-array>
 
 </resources>

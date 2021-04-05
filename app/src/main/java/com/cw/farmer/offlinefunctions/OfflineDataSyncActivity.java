@@ -2,6 +2,7 @@ package com.cw.farmer.offlinefunctions;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -19,6 +20,7 @@ import com.cw.farmer.model.Accountdetails;
 import com.cw.farmer.model.AllResponse;
 import com.cw.farmer.model.ContractSignDB;
 import com.cw.farmer.model.CropDestructionPostDB;
+import com.cw.farmer.model.CropWalkTB;
 import com.cw.farmer.model.EditContentModel;
 import com.cw.farmer.model.FarmerErrorResponse;
 import com.cw.farmer.model.FarmerModel;
@@ -38,6 +40,7 @@ import com.cw.farmer.table_models.IrrigateBlockTB;
 import com.cw.farmer.table_models.PlantBlockTB;
 import com.cw.farmer.table_models.RegisterBlockTB;
 import com.cw.farmer.table_models.ScoutingTB;
+import com.cw.farmer.utils.UtilityFunctions;
 
 import org.json.JSONObject;
 
@@ -216,6 +219,15 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
         );
         if(editFarmerDetailsItem.getDataItemSize() > 0) offlineDataItemList.add(editFarmerDetailsItem);
 
+        OfflineDataItem crossWalk = new OfflineDataItem(
+                CropWalkTB.class,
+                0,
+                CropWalkTB.listAll(CropWalkTB.class).size(),
+                false,
+                "Crop Walk Details"
+        );
+        if(crossWalk.getDataItemSize() > 0) offlineDataItemList.add(crossWalk);
+
 
         if(offlineDataItemList.size() > 0){
             findViewById(R.id.no_content).setVisibility(View.GONE);
@@ -270,6 +282,8 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
         finish();
     }
 
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -295,6 +309,14 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
 
         offlineDataItemList = new ArrayList<>();
         offlineDataItemList.clear();
+
+        Button btn_done = findViewById(R.id.btn_done);
+        btn_done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
 //        private Object DataItemObject;
 //        private int DataItemProgress;
@@ -382,6 +404,14 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                                         upateProgress(FarmerModelDB.class, true, error);
 
                                     } catch (Exception e) {
+
+                                        EditContentModel model = new EditContentModel(farmer.firstname,
+                                                farmer,
+                                                e.getMessage(),
+                                                farmer.getId(),
+                                                false);
+                                        registerfarmer.add(model);
+
                                         upateProgress(FarmerModelDB.class, true, e.getMessage());
                                     }
 
@@ -604,6 +634,7 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                                 }else{
                                     try {
 
+
                                         String error = response.errorBody() != null ?
                                                 new JSONObject(response.errorBody().string()).getJSONArray("errors").getJSONObject(0).get("developerMessage").toString()
                                                 : response.message();
@@ -618,6 +649,12 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                                                 : response.message());
 
                                     } catch (Exception e) {
+                                        EditContentModel model = new EditContentModel(harvest.farmerName + ", harvested " + harvest.harvestkilos + " kgs",
+                                                harvest,
+                                                e.getMessage(),
+                                                harvest.getId(),
+                                                false);
+                                        harvestCollection.add(model);
                                         upateProgress(HarvestingDB.class, true, e.getMessage());
                                     }
                                 }
@@ -964,7 +1001,6 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
 
 
                     List<EditFarmerDetailsTB> editFarmer = EditFarmerDetailsTB.listAll(EditFarmerDetailsTB.class);
-
                     for (EditFarmerDetailsTB details : editFarmer) {
                         HashMap<String, String> hashMap = new HashMap<>();
                         hashMap.put("farmerId", details.getFarmerId());
@@ -1007,6 +1043,59 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                         });
                     }
 
+                }
+
+                List<CropWalkTB> cropWalksList = CropWalkTB.listAll(CropWalkTB.class);
+                for(CropWalkTB cropWalk : cropWalksList){
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("farmerid", Integer.valueOf(cropWalk.getFarmerid()));
+                    hashMap.put("dateid", Integer.valueOf(cropWalk.getDateid()));
+                    hashMap.put("walkid",Integer.valueOf(cropWalk.getWalkid()));
+                    hashMap.put("cordinates", cropWalk.getCordinates());
+                    hashMap.put("location", cropWalk.getLocation());
+                    hashMap.put("cropstageid",Integer.valueOf(cropWalk.getCropstageId()));
+                    hashMap.put("centerid", cropWalk.getCenterid() != null ? Integer.valueOf(cropWalk.getCenterid()) : null);
+                    hashMap.put("value",cropWalk.getValue());
+                    hashMap.put("units",Integer.valueOf(cropWalk.getUnits()));
+                    hashMap.put("image",cropWalk.getImage());
+                    hashMap.put("filetype",cropWalk.getFiletype());
+                    hashMap.put("comment", cropWalk.getComment());
+                    hashMap.put("other", cropWalk.getOther());
+                    hashMap.put("locale","en");
+
+                    //Log.d(this.getPackageName().toUpperCase(), "Before Submitting: " + hashMap.toString());
+
+
+                    Retrofit retrofit = ApiClient.getClient("/authentication/", getApplicationContext());
+                    APIService service = retrofit.create(APIService.class);
+                    SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                    String auth_key = prefs_auth.getString("auth_key", "Basic YWRtaW46bWFudW5pdGVk");
+                    Call<ResponseBody> call = service.postCropWalk(auth_key, hashMap);
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                            if (response.code() == 200) {
+                                upateProgress(CropWalkTB.class, false,"");
+                                cropWalk.delete();
+                            }else{
+                                try {
+                                    upateProgress(CropWalkTB.class, true, response.errorBody() != null ?
+                                            UtilityFunctions.parseThroughErrorBody(new JSONObject(response.errorBody().string()))
+                                            : response.message());
+
+                                } catch (Exception e) {
+                                    upateProgress(CropWalkTB.class, true, e.getMessage());
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            upateProgress(CropWalkTB.class, true, t.getMessage());
+                        }
+                    });
                 }
 
     }

@@ -11,8 +11,8 @@ android {
         applicationId "com.cw.farmer"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 25
-        versionName "13.2.0.0"
+        versionCode 26
+        versionName "13.3.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -89,6 +89,14 @@ dependencies {
 
     //CrashReporting
     //implementation 'com.devs:acr:1.0.1'
+
+    //FIXME: Has issues if you select multiple items
+    //implementation 'io.apptik.widget:multiselectspinner:1.0.12'
+
+    implementation 'com.github.pratikbutani:MultiSelectSpinner:f47c0dadea'
+
+    implementation 'com.github.okaybroda:ImageZoom:1.1.0'
+
 
 
 

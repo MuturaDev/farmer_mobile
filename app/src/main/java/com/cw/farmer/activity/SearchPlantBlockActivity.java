@@ -141,7 +141,7 @@ public class SearchPlantBlockActivity   extends HandleConnectionAppCompatActivit
            // Log.d("Search","Searching Harvest data...");
             getData();
         } else {
-            pageItemArrayList = (ArrayList<PageItemPlantBlock>) OfflineFeature.getSharedPreferences("searchPlantBlockActivity", getApplicationContext(),PageItemPlantBlock.class);
+            pageItemArrayList = (ArrayList<PageItemPlantBlock>) OfflineFeature.getSharedPreferencesObject("searchPlantBlockActivity", getApplicationContext(),PageItemPlantBlock.class);
             setData();
         }
     }

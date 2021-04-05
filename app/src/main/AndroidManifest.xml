@@ -309,6 +309,15 @@
                 android:value="com.cw.farmer.activity.MainActivity" />
         </activity>
 
+        <activity android:name=".activity.CropWalkActivity"
+            android:label="Register Farmer"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/AppThemeNoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cw.farmer.activity.MainActivity" />
+        </activity>
+
         <receiver android:name=".MyReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -345,6 +354,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+
+        <activity android:name=".activity.SearchCropWalkActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
 
         <activity android:name=".activity.IrrigateBlockActivity"
             android:theme="@style/AppTheme">

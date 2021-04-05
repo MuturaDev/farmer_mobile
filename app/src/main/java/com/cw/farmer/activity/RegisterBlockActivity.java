@@ -173,7 +173,7 @@ public class RegisterBlockActivity extends HandleConnectionAppCompatActivity {
                     GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Select Farm");
                     farmNames.add(spinnerValue);
 
-                    for (GeneralSpinnerResponse names : (ArrayList<GeneralSpinnerResponse>) OfflineFeature.getSharedPreferences("RegisterBlockSelectFarm",getApplicationContext(), GeneralSpinnerResponse.class)) {
+                    for (GeneralSpinnerResponse names : (ArrayList<GeneralSpinnerResponse>) OfflineFeature.getSharedPreferencesObject("RegisterBlockSelectFarm",getApplicationContext(), GeneralSpinnerResponse.class)) {
                         GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
                         farmNames.add(spinnerValue1);
                     }

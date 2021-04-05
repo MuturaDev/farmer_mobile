@@ -403,14 +403,15 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
             valid = false;
         } else {
             //CHECK FOR VALID PHONE NUMBER, 07XXXXXXXX
-            if (et_phoneno.getText().toString().substring(0, 1).contains("0") && et_phoneno.getText().toString().substring(1, 2).contains("7")) {//also check for 07
+            //NEW CHANGES TO ACCOMMODATE NEW PHONENUMBERS
+            if (et_phoneno.getText().toString().substring(0, 1).contains("0") /*&& et_phoneno.getText().toString().substring(1, 2).contains("7")*/) {//also check for 07
 
                 et_phoneno.setError(null);
             } else {
 
                 ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
-                SpannableStringBuilder ssbuilder = new SpannableStringBuilder("Enter a valid Phone Number eg. 07xxxxxxxx");
-                ssbuilder.setSpan(fgcspan, 0, "Enter a valid Phone Number eg. 07xxxxxxxx".length(), 0);
+                SpannableStringBuilder ssbuilder = new SpannableStringBuilder("Enter a valid Phone Number eg. 0xxxxxxxxx");
+                ssbuilder.setSpan(fgcspan, 0, "Enter a valid Phone Number eg. 0xxxxxxxxx".length(), 0);
                 et_phoneno.setError(ssbuilder);
                 valid = false;
 

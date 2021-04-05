@@ -7,6 +7,7 @@ import com.cw.farmer.model.BankNameResponse;
 import com.cw.farmer.model.BlacklistPostResponse;
 import com.cw.farmer.model.BlacklistResponse;
 import com.cw.farmer.model.CropDateResponse;
+import com.cw.farmer.model.CropWalkTB;
 import com.cw.farmer.model.DashboardResponse;
 import com.cw.farmer.model.DestructionReasonResponse;
 import com.cw.farmer.model.GeneralSpinnerResponse;
@@ -24,10 +25,13 @@ import com.cw.farmer.model.RegisterResponse;
 import com.cw.farmer.model.RequisitionResponse;
 import com.cw.farmer.model.Result;
 import com.cw.farmer.model.SearchContractResponse;
+import com.cw.farmer.model.SearchCropWalkResponse;
 import com.cw.farmer.model.SearchDestructionResponse;
 import com.cw.farmer.model.SprayFarmerResponse;
 import com.cw.farmer.model.SprayNumbersResponse;
 import com.cw.farmer.model.TasksResponse;
+import com.cw.farmer.spinner_models.CropStageResponse;
+import com.cw.farmer.spinner_models.GrowthParameterResponse;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
@@ -253,14 +257,30 @@ public interface APIService {
     @POST("/fineract-provider/api/v1/scoutmonitor")
     Call<ResponseBody> postScoutMonitor(@Header("Authorization") String authorization, @Body HashMap requestBody);
 
+    //https://howtodoinjava.com/retrofit2/query-path-parameters/
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @GET("/fineract-provider/api/v1/cropwalkparameter/parameters/{id}")
+    Call<List<GrowthParameterResponse>> getGrowthParameters(@Header("Authorization") String authorization, @Path("id") Long id);
+
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @GET("/fineract-provider/api/v1/cropwalkparameter/cropstages")
+    Call<List<CropStageResponse>> getCropStages(@Header("Authorization") String authorization);
 
 
+    //NOTE: WITH IDS AS STRINGS
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/cropwalk")
+    Call<ResponseBody> postCropWalk(@Header("Authorization") String authorization, @Body HashMap request);
 
+    //NOTE: WITH IDS AS INTEGER
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    @POST("/fineract-provider/api/v1/cropwalk")
+    Call<ResponseBody> postCropWalk(@Header("Authorization") String authorization, @Body CropWalkTB request);
 
-
-
-
-
+    @Headers({"Accept: application/json", "Fineract-Platform-TenantId:default"})
+    //@GET("/fineract-provider/api/v1/cropwalk")
+    @GET("fineract-provider/api/v1/contractsigning/cropwalkfarmers")
+    Call<SearchCropWalkResponse> getCropWalkSearch(@Header("Authorization") String authorization, @Query("offset") int offset, @Query("limit") int limit,@Query("sqlSearch") String search);
 
 
 }

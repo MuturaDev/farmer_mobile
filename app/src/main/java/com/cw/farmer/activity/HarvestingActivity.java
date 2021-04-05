@@ -17,12 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,9 +30,7 @@ import com.cw.farmer.HandleConnectionAppCompatActivity;
 import com.cw.farmer.NetworkUtil;
 import com.cw.farmer.R;
 import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.model.BankNameDB;
 import com.cw.farmer.model.EditContentModel;
-import com.cw.farmer.model.FarmerModelDB;
 import com.cw.farmer.model.HarvestingDB;
 import com.cw.farmer.model.PageItemHarvest;
 import com.cw.farmer.offlinefunctions.OfflineDataSyncActivity;
@@ -189,7 +185,7 @@ public class HarvestingActivity extends HandleConnectionAppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        ArrayList<PageItemHarvest> list = (ArrayList<PageItemHarvest>) OfflineFeature.getSharedPreferences("harvestfarmer", getApplicationContext(), PageItemHarvest.class);
+                        ArrayList<PageItemHarvest> list = (ArrayList<PageItemHarvest>) OfflineFeature.getSharedPreferencesObject("harvestfarmer", getApplicationContext(), PageItemHarvest.class);
                         EditContentModel positionModel = editContentModelList.get(getAdapterPosition());
                         editModel = positionModel;
                         HarvestingDB modelDB = (HarvestingDB) positionModel.getContentObject();

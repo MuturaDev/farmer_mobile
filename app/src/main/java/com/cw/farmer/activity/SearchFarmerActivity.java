@@ -93,12 +93,12 @@ public class SearchFarmerActivity extends HandleConnectionAppCompatActivity {
             String searchFarmer = farmer_search.getText().toString();
 
             if(searchFarmer.isEmpty()){
-                pageItemArrayList = (ArrayList<PageItem>) OfflineFeature.getSharedPreferences("viewrecruitfarmer", getApplicationContext(), PageItem.class);
+                pageItemArrayList = (ArrayList<PageItem>) OfflineFeature.getSharedPreferencesObject("viewrecruitfarmer", getApplicationContext(), PageItem.class);
             }else{
                 pageItemArrayList = new ArrayList<>();
                 pageItemArrayList.clear();
 
-                for(PageItem item :  (ArrayList<PageItem>) OfflineFeature.getSharedPreferences("viewrecruitfarmer", getApplicationContext(), PageItem.class)){
+                for(PageItem item :  (ArrayList<PageItem>) OfflineFeature.getSharedPreferencesObject("viewrecruitfarmer", getApplicationContext(), PageItem.class)){
 
                     if(item.getFirstname().toLowerCase().contains(searchFarmer.toLowerCase()) ||
                             item.getMiddlename().toLowerCase().contains(searchFarmer.toLowerCase()) ||
@@ -157,7 +157,7 @@ public class SearchFarmerActivity extends HandleConnectionAppCompatActivity {
                 }
             });
         } else {
-            pageItemArrayList = (ArrayList<PageItem>) OfflineFeature.getSharedPreferences("viewrecruitfarmer", getApplicationContext(), PageItem.class);
+            pageItemArrayList = (ArrayList<PageItem>) OfflineFeature.getSharedPreferencesObject("viewrecruitfarmer", getApplicationContext(), PageItem.class);
             setData();
             progressDialog.hide();
         }

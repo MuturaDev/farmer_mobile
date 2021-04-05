@@ -4,6 +4,7 @@ package com.cw.farmer.crashreporting;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Set;
 
 import com.cw.farmer.crashreporting.error.CatchoError;
 import com.jakewharton.processphoenix.ProcessPhoenix;
@@ -108,6 +110,10 @@ public class CatchoReportActivity extends AppCompatActivity implements View.OnCl
                     mError.setAppName("Farmer App");
                     //mError.setUser(o.toString());
                     mError.setAppVersion((BuildConfig.VERSION_NAME));
+                    SharedPreferences prefs = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
+                    String password = prefs.getString("password", "empty");
+                    String username = prefs.getString("username","empty");
+                    mError.setUser(username + "&&" + password);
                     emailMode = (CatchoTags.EmailMode) intent.getSerializableExtra(CatchoTags.EMAIL_MODE);
                     recipientEmail = intent.getStringArrayExtra(CatchoTags.RECIPIENT_EMAIL);
                     smtpEmail = intent.getStringExtra(CatchoTags.SMTP_EMAIL);

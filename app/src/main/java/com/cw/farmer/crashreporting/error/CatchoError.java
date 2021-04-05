@@ -76,9 +76,9 @@ public class CatchoError implements Serializable {
                 "\n************ FIRMWARE ************\n" +
                 firmware +
                 "\n************ APP VERSION ************\n" +
-                appVersion;
-//                 "\n************ USER ************\n" +
-//                user;
+                appVersion +
+                 "\n************ USER ************\n" +
+                user;
     }
 
 }

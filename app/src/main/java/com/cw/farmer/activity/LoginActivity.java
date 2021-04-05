@@ -90,10 +90,10 @@ public class LoginActivity extends HandleConnectionAppCompatActivity implements 
 
     private boolean isValid() {
         if (et_username.getText().length() == 0 || et_username.getText().toString().equals("") || et_username.getText().equals(null)) {
-            et_username.setError("Can not empty");
+            et_username.setError("Field cannot be blank");
             return false;
         } else if (et_password.getText().length() == 0 || et_password.getText().toString().equals("") || et_password.getText().equals(null)) {
-            et_password.setError("Can not empty");
+            et_password.setError("Field cannot be blank");
             return false;
         }
         return true;

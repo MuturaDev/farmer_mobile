@@ -14,14 +14,12 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -48,51 +46,28 @@ import com.cw.farmer.crashreporting.Catcho;
 import com.cw.farmer.custom.Utility;
 import com.cw.farmer.internetConnectionBroadcast.CheckNetworkJob;
 import com.cw.farmer.internetConnectionBroadcast.NotificationNotify;
-import com.cw.farmer.model.Accountdetails;
 import com.cw.farmer.model.AdhocResponse;
-import com.cw.farmer.model.AllResponse;
-import com.cw.farmer.model.ContractSignDB;
-import com.cw.farmer.model.CropDestructionPostDB;
-import com.cw.farmer.model.FarmerErrorResponse;
-import com.cw.farmer.model.FarmerModel;
-import com.cw.farmer.model.FarmerModelDB;
-import com.cw.farmer.model.HarvestingDB;
-import com.cw.farmer.model.Identitydetails;
 import com.cw.farmer.model.PageItemsAdhoc;
 import com.cw.farmer.model.PageItemstask;
-import com.cw.farmer.model.PlantingVerifyDB;
-import com.cw.farmer.model.RecruitFarmerDB;
-import com.cw.farmer.model.SprayPostDB;
 import com.cw.farmer.model.TasksResponse;
 import com.cw.farmer.model.dashboard;
 import com.cw.farmer.offlinefunctions.OfflineDataSyncActivity;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
-import com.cw.farmer.table_models.ApplyFertilizerTB;
-import com.cw.farmer.table_models.ChangeCentreTB;
-import com.cw.farmer.table_models.EditFarmerDetailsTB;
-import com.cw.farmer.table_models.HarvestBlockTB;
-import com.cw.farmer.table_models.IrrigateBlockTB;
-import com.cw.farmer.table_models.PlantBlockTB;
-import com.cw.farmer.table_models.RegisterBlockTB;
-import com.cw.farmer.table_models.ScoutingTB;
 import com.cw.farmer.utils.Constants;
 import com.cw.farmer.offlinefunctions.OfflineFeature;
 import com.github.florent37.tutoshowcase.TutoShowcase;
 import com.google.android.material.appbar.AppBarLayout;
 
-import org.imaginativeworld.oopsnointernet.ConnectionCallback;
 import org.imaginativeworld.oopsnointernet.NoInternetDialog;
 import org.imaginativeworld.oopsnointernet.NoInternetSnackbar;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -260,6 +235,12 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
         setContentView(R.layout.activity_home);
 
 
+//        //TODO: REMOVE THIS
+//        int i = 1;
+//        int z = i/0;
+
+
+
 
         //HANDLES NOTIFICATIONS FOR INTERNET CONNECTION
         if (getIntent() != null) {
@@ -389,7 +370,7 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
             prepareListData();
         } else {
 
-            listData((List<PageItemstask>) OfflineFeature.getSharedPreferences("PageItemsTasks",getApplicationContext(),PageItemstask.class));
+            listData((List<PageItemstask>) OfflineFeature.getSharedPreferencesObject("PageItemsTasks",getApplicationContext(),PageItemstask.class));
         }
 
 
@@ -534,6 +515,11 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
         startActivity(new Intent(HomeActivity.this, MyDashboardActivity.class));
     }
 
+
+    public void openCropWalkBlock(View v){
+        startActivity(new Intent(HomeActivity.this, CropWalkActivity.class));
+    }
+
     private void listData(List<PageItemstask> list) {
         try {
             // TODO: 2020-06-02 Until they say what this notificaiton is for, we can not continue using it.
@@ -612,7 +598,6 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
 
     } catch(
     Exception e)
-
     {
         Utility.showToast(HomeActivity.this, e.getMessage());
         //System.out.println(e.getMessage());
@@ -620,7 +605,6 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
 
 }
     private void prepareListData() {
-
 
 //        progressDialog.setCancelable(false);
 //        // progressBar.setMessage("Please Wait...");
@@ -637,14 +621,11 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
               //  progressDialog.dismiss();
                 progressBar.setVisibility(View.GONE);
 
-                    if (response.body().getTotalFilteredRecords() > 0) {
-
-                        listData(response.body().getPageItemstasks());
-                        OfflineFeature.saveSharedPreferences(response.body().getPageItemstasks(), "PageItemsTasks", getApplicationContext());
-
-
-                    }
-
+                    if(response.body() != null)
+                        if (response.body().getTotalFilteredRecords() > 0) {
+                            listData(response.body().getPageItemstasks());
+                            OfflineFeature.saveSharedPreferences(response.body().getPageItemstasks(), "PageItemsTasks", getApplicationContext());
+                        }
             }
 
             @Override
@@ -820,7 +801,6 @@ public class HomeActivity extends HandleConnectionAppCompatActivity implements V
         {
 
             super.onBackPressed();
-
             //ALVIN, ASKED THIS TO BE REMOVED
 //            new AlertDialog.Builder(context)
 //                    .setCancelable(false)

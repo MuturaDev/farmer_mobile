@@ -109,7 +109,7 @@ public class RegisterActivity extends HandleConnectionAppCompatActivity {
                 }
             });
         }else{
-            pageItemArrayList =  (ArrayList<PageItem>)  OfflineFeature.getSharedPreferences("RegisterActivityOffline", getApplicationContext(), PageItem.class);
+            pageItemArrayList =  (ArrayList<PageItem>)  OfflineFeature.getSharedPreferencesObject("RegisterActivityOffline", getApplicationContext(), PageItem.class);
             setData();
         }
     }

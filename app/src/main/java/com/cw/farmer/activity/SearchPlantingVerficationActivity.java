@@ -69,7 +69,7 @@ public class SearchPlantingVerficationActivity extends HandleConnectionAppCompat
         } else {
 
             String farmerSearch = farmer_search.getText().toString();
-            ArrayList<PageItemsPlantVerify>  list = (ArrayList<PageItemsPlantVerify>) OfflineFeature.getSharedPreferences("verifyplantingfarmer", getApplicationContext(), PageItemsPlantVerify.class);
+            ArrayList<PageItemsPlantVerify>  list = (ArrayList<PageItemsPlantVerify>) OfflineFeature.getSharedPreferencesObject("verifyplantingfarmer", getApplicationContext(), PageItemsPlantVerify.class);
             if(farmerSearch.isEmpty()){
                 pageItemArrayList = list;
             }else{

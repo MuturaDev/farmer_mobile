@@ -78,12 +78,12 @@ public class SearchSprayActivity extends HandleConnectionAppCompatActivity {
             String farmerSearch = farmer_search.getText().toString();
 
             if(farmerSearch.isEmpty()){
-                pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferences("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class);
+                pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferencesObject("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class);
             }else{
                 pageItemArrayList = new ArrayList<>();
                 pageItemArrayList.clear();
 
-                List<PageItemsSprayFarmer> list = (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferences("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class);
+                List<PageItemsSprayFarmer> list = (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferencesObject("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class);
                 if(list != null)
                 for(PageItemsSprayFarmer item : list){
                     if(item.getFarmerName().toLowerCase().contains(farmerSearch.toLowerCase()) || item.getIdno().toLowerCase().contains(farmerSearch.toLowerCase())){
@@ -132,7 +132,7 @@ public class SearchSprayActivity extends HandleConnectionAppCompatActivity {
                 }
             });
         } else {
-            pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferences("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class);
+            pageItemArrayList = (ArrayList<PageItemsSprayFarmer>) OfflineFeature.getSharedPreferencesObject("sprayfarmer", getApplicationContext(), PageItemsSprayFarmer.class);
             setData();
             progressDialog.hide();
         }

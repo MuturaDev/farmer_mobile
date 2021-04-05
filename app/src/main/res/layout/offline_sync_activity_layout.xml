@@ -39,6 +39,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/offline_recycler"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="0dp"
                     android:layout_height="match_parent"/>
 
                 <TextView
@@ -50,7 +51,18 @@
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content"/>
 
-            </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_done"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:text="DONE"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
 
 
 

@@ -105,7 +105,7 @@ public class SearchSearchAreaActivity extends HandleConnectionAppCompatActivity 
             getData();
         } else {
 //            pageItemArrayList = getArrayList("SearchSearchAreaActivity");
-            pageItemArrayList = (ArrayList<PageItemSearchArea>) OfflineFeature.getSharedPreferences("SearchSearchAreaActivity", getApplicationContext(),PageItemSearchArea.class );
+            pageItemArrayList = (ArrayList<PageItemSearchArea>) OfflineFeature.getSharedPreferencesObject("SearchSearchAreaActivity", getApplicationContext(),PageItemSearchArea.class );
             setData();
         }
     }

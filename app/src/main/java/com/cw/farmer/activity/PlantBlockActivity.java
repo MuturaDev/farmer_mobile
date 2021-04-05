@@ -469,7 +469,7 @@ public class PlantBlockActivity extends HandleConnectionAppCompatActivity {
                     GeneralSpinner spinnerValue = new GeneralSpinner(-1, "Variety");
                     farmNames.add(spinnerValue);
 
-                    for (GeneralSpinnerResponse names : (ArrayList<GeneralSpinnerResponse>) OfflineFeature.getSharedPreferences("PlantBlockSpinner", getApplicationContext(),GeneralSpinnerResponse.class)) {
+                    for (GeneralSpinnerResponse names : (ArrayList<GeneralSpinnerResponse>) OfflineFeature.getSharedPreferencesObject("PlantBlockSpinner", getApplicationContext(),GeneralSpinnerResponse.class)) {
                         GeneralSpinner spinnerValue1 = new GeneralSpinner(names.getId(), names.getShtDesc());
                         farmNames.add(spinnerValue1);
                     }

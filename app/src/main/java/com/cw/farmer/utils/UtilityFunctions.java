@@ -12,11 +12,39 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class UtilityFunctions {
+    public static String formatDate(List<Integer> cropDate){
+        String date = "";
+        for (int elem : cropDate) {
+            date = elem + "/" + date;
+        }
+        String contractdate = "";
+        for (int elem : cropDate) {
+            contractdate = elem + "/" + contractdate;
+        }
+
+        return date.substring(0, date.length() - 1);
+    }
+
+
+    public static String parseThroughErrorBody(JSONObject jObjError){
+        try {
+            return jObjError.has("errors") ? jObjError.getJSONArray("errors").length() > 0 ?
+                    jObjError.getJSONArray("errors").getJSONObject(0).get("developerMessage").toString() :
+                    jObjError.get("error").toString() + " " + jObjError.get("message").toString() :
+                    jObjError.get("error").toString() + " " + jObjError.get("message").toString();
+        }catch (Exception ex){
+            return ex.getMessage();
+        }
+    }
 
     public static void doRestart(Context c) {
         String TAG = c.getPackageName().toUpperCase();
