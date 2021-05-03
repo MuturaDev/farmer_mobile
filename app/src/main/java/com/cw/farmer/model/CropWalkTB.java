@@ -8,39 +8,51 @@ public class CropWalkTB extends SugarRecord<CropWalkTB> {
     @SerializedName("farmerid ")
     @Expose
     private Integer farmerid;
+
     @SerializedName("dateid")
     @Expose
     private Integer dateid;
+
     @SerializedName("walkid")
     @Expose
     private Integer walkid;
+
     @SerializedName("cordinates")
     @Expose
     private String cordinates;
+
     @SerializedName("location")
     @Expose
     private String location;
+
     @SerializedName("cropstageId")
     @Expose
     private Integer cropstageId;
+
     @SerializedName("centerid")
     @Expose
     private Integer centerid;
-    @SerializedName("value")
+
+    @SerializedName("locale")
     @Expose
-    private String value;
+    private String locale;
+
     @SerializedName("units")
     @Expose
     private Integer units;
+
     @SerializedName("image")
     @Expose
     private String image;
+
     @SerializedName("filetype")
     @Expose
     private String filetype;
+
     @SerializedName("other")
     @Expose
     private String other;
+
     @SerializedName("comment")
     @Expose
     private String comment;
@@ -49,7 +61,7 @@ public class CropWalkTB extends SugarRecord<CropWalkTB> {
     public CropWalkTB() {
     }
 
-    public CropWalkTB(Integer farmerid, Integer dateid, Integer walkid, String cordinates, String location, Integer cropstageId, Integer centerid, String value, Integer units, String image, String filetype, String other, String comment) {
+    public CropWalkTB(Integer farmerid, Integer dateid, Integer walkid, String cordinates, String location, Integer cropstageId, Integer centerid, String locale, Integer units, String image, String filetype, String other, String comment) {
         this.farmerid = farmerid;
         this.dateid = dateid;
         this.walkid = walkid;
@@ -57,7 +69,7 @@ public class CropWalkTB extends SugarRecord<CropWalkTB> {
         this.location = location;
         this.cropstageId = cropstageId;
         this.centerid = centerid;
-        this.value = value;
+        this.locale = locale;
         this.units = units;
         this.image = image;
         this.filetype = filetype;
@@ -101,8 +113,8 @@ public class CropWalkTB extends SugarRecord<CropWalkTB> {
         return centerid;
     }
 
-    public String getValue() {
-        return value;
+    public String getLocale() {
+        return locale;
     }
 
     public Integer getUnits() {

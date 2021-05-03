@@ -2,7 +2,6 @@ package com.cw.farmer.offlinefunctions;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -1055,7 +1054,7 @@ public class OfflineDataSyncActivity extends AppCompatActivity {
                     hashMap.put("location", cropWalk.getLocation());
                     hashMap.put("cropstageid",Integer.valueOf(cropWalk.getCropstageId()));
                     hashMap.put("centerid", cropWalk.getCenterid() != null ? Integer.valueOf(cropWalk.getCenterid()) : null);
-                    hashMap.put("value",cropWalk.getValue());
+                    hashMap.put("value",cropWalk.getLocale());
                     hashMap.put("units",Integer.valueOf(cropWalk.getUnits()));
                     hashMap.put("image",cropWalk.getImage());
                     hashMap.put("filetype",cropWalk.getFiletype());

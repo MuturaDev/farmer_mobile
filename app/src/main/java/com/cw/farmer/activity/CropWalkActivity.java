@@ -132,6 +132,12 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
         image_dropdown_comment = findViewById(R.id.image_dropdown_comment);
 
         image = findViewById(R.id.image);
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage();
+            }
+        });
         image_preview = findViewById(R.id.image_preview);
 
         btn_take_photo = findViewById(R.id.btn_take_photo);
@@ -146,6 +152,14 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
             @Override
             public void onClick(View view) {
                 submit();
+            }
+        });
+
+        image_dropdown_additional_info = findViewById(R.id.image_dropdown_additional_info);
+        image_dropdown_additional_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sp_multi_additional_info.performClick();
             }
         });
 
@@ -198,8 +212,8 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                             //https://stackoverflow.com/questions/3285412/whats-the-best-way-to-limit-text-length-of-edittext-in-android#:~:text=This%20will%20limit%20the%20maximum,EditText%20widget%20to%206%20characters.&text=Programmatically%3A,%5B0%5D%20%3D%20new%20InputFilter.
                             //Set Length filter. Restricting to 10 characters only
                             if(selectedGrowthParameter.getParamConstraints() != null)
-                            if(TextUtils.isDigitsOnly(selectedGrowthParameter.getParamConstraints()))
-                                et_comment.setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(selectedGrowthParameter.getParamConstraints()))});
+                                if(TextUtils.isDigitsOnly(selectedGrowthParameter.getParamConstraints()))
+                                    et_comment.setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(selectedGrowthParameter.getParamConstraints()))});
                             sp_comment.setVisibility(View.GONE);
                             image_dropdown_comment.setVisibility(View.GONE);
 
@@ -297,20 +311,20 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                         }
 
                         if(!TextUtils.isEmpty(editable.toString()))
-                        if(TextUtils.isDigitsOnly(editable.toString().trim())){
-                            int numberEntered = Integer.parseInt(editable.toString().trim());
-                            if(numberEntered <= max && numberEntered >= min){
-                                et_comment.setError(null);
-                                commentValidate = true;
-                            }else{
-                                ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
-                                SpannableStringBuilder ssbuilder = new SpannableStringBuilder("Out of Range. Should be between " + min + " and " + max + " inclusive");
-                                ssbuilder.setSpan(fgcspan, 0, ("Out of Range. Should be between " + min + " and " + max + " inclusive").length(), 0);
-                                et_comment.setError(ssbuilder);
-                                commentValidate = false;
+                            if(TextUtils.isDigitsOnly(editable.toString().trim())){
+                                int numberEntered = Integer.parseInt(editable.toString().trim());
+                                if(numberEntered <= max && numberEntered >= min){
+                                    et_comment.setError(null);
+                                    commentValidate = true;
+                                }else{
+                                    ForegroundColorSpan fgcspan = new ForegroundColorSpan(errorColor);
+                                    SpannableStringBuilder ssbuilder = new SpannableStringBuilder("Out of Range. Should be between " + min + " and " + max + " inclusive");
+                                    ssbuilder.setSpan(fgcspan, 0, ("Out of Range. Should be between " + min + " and " + max + " inclusive").length(), 0);
+                                    et_comment.setError(ssbuilder);
+                                    commentValidate = false;
 
+                                }
                             }
-                        }
                     }
 
                 }else if(selectedGrowthParameter.getParamType().equals("T")){
@@ -321,6 +335,10 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                 }
             }
         });
+
+
+
+
         sp_additional_info  = findViewById(R.id.sp_additional_info);
         sp_additional_info.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -356,10 +374,10 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                                     if(!TextUtils.isEmpty(selectedGrowthParameter.getAdditionalDependConstraints())){
 
                                         List<String> dropDownList = new ArrayList<>();
-                                       // dropDownList.add("Select Additional Info");
+                                        // dropDownList.add("Select Additional Info");
                                         dropDownList.addAll(Arrays.asList(selectedGrowthParameter.getAdditionalDependConstraints().split(",")));
 
-                                       // ArrayAdapter<String> adapter = new ArrayAdapter <String>(CropWalkActivity.this, android.R.layout.simple_list_item_multiple_choice, dropDownList);
+                                        // ArrayAdapter<String> adapter = new ArrayAdapter <String>(CropWalkActivity.this, android.R.layout.simple_list_item_multiple_choice, dropDownList);
 //                                        sp_multi_additional_info
 //                                                .setListAdapter(adapter)
 //                                                .setSelectAll(false)
@@ -394,7 +412,6 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
 //                                                    }
 //                                                });
 
-
                                         //NEW MULTI DROP DOWN
 //                                        final List<String> list = Arrays.asList(getResources().getStringArray(R.array.mood_array));
                                         final List<KeyPairBoolData> listArray0 = new ArrayList<>();
@@ -411,7 +428,7 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                                          *
                                          *  Using MultiSpinnerSearch class
                                          */
-                                         sp_multi_additional_info = findViewById(R.id.multipleItemSelectionSpinner);
+                                        sp_multi_additional_info = findViewById(R.id.multipleItemSelectionSpinner);
 
                                         // Pass true If you want searchView above the list. Otherwise false. default = true.
                                         sp_multi_additional_info.setSearchEnabled(true);
@@ -442,10 +459,13 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                                                     if (items.get(i).isSelected()) {
                                                         //Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
                                                         String item = items.get(i).getName();
-                                                            checkedItemList.add(item);
+                                                        checkedItemList.add(item);
 
                                                     }
                                                 }
+
+
+//=============================
 
                                                 //concat checked items
                                                 StringBuilder sb = new StringBuilder();
@@ -456,6 +476,8 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                                                     String item = checkedItemList.get(i).trim();
                                                     sb.append(item);
 
+
+//============================
                                                 }
                                                 selectedSpAdditionalInfo = sb.toString();
 
@@ -474,6 +496,7 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                                                         "Limit exceed ", Toast.LENGTH_LONG).show();
                                             }
                                         });
+
 
                                         sp_multi_additional_info.setVisibility(View.VISIBLE);
                                         image_dropdown_additional_info.setVisibility(View.VISIBLE);
@@ -518,7 +541,7 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-               selectedSpComment = null;
+                selectedSpComment = null;
             }
         });
 
@@ -530,7 +553,7 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
 
         populateCropStages();
 
-            //NOTE: TESTING SPINNER WITH MULTIPLE OPTIONS
+        //NOTE: TESTING SPINNER WITH MULTIPLE OPTIONS
 
 
 
@@ -763,20 +786,20 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                 }else {
                     SharedPreferences prefs_auth = getSharedPreferences("PERMISSIONS", MODE_PRIVATE);
                     CropWalkTB cropWalk = new CropWalkTB(
-                           (cropWalkSearchPageItemResponse.getFarmerId()),
-                           (cropWalkSearchPageItemResponse.getPlantingId()),
+                            (cropWalkSearchPageItemResponse.getFarmerId()),
+                            (cropWalkSearchPageItemResponse.getPlantingId()),
                             Integer.valueOf(selectedGrowthParameter.getId()),//(cropWalkSearchPageItemResponse.getID()),
-                           coordinates,
-                           location_str,
-                           (selectedCropStage.getId()),
+                            coordinates,
+                            location_str,
+                            (selectedCropStage.getId()),
                             //TODO: REMOVE THIS, PART
-                           null,//Integer.valueOf(prefs_auth.getString("center_ids", "1")),
-                           null,//cropWalkSearchPageItemResponse.getParameterValue(),
-                           Integer.valueOf(cropWalkSearchPageItemResponse.getTotalUnits()),
-                    getBase64FromPath(),
-                           "image/png",
-                            postComment,
-                   postAdditionalInfo
+                            null,//Integer.valueOf(prefs_auth.getString("center_ids", "1")),
+                            null,//cropWalkSearchPageItemResponse.getParameterValue(),
+                            Integer.valueOf(cropWalkSearchPageItemResponse.getTotalUnits()),
+                            getBase64FromPath(),
+                            "image/png",
+                            postAdditionalInfo,
+                            postComment
                     );
                     cropWalk.save();
 
@@ -835,7 +858,7 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
             });
         }else{
             sp_crop_stage.setAdapter(new ArrayAdapter<>(CropWalkActivity.this, android.R.layout.simple_spinner_dropdown_item, (ArrayList<CropStageResponse>) OfflineFeature.getSharedPreferencesArray("CropStageSpinner", getApplicationContext(), CropStageResponse.class) ));
-             showProgress1(false);
+            showProgress1(false);
         }
     }
 
@@ -1015,3 +1038,4 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
     }
 
 }
+
