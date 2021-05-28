@@ -140,8 +140,13 @@ public class MainActivity extends HandleConnectionAppCompatActivity implements V
 
         if(getIntent() != null){
             if(getIntent().getExtras() != null){
-                editContentModelArrayList   = (ArrayList<EditContentModel>) getIntent().getExtras().getSerializable("CHECKDATA");
-                editEnabled = true;
+
+                String message = (String) getIntent().getExtras().getString("CHECKDATA");
+                if(message.equalsIgnoreCase("registerfarmer")){
+                    editContentModelArrayList   =  OfflineDataSyncActivity.registerfarmer;//(ArrayList<EditContentModel>) getIntent().getExtras().getSerializable("CHECKDATA");
+                    editEnabled = true;
+                }
+
             }
         }
 

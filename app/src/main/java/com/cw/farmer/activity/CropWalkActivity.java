@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,13 +20,16 @@ import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -140,13 +145,16 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
         });
         image_preview = findViewById(R.id.image_preview);
 
-        btn_take_photo = findViewById(R.id.btn_take_photo);
-        btn_take_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectImage();
-            }
-        });
+//        btn_take_photo = findViewById(R.id.btn_take_photo);
+//        btn_take_photo.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//               // selectImage();
+//
+//
+//
+//            }
+//        });
         btn_submit = findViewById(R.id.btn_submit);
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -925,9 +933,11 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
     private void selectImage(){
         final CharSequence[] items =
                 {
+                        "View Image",
                         "Take Photo",
                         "Choose from Library",
-                        "Cancel"
+                        "Cancel",
+
                 };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -951,6 +961,55 @@ public class CropWalkActivity extends HandleConnectionAppCompatActivity {
                     }
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
+                }else if(items[item].equals("View Image")){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CropWalkActivity.this);
+                    builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //selectImage();
+                            dialog.cancel();
+                        }
+                    });
+//                        .setNegativeButton("", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                    }
+//                });
+                    final AlertDialog dialog2 = builder.create();
+                    LayoutInflater inflater = getLayoutInflater();
+                    View dialogLayout = inflater.inflate(R.layout.image_view_activity_layout, null);
+                    dialog2.setView(dialogLayout);
+                    dialog2.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                    ImageView image2 = (ImageView) dialog2.findViewById(R.id.goProDialogImage);
+                    image2.setScaleType(ImageView.ScaleType.MATRIX);
+                    //image.setAdjustViewBounds(true);
+                    Glide.with(CropWalkActivity.this).load(compressedImageFile).into(image2);
+                    ImageZoomHelper.setViewZoomable(image2);
+
+                    dialog2.show();
+
+                    dialog2.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface d) {
+
+//                            Bitmap icon = BitmapFactory.decodeResource(CropWalkActivity.this.getResources(),
+//                                    R.drawable.camera_icon);
+
+                            //if(compressedImageFile != null) {
+
+
+
+                            //}
+
+//                            float imageWidthInPX = (float)image2.getWidth();
+//
+//                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
+//                                    Math.round(imageWidthInPX * (float)icon.getHeight() / (float)icon.getWidth()));
+//                            image2.setLayoutParams(layoutParams);
+
+                        }
+                    });
                 }
             }
         });

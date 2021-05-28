@@ -25,7 +25,9 @@ import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
 import com.cw.farmer.table_models.FarmerDocument;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
@@ -135,15 +137,22 @@ public class FarmerDocumentsActivity extends HandleConnectionAppCompatActivity {
         return true;
     }
 
+
+    static Map<String,String> pageItemObject;
+
+
+
+    //http://frigo@w/7
     public void opendoc(View v) {
+        pageItemObject = new HashMap<>();
+        pageItemObject.put("id", pageItem.getId() + "");
+        pageItemObject.put("entry_id", entry_id + "");
+        pageItemObject.put("id_no", id_no);
+        pageItemObject.put("id_image", id_image);
+        pageItemObject.put("status_farmer", status_farmer);
+        pageItemObject.put("dob", dob);
 
         Intent intent = new Intent(FarmerDocumentsActivity.this, UpdateDocsActivity.class);
-        intent.putExtra("id", pageItem.getId() + "");
-        intent.putExtra("entry_id", entry_id + "");
-        intent.putExtra("id_no", id_no);
-        intent.putExtra("id_image", id_image);
-        intent.putExtra("status_farmer", status_farmer);
-        intent.putExtra("dob", dob);
         Bundle bundle1 = new Bundle();
         bundle1.putParcelable("item", pageItem);
         intent.putExtras(bundle1);

@@ -30,7 +30,9 @@ import org.imaginativeworld.oopsnointernet.ConnectionCallback;
 import org.imaginativeworld.oopsnointernet.NoInternetDialog;
 import org.imaginativeworld.oopsnointernet.NoInternetSnackbar;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
@@ -43,7 +45,8 @@ public class FarmerAccountsActivity extends HandleConnectionAppCompatActivity {
     ImageView imageView;
     PageItem pageItem;
     Integer id;
-    String farmer_id, account_name, bank_name, account_image, entry_id, status_farmer, dob;
+    String farmer_id, account_name, bank_name, entry_id, status_farmer, dob;
+    static String account_image;
 
 
     @Override
@@ -148,20 +151,22 @@ public class FarmerAccountsActivity extends HandleConnectionAppCompatActivity {
         return true;
     }
 
+
+
     public void opendoc(View v) {
-//        Intent intent = new Intent(FarmerAccountsActivity.this, UpdateBankActivity.class);
-//        intent.putExtra("id", pageItem.getId() + "");
-//        intent.putExtra("entry_id", entry_id + "");
-//        intent.putExtra("account_name", account_name);
-//        intent.putExtra("bank_name", bank_name);
+       Intent intent = new Intent(FarmerAccountsActivity.this, UpdateBankActivity.class);
+        intent.putExtra("id", pageItem.getId() + "");
+        intent.putExtra("entry_id", entry_id + "");
+        intent.putExtra("account_name", account_name);
+        intent.putExtra("bank_name", bank_name);
         //TODO:ERROR: HERE IS THE ISSUE
-//        intent.putExtra("account_image", account_image);
-//        intent.putExtra("status_farmer", status_farmer);
-//        //intent.putExtra("dob", dob);
-//       // Bundle bundle1 = new Bundle();
-//       // bundle1.putParcelable("item", pageItem);
-//       // intent.putExtras(bundle1);
-//        startActivity(intent);
+        //intent.putExtra("account_image", account_image);
+        intent.putExtra("status_farmer", status_farmer);
+        //intent.putExtra("dob", dob);
+       // Bundle bundle1 = new Bundle();
+       // bundle1.putParcelable("item", pageItem);
+       // intent.putExtras(bundle1);
+        startActivity(intent);
     }
 
 }

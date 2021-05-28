@@ -31,6 +31,7 @@ import com.cw.farmer.model.BankNameResponse;
 import com.cw.farmer.model.PageItem;
 import com.cw.farmer.server.APIService;
 import com.cw.farmer.server.ApiClient;
+import com.cw.farmer.table_models.FarmerDocument;
 
 import org.json.JSONObject;
 
@@ -95,26 +96,26 @@ public class UpdateBankActivity extends HandleConnectionAppCompatActivity {
         Bundle b = iin.getExtras();
 
 
-//        if (b != null) {
-//            et_accountno.setText((String) b.get("account_name"));
-//            //account_name,bank_name,account_image
-//            farmer_id = (String) b.get("id");
-//            bank_name = (String) b.get("bank_name");
-//            account_image = (String) b.get("account_image");
-//            entry_id = (String) b.get("entry_id");
-//            account_name = (String) b.get("account_name");
-//            status_farmer = (String) b.get("status_farmer");
-//            dob = (String) b.get("dob");
-//
-//            pageItem = b.getParcelable("item");
-//
-//            if(account_image != null) {
-//                byte[] imageByteArray = Base64.decode(account_image, Base64.DEFAULT);
-//                iv_bank_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-//                iv_bank_image.setAdjustViewBounds(true);
-//                Glide.with(UpdateBankActivity.this).asBitmap().load(imageByteArray).into(iv_bank_image);
-//            }
-//        }
+        if (b != null) {
+            et_accountno.setText((String) b.get("account_name"));
+            //account_name,bank_name,account_image
+            farmer_id = (String) b.get("id");
+            bank_name = (String) b.get("bank_name");
+            account_image = FarmerAccountsActivity.account_image;//(String) b.get("account_image");
+            entry_id = (String) b.get("entry_id");
+            account_name = (String) b.get("account_name");
+            status_farmer = (String) b.get("status_farmer");
+            dob = (String) b.get("dob");
+
+            pageItem = b.getParcelable("item");
+
+            if(account_image != null) {
+                byte[] imageByteArray = Base64.decode(account_image, Base64.DEFAULT);
+                iv_bank_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                iv_bank_image.setAdjustViewBounds(true);
+                Glide.with(UpdateBankActivity.this).asBitmap().load(imageByteArray).into(iv_bank_image);
+            }
+        }
 
 
 
@@ -271,28 +272,30 @@ public class UpdateBankActivity extends HandleConnectionAppCompatActivity {
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog.dismissWithAnimation();
-                                        Intent intent = new Intent(UpdateBankActivity.this, FarmerDetailsActivity.class);
-                                        Bundle bundle1 = new Bundle();
-                                        bundle1.putParcelable("item", pageItem);
-                                        intent.putExtras(bundle1);
-                                        intent.putExtra("id", pageItem.getId());
-                                        intent.putExtra("status", status_farmer);
-                                        intent.putExtra("dob", dob);
-                                        startActivity(intent);
+                                        //TODO: HAS ISSUES
+//                                        Intent intent = new Intent(UpdateBankActivity.this, FarmerDetailsActivity.class);
+//                                        Bundle bundle1 = new Bundle();
+//                                        bundle1.putParcelable("item", pageItem);
+//                                        intent.putExtras(bundle1);
+//                                        intent.putExtra("id", pageItem.getId());
+//                                        intent.putExtra("status", status_farmer);
+//                                        intent.putExtra("dob", dob);
+//                                        startActivity(intent);
                                     }
                                 })
                                 .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog.dismissWithAnimation();
-                                        Intent intent = new Intent(UpdateBankActivity.this, FarmerDetailsActivity.class);
-                                        Bundle bundle1 = new Bundle();
-                                        bundle1.putParcelable("item", pageItem);
-                                        intent.putExtras(bundle1);
-                                        intent.putExtra("id", pageItem.getId());
-                                        intent.putExtra("status", status_farmer);
-                                        intent.putExtra("dob", dob);
-                                        startActivity(intent);
+                                        //TODO: HAS ISSUES
+//                                        Intent intent = new Intent(UpdateBankActivity.this, FarmerDetailsActivity.class);
+//                                        Bundle bundle1 = new Bundle();
+//                                        bundle1.putParcelable("item", pageItem);
+//                                        intent.putExtras(bundle1);
+//                                        intent.putExtra("id", pageItem.getId());
+//                                        intent.putExtra("status", status_farmer);
+//                                        intent.putExtra("dob", dob);
+//                                        startActivity(intent);
                                     }
                                 })
                                 .show();

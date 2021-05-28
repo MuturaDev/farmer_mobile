@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import id.zelory.compressor.Compressor;
@@ -81,8 +82,10 @@ public class UpdateDocsActivity extends HandleConnectionAppCompatActivity {
             }
         });
         Intent iin = getIntent();
-        Bundle b = iin.getExtras();
+        Bundle bb = iin.getExtras();
 
+
+        Map<String,String> b =  FarmerDocumentsActivity.pageItemObject;
         if (b != null) {
             et_idno.setText((String) b.get("id_no"));
             farmer_id = (String) b.get("id");
@@ -91,7 +94,7 @@ public class UpdateDocsActivity extends HandleConnectionAppCompatActivity {
             id_no = (String) b.get("id_no");
             status_farmer = (String) b.get("status_farmer");
             dob = (String) b.get("dob");
-            pageItem = b.getParcelable("item");
+            pageItem = bb.getParcelable("item");
 
             byte[] imageByteArray = Base64.decode(id_image, Base64.DEFAULT);
             Glide.with(UpdateDocsActivity.this).asBitmap().load(imageByteArray).into(iv_image);
@@ -161,6 +164,7 @@ public class UpdateDocsActivity extends HandleConnectionAppCompatActivity {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (resultCode == RESULT_OK) {
 
             EasyImage.handleActivityResult(requestCode, resultCode, data, UpdateDocsActivity.this, new EasyImage.Callbacks() {
@@ -177,7 +181,7 @@ public class UpdateDocsActivity extends HandleConnectionAppCompatActivity {
                             .compressToFileAsFlowable(imageFile)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new io.reactivex.functions.Consumer<File>() {
+                            .subscribe(new Consumer<File>() {
                                 @Override
                                 public void accept(File file) {
                                     if (type == 0) {
@@ -204,7 +208,7 @@ public class UpdateDocsActivity extends HandleConnectionAppCompatActivity {
                 }
             });
         }
-
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public String getBase64FromPath() {

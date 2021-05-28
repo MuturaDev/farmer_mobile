@@ -134,9 +134,11 @@ public class OfflineDataRecyclerAdapter extends RecyclerView.Adapter<OfflineData
                     if(offlineDataItem.getDataItemObject().equals(FarmerModelDB.class)){
 
                             Intent intent = new Intent((context), MainActivity.class);
-                            Bundle b = new Bundle();
-                            b.putSerializable("CHECKDATA", OfflineDataSyncActivity.registerfarmer);
-                            intent.putExtras(b);
+                           // Bundle b = new Bundle();
+                            //b.putSerializable("CHECKDATA", OfflineDataSyncActivity.registerfarmer);
+
+                            //intent.putExtras(b);
+                            intent.putExtra("CHECKDATA", "registerfarmer");
                             (context).startActivity(intent);
                             ((OfflineDataSyncActivity) context).finish();
 
